@@ -1,9 +1,8 @@
-# docker build -t pautlenrom -f DockerFile  . 
 FROM ubuntu:18.04
-RUN apt update
-RUN apt install -y gcc
-RUN apt install -y nasm
-RUN apt install -y g++-multilib 
-RUN apt install -y libc6-dev-i386
-RUN apt install -y make
+RUN apt-get update
+RUN apt-get install -y gcc
+RUN apt-get install -y nasm
+RUN apt-get install -y g++-multilib 
+RUN apt-get install -y libc6-dev-i386
+RUN apt-get install -y make
 CMD ["bash"]
