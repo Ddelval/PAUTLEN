@@ -366,8 +366,35 @@ que hay diferentes funciones de librería para la lectura (idem. escritura) de
 cada tipo. Se deben insertar en la pila los argumentos necesarios, realizar la
 llamada (call) a la función de librería correspondiente y limpiar la pila.
 */
-void leer(FILE *fpasm, char *nombre, int tipo);
-void escribir(FILE *fpasm, int es_variable, int tipo);
+void leer(FILE *fpasm, char *nombre, int tipo) {
+	char *assembler_string = NULL;
+	char *pop_string = (char *)malloc(strlen("pop dword [_]") + strlen(nombre) + 10);
+
+	if (tipo == ENTERO) {
+		append_string(&assembler_string, "call scan_int");
+	} else {	// for our own sanity let's suppose this can only be BOOLEAN now
+		append_string(&assembler_string, "call scan_boolean");
+	}
+
+	sprintf(pop_string, "pop dword [_%s]", nombre);
+	append_string(&assembler_string, pop_string);	
+
+	fprintf(fpasm, "%s", assembler_string);
+}
+
+void escribir(FILE *fpasm, int es_variable, int tipo) {
+	char *assembler_string = NULL;
+
+	if (tipo == ENTERO) {
+		append_string(&assembler_string, "call print_int");
+	} else {	// for our own sanity let's suppose this can only be BOOLEAN now
+		append_string(&assembler_string, "call print_boolean");
+	}
+
+	append_string(assembler_string, "add esp, 4");
+
+	fprintf(fpasm, "%s", assembler_string);
+}
 
 void ifthenelse_inicio(FILE *fpasm, int exp_es_variable, int etiqueta);
 /*
