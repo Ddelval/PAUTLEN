@@ -21,7 +21,7 @@ variable.
 void escribir_subseccion_data(FILE *fpasm) {
     const char *assembler_string =
         "segment .data\n"
-        "   msg_error_division db \" Error division por 0 \", 0\n";
+        "  msg_error_division db \" Error division por 0 \", 0\n";
 
     fprintf(fpasm, "%s", assembler_string);
 }
@@ -136,12 +136,228 @@ si se cumple la comparación y “0” si no se cumple), se deja en la pila como
 el resto de operaciones. Se deben usar etiquetas para poder gestionar los saltos
 necesarios para implementar las comparaciones.
 */
-void igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta);
-void distinto(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta);
-void menor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta);
-void mayor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta);
-void menor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta);
-void mayor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta);
+
+void append_string(char **dest, const char *line) {
+    int size = strlen(line) + 2;
+	
+	if (!(*dest)) {
+		*dest = (char *)calloc(1, size);
+	} else {
+		*dest = (char *)realloc(*dest, strlen(*dest) + size);
+	}
+
+	strcat(*dest, line);
+	strcat(*dest, "\n");
+}
+
+char *tag_string(const char *string, int tag) {
+	char *str = (char *)malloc(((int)((ceil(log10(tag)) + 1) * sizeof(char)) + strlen(string)) * sizeof(char));
+	return str;
+}
+
+void igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta) {
+	char *assembler_string = NULL;
+	char *comparison_string = tag_string("je equ_", etiqueta);
+	char *equal_string = tag_string("equ_:", etiqueta);
+	char *jump_string = tag_string("jmp fin_", etiqueta);
+	char *end_string = tag_string("fin_:", etiqueta);
+
+	append_string(&assembler_string, "pop dword eax");
+
+    if (es_variable2) {
+		append_string(&assembler_string, "mov eax, [eax]");
+	}
+
+	append_string(&assembler_string, "pop dword ebx");
+	
+	if (es_variable1) {
+		append_string(&assembler_string, "mov ebx, [ebx]");
+	}
+
+	append_string(&assembler_string, "cmp eax, ebx");
+	sprintf(comparison_string, "je equ_%d", etiqueta);
+	append_string(&assembler_string, comparison_string);
+	append_string(&assembler_string, "push dword 0");
+	sprintf(jump_string, "jmp fin_%d", etiqueta);
+	append_string(&assembler_string, jump_string);
+	sprintf(equal_string, "equ_%d:", etiqueta);
+	append_string(&assembler_string, equal_string);
+	append_string(&assembler_string, "push dword 1");
+	sprintf(end_string, "fin_%d:", etiqueta);
+	append_string(&assembler_string, end_string);
+
+	fprintf(fpasm, "%s", assembler_string);
+}
+
+void distinto(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta) {
+	char *assembler_string = NULL;
+	char *comparison_string = tag_string("jne dif_", etiqueta);
+	char *different_string = tag_string("dif_:", etiqueta);
+	char *jump_string = tag_string("jmp fin_", etiqueta);
+	char *end_string = tag_string("fin_:", etiqueta);
+
+	append_string(&assembler_string, "pop dword eax");
+
+    if (es_variable2) {
+		append_string(&assembler_string, "mov eax, [eax]");
+	}
+
+	append_string(&assembler_string, "pop dword ebx");
+	
+	if (es_variable1) {
+		append_string(&assembler_string, "mov ebx, [ebx]");
+	}
+
+	append_string(&assembler_string, "cmp eax, ebx");
+	sprintf(comparison_string, "jne dif_%d", etiqueta);
+	append_string(&assembler_string, comparison_string);
+	append_string(&assembler_string, "push dword 0");
+	sprintf(jump_string, "jmp fin_%d", etiqueta);
+	append_string(&assembler_string, jump_string);
+	sprintf(different_string, "dif_%d:", etiqueta);
+	append_string(&assembler_string, different_string);
+	append_string(&assembler_string, "push dword 1");
+	sprintf(end_string, "fin_%d:", etiqueta);
+	append_string(&assembler_string, end_string);
+
+	fprintf(fpasm, "%s", assembler_string);
+}
+
+void menor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta) {
+	char *assembler_string = NULL;
+	char *comparison_string = tag_string("jle loe_", etiqueta);
+	char *less_equal_string = tag_string("loe_:", etiqueta);
+	char *jump_string = tag_string("jmp fin_", etiqueta);
+	char *end_string = tag_string("fin_:", etiqueta);
+
+	append_string(&assembler_string, "pop dword eax");
+
+    if (es_variable2) {
+		append_string(&assembler_string, "mov eax, [eax]");
+	}
+
+	append_string(&assembler_string, "pop dword ebx");
+	
+	if (es_variable1) {
+		append_string(&assembler_string, "mov ebx, [ebx]");
+	}
+
+	append_string(&assembler_string, "cmp eax, ebx");
+	sprintf(comparison_string, "jle loe_%d", etiqueta);
+	append_string(&assembler_string, comparison_string);
+	append_string(&assembler_string, "push dword 0");
+	sprintf(jump_string, "jmp fin_%d", etiqueta);
+	append_string(&assembler_string, jump_string);
+	sprintf(less_equal_string, "loe_%d:", etiqueta);
+	append_string(&assembler_string, less_equal_string);
+	append_string(&assembler_string, "push dword 1");
+	sprintf(end_string, "fin_%d:", etiqueta);
+	append_string(&assembler_string, end_string);
+
+	fprintf(fpasm, "%s", assembler_string);
+}
+
+void mayor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta) {
+	char *assembler_string = NULL;
+	char *comparison_string = tag_string("jge goe_", etiqueta);
+	char *greater_equal_string = tag_string("goe_:", etiqueta);
+	char *jump_string = tag_string("jmp fin_", etiqueta);
+	char *end_string = tag_string("fin_:", etiqueta);
+
+	append_string(&assembler_string, "pop dword eax");
+
+    if (es_variable2) {
+		append_string(&assembler_string, "mov eax, [eax]");
+	}
+
+	append_string(&assembler_string, "pop dword ebx");
+	
+	if (es_variable1) {
+		append_string(&assembler_string, "mov ebx, [ebx]");
+	}
+
+	append_string(&assembler_string, "cmp eax, ebx");
+	sprintf(comparison_string, "jge goe_%d", etiqueta);
+	append_string(&assembler_string, comparison_string);
+	append_string(&assembler_string, "push dword 0");
+	sprintf(jump_string, "jmp fin_%d", etiqueta);
+	append_string(&assembler_string, jump_string);
+	sprintf(greater_equal_string, "goe_%d:", etiqueta);
+	append_string(&assembler_string, greater_equal_string);
+	append_string(&assembler_string, "push dword 1");
+	sprintf(end_string, "fin_%d:", etiqueta);
+	append_string(&assembler_string, end_string);
+
+	fprintf(fpasm, "%s", assembler_string);
+}
+
+void menor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta) {
+	char *assembler_string = NULL;
+	char *comparison_string = tag_string("jl lss_", etiqueta);
+	char *lesser_string = tag_string("lss_:", etiqueta);
+	char *jump_string = tag_string("jmp fin_", etiqueta);
+	char *end_string = tag_string("fin_:", etiqueta);
+
+	append_string(&assembler_string, "pop dword eax");
+
+    if (es_variable2) {
+		append_string(&assembler_string, "mov eax, [eax]");
+	}
+
+	append_string(&assembler_string, "pop dword ebx");
+	
+	if (es_variable1) {
+		append_string(&assembler_string, "mov ebx, [ebx]");
+	}
+
+	append_string(&assembler_string, "cmp eax, ebx");
+	sprintf(comparison_string, "jl lss_%d", etiqueta);
+	append_string(&assembler_string, comparison_string);
+	append_string(&assembler_string, "push dword 0");
+	sprintf(jump_string, "jmp fin_%d", etiqueta);
+	append_string(&assembler_string, jump_string);
+	sprintf(lesser_string, "lss_%d:", etiqueta);
+	append_string(&assembler_string, lesser_string);
+	append_string(&assembler_string, "push dword 1");
+	sprintf(end_string, "fin_%d:", etiqueta);
+	append_string(&assembler_string, end_string);
+
+	fprintf(fpasm, "%s", assembler_string);
+}
+
+void mayor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta) {
+	char *assembler_string = NULL;
+	char *comparison_string = tag_string("jg gtr_", etiqueta);
+	char *greater_string = tag_string("gtr_:", etiqueta);
+	char *jump_string = tag_string("jmp fin_", etiqueta);
+	char *end_string = tag_string("fin_:", etiqueta);
+
+	append_string(&assembler_string, "pop dword eax");
+
+    if (es_variable2) {
+		append_string(&assembler_string, "mov eax, [eax]");
+	}
+
+	append_string(&assembler_string, "pop dword ebx");
+	
+	if (es_variable1) {
+		append_string(&assembler_string, "mov ebx, [ebx]");
+	}
+
+	append_string(&assembler_string, "cmp eax, ebx");
+	sprintf(comparison_string, "jg gtr_%d", etiqueta);
+	append_string(&assembler_string, comparison_string);
+	append_string(&assembler_string, "push dword 0");
+	sprintf(jump_string, "jmp fin_%d", etiqueta);
+	append_string(&assembler_string, jump_string);
+	sprintf(greater_string, "gtr_%d:", etiqueta);
+	append_string(&assembler_string, greater_string);
+	append_string(&assembler_string, "push dword 1");
+	sprintf(end_string, "fin_%d:", etiqueta);
+	append_string(&assembler_string, end_string);
+
+	fprintf(fpasm, "%s", assembler_string);
+}
 
 /* FUNCIONES DE ESCRITURA Y LECTURA */
 /*
