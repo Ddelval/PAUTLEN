@@ -1,5 +1,8 @@
 #include "generacion.h"
 
+/** PRIVATE PROTOTYPES **/
+void append_string(char **dest, const char *line);
+
 /* OBSERVACIÓN GENERAL A TODAS LAS FUNCIONES:
 Todas ellas escriben el código NASM a un FILE* proporcionado como primer
 argumento.
@@ -7,7 +10,7 @@ argumento.
 
 void escribir_cabecera_bss(FILE *fpasm) {
     const char *assembler_string = "segment .bss\n"
-                                   "  __esp resd 1\n";
+                                   "__esp resd 1\n";
 
     fprintf(fpasm, "%s", assembler_string);
 }
@@ -21,7 +24,7 @@ variable.
 void escribir_subseccion_data(FILE *fpasm) {
     const char *assembler_string =
         "segment .data\n"
-        "  msg_error_division db \" Error division por 0 \", 0\n";
+        "msg_error_division db \" Error division por 0 \", 0\n";
 
     fprintf(fpasm, "%s", assembler_string);
 }
@@ -32,7 +35,7 @@ En este punto, al menos, debes ser capaz de detectar la división por 0.
 */
 
 void declarar_variable(FILE *fpasm, char *nombre, int tipo, int tamano) {
-    const char *assembler_string = "   %s resd %d\n";
+    const char *assembler_string = "_%s resd %d\n";
     fprintf(fpasm, assembler_string, nombre, tamano);
 }
 /*
@@ -46,20 +49,35 @@ vectores, por eso se adjunta un argumento final (tamano) que para esta
 primera práctica siempre recibirá el valor 1.
 */
 
-void escribir_segmento_codigo(FILE *fpasm);
+void escribir_segmento_codigo(FILE *fpasm) {
+    const char *assembler_string =
+        "segment .text\n"
+        "global main\n"
+        "extern scan_int, print_int, scan_boolean, print_boolean\n"
+    	"extern print_endofline, print_blank, print_string\n";
+    fprintf(fpasm, "%s", assembler_string);
+}
 /*
 Para escribir el comienzo del segmento .text, básicamente se indica que se
 exporta la etiqueta main y que se usarán las funciones declaradas en la librería
 alfalib.o
 */
 
-void escribir_inicio_main(FILE *fpasm);
+void escribir_inicio_main(FILE *fpasm) {
+    const char *assembler_string = "main:\n"
+                                   "mov [__esp], esp\n";
+    fprintf(fpasm, "%s", assembler_string);
+}
 /*
 En este punto se debe escribir, al menos, la etiqueta main y la sentencia que
 guarda el puntero de pila en su variable (se recomienda usar __esp).
 */
 
-void escribir_fin(FILE *fpasm);
+void escribir_fin(FILE *fpasm) {
+    const char *assembler_string = "mov  esp, [__esp]\n"
+                                   "ret\n";
+    fprintf(fpasm, "%s", assembler_string);
+}
 /*
 Al final del programa se escribe:
 - El código NASM para salir de manera controlada cuando se detecta un error
@@ -71,7 +89,15 @@ zona de finalización del programa).
 ·Salir del programa (ret).
 */
 
-void escribir_operando(FILE *fpasm, char *nombre, int es_variable);
+void escribir_operando(FILE *fpasm, char *nombre, int es_variable) {
+    char *assembler_string=NULL;
+    if (es_variable) {
+        assembler_string = "push dword _%s\n";
+    } else {
+        assembler_string = "push dword %s\n";
+    }
+    fprintf(fpasm, assembler_string, nombre);
+}
 /*
 Función que debe ser invocada cuando se sabe un operando de una operación
 aritmético-lógica y se necesita introducirlo en la pila.
@@ -83,7 +109,22 @@ primer caso internamente se representará como _b1 y, sin embargo, en el
 segundo se representará tal y como esté en el argumento (34).
 */
 
-void asignar(FILE *fpasm, char *nombre, int es_variable);
+void asignar(FILE *fpasm, char *nombre, int es_variable) {
+    char *assembler_string=NULL;
+    append_string(&assembler_string, "pop eax");
+    if (es_variable) {
+        append_string(&assembler_string, "mov eax, [eax]");
+    }
+    int length = strlen("mov [], eax") + strlen(nombre);
+    char *asignment = calloc(length, sizeof(char));
+    sprintf(asignment, "mov [_%s], eax", nombre);
+    append_string(&assembler_string, asignment);
+
+    fprintf(fpasm, assembler_string, nombre);
+
+    free(asignment);
+    free(assembler_string);
+}
 /*
 - Genera el código para asignar valor a la variable de nombre nombre.
 - Se toma el valor de la cima de la pila.
