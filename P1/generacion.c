@@ -228,8 +228,8 @@ void multiplicar(FILE *fpasm, int es_variable_1, int es_variable_2)
 void dividir(FILE *fpasm, int es_variable_1, int es_variable_2)
 {
 	char *assembler_string = NULL;
-	int equal=0;
-	
+	int equal = 0;
+
 	append_string(&assembler_string, "pop eax");
 	if (es_variable_1)
 	{
@@ -242,14 +242,17 @@ void dividir(FILE *fpasm, int es_variable_1, int es_variable_2)
 	{
 		append_string(&assembler_string, "mov edx, ebx");
 		append_string(&assembler_string, "mov ebx, [ebx]");
-		igual(fpasm, 0, es_variable_2, equal);
+	}
+
+	igual(fpasm, 0, es_variable_2, equal);
 		//Restore the values of the stack
-		if(equal){
+		if (equal)
+		{
 			append_string(&assembler_string, "push ecx");
 			append_string(&assembler_string, "push edx");
+			fprintf(fpasm, "%s", assembler_string);
 			return;
 		}
-	}	
 
 	append_string(&assembler_string, "idiv dword ebx");
 	append_string(&assembler_string, "push eax");
@@ -320,7 +323,31 @@ Función aritmética de cambio de signo.
 Es análoga a las binarias, excepto que sólo requiere de un acceso a la pila ya
 que sólo usa un operando.
 */
-void no(FILE *fpasm, int es_variable, int cuantos_no);
+void no(FILE *fpasm, int es_variable, int cuantos_no)
+{
+	char *assembler_string = NULL;
+	int equal = 0;
+
+	append_string(&assembler_string, "pop eax");
+	if (es_variable)
+	{
+		append_string(&assembler_string, "mov eax, [eax]");
+	}
+
+	igual(fpasm, 0, es_variable, equal);
+	//Restore the values of the stack
+	if (equal)
+	{
+		append_string(&assembler_string, "mov dword eax, 1");
+		append_string(&assembler_string, "push eax");
+	}
+	else
+	{
+		append_string(&assembler_string, "mov dword eax, 0");
+		append_string(&assembler_string, "push eax");
+	}
+	fprintf(fpasm, "%s", assembler_string);
+}
 /*
 Función monádica lógica de negación. No hay un código de operación de la ALU
 que realice esta operación por lo que se debe codificar un algoritmo que, si
