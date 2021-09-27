@@ -8,8 +8,6 @@ MODULES_BIN=$(foreach t, $(MODULES),bin/$(t).o)
 tests: $(TEST_EXEC)
 	@printf  "\e[32mTests compiled successfully\e[39;0m\n"
 
-run_tests: $(TEST_EXEC)
-
 $(TEST_EXEC): bin/%: %.c $(MODULES_BIN)
 	mkdir -p bin 
 	$(CC) -o $@ $^  $(COMPILER_FLAGS)
