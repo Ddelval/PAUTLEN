@@ -163,20 +163,20 @@ void sumar(FILE *fpasm, int es_variable_1, int es_variable_2)
 {
 	char *assembler_string = NULL;
 
-	append_string(&assembler_string, "pop eax");
+	append_string(&assembler_string, "pop dword eax");
 	if (es_variable_1)
 	{
 		append_string(&assembler_string, "mov eax, [eax]");
 	}
 
-	append_string(&assembler_string, "pop ebx");
+	append_string(&assembler_string, "pop dword ebx");
 	if (es_variable_2)
 	{
 		append_string(&assembler_string, "mov ebx, [ebx]");
 	}
 
 	append_string(&assembler_string, "add dword eax, ebx");
-	append_string(&assembler_string, "push eax");
+	append_string(&assembler_string, "push dword eax");
 
 	fprintf(fpasm, "%s", assembler_string);
 }
@@ -185,20 +185,20 @@ void restar(FILE *fpasm, int es_variable_1, int es_variable_2)
 {
 	char *assembler_string = NULL;
 
-	append_string(&assembler_string, "pop eax");
+	append_string(&assembler_string, "pop dword eax");
 	if (es_variable_1)
 	{
 		append_string(&assembler_string, "mov eax, [eax]");
 	}
 
-	append_string(&assembler_string, "pop ebx");
+	append_string(&assembler_string, "pop dword ebx");
 	if (es_variable_2)
 	{
 		append_string(&assembler_string, "mov ebx, [ebx]");
 	}
 
 	append_string(&assembler_string, "sub dword eax, ebx");
-	append_string(&assembler_string, "push eax");
+	append_string(&assembler_string, "push dword eax");
 
 	fprintf(fpasm, "%s", assembler_string);
 }
@@ -207,20 +207,20 @@ void multiplicar(FILE *fpasm, int es_variable_1, int es_variable_2)
 {
 	char *assembler_string = NULL;
 
-	append_string(&assembler_string, "pop eax");
+	append_string(&assembler_string, "pop dword eax");
 	if (es_variable_1)
 	{
 		append_string(&assembler_string, "mov eax, [eax]");
 	}
 
-	append_string(&assembler_string, "pop ebx");
+	append_string(&assembler_string, "pop dword ebx");
 	if (es_variable_2)
 	{
 		append_string(&assembler_string, "mov ebx, [ebx]");
 	}
 
 	append_string(&assembler_string, "imul dword ebx");
-	append_string(&assembler_string, "push eax");
+	append_string(&assembler_string, "push dword eax");
 
 	fprintf(fpasm, "%s", assembler_string);
 }
@@ -228,34 +228,21 @@ void multiplicar(FILE *fpasm, int es_variable_1, int es_variable_2)
 void dividir(FILE *fpasm, int es_variable_1, int es_variable_2)
 {
 	char *assembler_string = NULL;
-	int equal = 0;
 
-	append_string(&assembler_string, "pop eax");
+	append_string(&assembler_string, "pop dword eax");
 	if (es_variable_1)
 	{
-		append_string(&assembler_string, "mov ecx, eax");
 		append_string(&assembler_string, "mov eax, [eax]");
 	}
 
-	append_string(&assembler_string, "pop ebx");
+	append_string(&assembler_string, "pop dword ebx");
 	if (es_variable_2)
 	{
-		append_string(&assembler_string, "mov edx, ebx");
 		append_string(&assembler_string, "mov ebx, [ebx]");
 	}
 
-	igual(fpasm, 0, es_variable_2, equal);
-		//Restore the values of the stack
-		if (equal)
-		{
-			append_string(&assembler_string, "push ecx");
-			append_string(&assembler_string, "push edx");
-			fprintf(fpasm, "%s", assembler_string);
-			return;
-		}
-
 	append_string(&assembler_string, "idiv dword ebx");
-	append_string(&assembler_string, "push eax");
+	append_string(&assembler_string, "push dword eax");
 
 	fprintf(fpasm, "%s", assembler_string);
 }
@@ -264,20 +251,20 @@ void o(FILE *fpasm, int es_variable_1, int es_variable_2)
 {
 	char *assembler_string = NULL;
 
-	append_string(&assembler_string, "pop eax");
+	append_string(&assembler_string, "pop dword eax");
 	if (es_variable_1)
 	{
 		append_string(&assembler_string, "mov eax, [eax]");
 	}
 
-	append_string(&assembler_string, "pop ebx");
+	append_string(&assembler_string, "pop dword ebx");
 	if (es_variable_2)
 	{
 		append_string(&assembler_string, "mov ebx, [ebx]");
 	}
 
 	append_string(&assembler_string, "or dword eax, ebx");
-	append_string(&assembler_string, "push eax");
+	append_string(&assembler_string, "push dword eax");
 
 	fprintf(fpasm, "%s", assembler_string);
 }
@@ -286,20 +273,20 @@ void y(FILE *fpasm, int es_variable_1, int es_variable_2)
 {
 	char *assembler_string = NULL;
 
-	append_string(&assembler_string, "pop eax");
+	append_string(&assembler_string, "pop dword eax");
 	if (es_variable_1)
 	{
 		append_string(&assembler_string, "mov eax, [eax]");
 	}
 
-	append_string(&assembler_string, "pop ebx");
+	append_string(&assembler_string, "pop dword ebx");
 	if (es_variable_2)
 	{
 		append_string(&assembler_string, "mov ebx, [ebx]");
 	}
 
 	append_string(&assembler_string, "and dword eax, ebx");
-	append_string(&assembler_string, "push eax");
+	append_string(&assembler_string, "push dword eax");
 
 	fprintf(fpasm, "%s", assembler_string);
 }
@@ -308,13 +295,13 @@ void cambiar_signo(FILE *fpasm, int es_variable)
 {
 	char *assembler_string = NULL;
 
-	append_string(&assembler_string, "pop eax");
+	append_string(&assembler_string, "pop dword eax");
 	if (es_variable)
 	{
 		append_string(&assembler_string, "mov eax, [eax]");
 	}
-	append_string(&assembler_string, "neg eax");
-	append_string(&assembler_string, "push eax");
+	append_string(&assembler_string, "neg dword eax");
+	append_string(&assembler_string, "push dword eax");
 
 	fprintf(fpasm, "%s", assembler_string);
 }
