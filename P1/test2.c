@@ -13,6 +13,7 @@ int main() {
     escribir_operando(f, "32", 0);
     asignar(f, "a", 0);
     escribir_fin(f);
+    sumar(f, 0, 0);
 
     return 0;
 }
