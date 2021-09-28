@@ -1,6 +1,6 @@
 #include "generacion.h"
 
-int main() { 
+int main() {
     FILE *f = stdout;
     escribir_subseccion_data(f);
 
