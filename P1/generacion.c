@@ -110,20 +110,12 @@ segundo se representará tal y como esté en el argumento (34).
 */
 
 void asignar(FILE *fpasm, char *nombre, int es_variable) {
-    char *assembler_string = NULL;
-    append_string(&assembler_string, "pop eax");
+
+    fprintf(fpasm, "%s\n", "pop eax");
     if (es_variable) {
-        append_string(&assembler_string, "mov eax, [eax]");
+        fprintf(fpasm, "%s\n", "mov eax, [eax]");
     }
-    int length = strlen("mov [], eax") + strlen(nombre);
-    char *asignment = calloc(length, sizeof(char));
-    sprintf(asignment, "mov [_%s], eax", nombre);
-    append_string(&assembler_string, asignment);
-
-    fprintf(fpasm, assembler_string, nombre);
-
-    free(asignment);
-    free(assembler_string);
+    fprintf(fpasm, "mov [_%s], eax\n", nombre);
 }
 /*
 - Genera el código para asignar valor a la variable de nombre nombre.
@@ -132,133 +124,71 @@ void asignar(FILE *fpasm, char *nombre, int es_variable) {
 una referencia (1) o ya un valor explícito (0).
 */
 
+/**
+ * Generate the code to pop the operands from the stack
+ * the integer arguments indicate whether the variables are
+ * stored in the stack as pointers or as values
+ */
+void pop_values_for_operation(FILE *fpasm, int es_variable_1,
+                              int es_variable_2) {
+
+    // Note that variables shall be popped from the stack in
+    // the reverse order
+    fprintf(fpasm, "%s\n", "pop dword ebx");
+    if (es_variable_2) {
+        fprintf(fpasm, "%s\n", "mov dword ebx, [ebx]");
+    }
+
+    fprintf(fpasm, "%s\n", "pop dword eax");
+    if (es_variable_1) {
+        fprintf(fpasm, "%s\n", "mov dword eax, [eax]");
+    }
+}
+
+void simple_operation(FILE *fpasm, const char *instruction, int es_variable_1,
+                      int es_variable_2) {
+    pop_values_for_operation(fpasm, es_variable_1, es_variable_2);
+    fprintf(fpasm, "%s eax, ebx\n", instruction);
+    fprintf(fpasm, "%s\n", "push dword eax");
+}
+
 /* FUNCIONES ARITMÉTICO-LÓGICAS BINARIAS */
 /*
 En todas ellas se realiza la operación como se ha resumido anteriormente:
 - Se extrae de la pila los operandos
 - Se realiza la operación
 - Se guarda el resultado en la pila
-Los dos últimos argumentos indican respectivamente si lo que hay en la pila es
-una referencia a un valor o un valor explícito.
+Los dos últimos argumentos indican respectivamente si lo que hay en la pila
+es una referencia a un valor o un valor explícito.
 
-Deben tenerse en cuenta las peculiaridades de cada operación. En este sentido
-sí hay que mencionar explícitamente que, en el caso de la división, se debe
-controlar si el divisor es “0” y en ese caso se debe saltar a la rutina de error
-controlado (restaurando el puntero de pila en ese caso y comprobando en el
-retorno que no se produce “Segmentation Fault”)
+Deben tenerse en cuenta las peculiaridades de cada operación. En este
+sentido sí hay que mencionar explícitamente que, en el caso de la división,
+se debe controlar si el divisor es “0” y en ese caso se debe saltar a la
+rutina de error controlado (restaurando el puntero de pila en ese caso y
+comprobando en el retorno que no se produce “Segmentation Fault”)
 */
 void sumar(FILE *fpasm, int es_variable_1, int es_variable_2) {
-    char *assembler_string = NULL;
-
-    append_string(&assembler_string, "pop dword eax");
-    if (es_variable_1) {
-        append_string(&assembler_string, "mov eax, [eax]");
-    }
-
-    append_string(&assembler_string, "pop dword ebx");
-    if (es_variable_2) {
-        append_string(&assembler_string, "mov ebx, [ebx]");
-    }
-
-    append_string(&assembler_string, "add dword eax, ebx");
-    append_string(&assembler_string, "push dword eax");
-
-    fprintf(fpasm, "%s", assembler_string);
+    simple_operation(fpasm, "add", es_variable_1, es_variable_2);
 }
 
 void restar(FILE *fpasm, int es_variable_1, int es_variable_2) {
-    char *assembler_string = NULL;
-
-    append_string(&assembler_string, "pop dword eax");
-    if (es_variable_1) {
-        append_string(&assembler_string, "mov eax, [eax]");
-    }
-
-    append_string(&assembler_string, "pop dword ebx");
-    if (es_variable_2) {
-        append_string(&assembler_string, "mov ebx, [ebx]");
-    }
-
-    append_string(&assembler_string, "sub dword eax, ebx");
-    append_string(&assembler_string, "push dword eax");
-
-    fprintf(fpasm, "%s", assembler_string);
+    simple_operation(fpasm, "sub", es_variable_1, es_variable_2);
 }
 
 void multiplicar(FILE *fpasm, int es_variable_1, int es_variable_2) {
-    char *assembler_string = NULL;
-
-    append_string(&assembler_string, "pop dword eax");
-    if (es_variable_1) {
-        append_string(&assembler_string, "mov eax, [eax]");
-    }
-
-    append_string(&assembler_string, "pop dword ebx");
-    if (es_variable_2) {
-        append_string(&assembler_string, "mov ebx, [ebx]");
-    }
-
-    append_string(&assembler_string, "imul dword ebx");
-    append_string(&assembler_string, "push dword eax");
-
-    fprintf(fpasm, "%s", assembler_string);
+    simple_operation(fpasm, "imul", es_variable_1, es_variable_2);
 }
 
 void dividir(FILE *fpasm, int es_variable_1, int es_variable_2) {
-    char *assembler_string = NULL;
-
-    append_string(&assembler_string, "pop dword eax");
-    if (es_variable_1) {
-        append_string(&assembler_string, "mov eax, [eax]");
-    }
-
-    append_string(&assembler_string, "pop dword ebx");
-    if (es_variable_2) {
-        append_string(&assembler_string, "mov ebx, [ebx]");
-    }
-
-    append_string(&assembler_string, "idiv dword ebx");
-    append_string(&assembler_string, "push dword eax");
-
-    fprintf(fpasm, "%s", assembler_string);
+    simple_operation(fpasm, "idiv", es_variable_1, es_variable_2);
 }
 
 void o(FILE *fpasm, int es_variable_1, int es_variable_2) {
-    char *assembler_string = NULL;
-
-    append_string(&assembler_string, "pop dword eax");
-    if (es_variable_1) {
-        append_string(&assembler_string, "mov eax, [eax]");
-    }
-
-    append_string(&assembler_string, "pop dword ebx");
-    if (es_variable_2) {
-        append_string(&assembler_string, "mov ebx, [ebx]");
-    }
-
-    append_string(&assembler_string, "or dword eax, ebx");
-    append_string(&assembler_string, "push dword eax");
-
-    fprintf(fpasm, "%s", assembler_string);
+    simple_operation(fpasm, "or", es_variable_1, es_variable_2);
 }
 
 void y(FILE *fpasm, int es_variable_1, int es_variable_2) {
-    char *assembler_string = NULL;
-
-    append_string(&assembler_string, "pop dword eax");
-    if (es_variable_1) {
-        append_string(&assembler_string, "mov eax, [eax]");
-    }
-
-    append_string(&assembler_string, "pop dword ebx");
-    if (es_variable_2) {
-        append_string(&assembler_string, "mov ebx, [ebx]");
-    }
-
-    append_string(&assembler_string, "and dword eax, ebx");
-    append_string(&assembler_string, "push dword eax");
-
-    fprintf(fpasm, "%s", assembler_string);
+    simple_operation(fpasm, "and", es_variable_1, es_variable_2);
 }
 
 void cambiar_signo(FILE *fpasm, int es_variable) {
@@ -282,21 +212,18 @@ void no(FILE *fpasm, int es_variable, int cuantos_no) {
     char *assembler_string = NULL;
     int equal = 0;
 
-    append_string(&assembler_string, "pop eax");
+    append_string(&assembler_string, "pop dword eax");
+    fprintf(fpasm, "%s\n", "pop dword eax");
     if (es_variable) {
-        append_string(&assembler_string, "mov eax, [eax]");
+        fprintf(fpasm, "%s\n", "mov dword eax, [eax]");
     }
-
-    igual(fpasm, 0, es_variable, equal);
-    // Restore the values of the stack
-    if (equal) {
-        append_string(&assembler_string, "mov dword eax, 1");
-        append_string(&assembler_string, "push eax");
-    } else {
-        append_string(&assembler_string, "mov dword eax, 0");
-        append_string(&assembler_string, "push eax");
-    }
-    fprintf(fpasm, "%s", assembler_string);
+    fprintf(fpasm, "%s\n", "cmp eax, 0\n");
+    fprintf(fpasm, "jne match_no_%d\n", cuantos_no);
+    fprintf(fpasm, "%s\n", "push dword 1\n");
+    fprintf(fpasm, "jmp end_no_%d\n", cuantos_no);
+    fprintf(fpasm, "match_no_%d:\n", cuantos_no);
+    fprintf(fpasm, "%s\n", "push dword 0\n");
+    fprintf(fpasm, "end_no_%d:\n", cuantos_no);
 }
 /*
 Función monádica lógica de negación. No hay un código de operación de la ALU
@@ -335,211 +262,43 @@ char *tag_string(const char *string, int tag) {
         sizeof(char));
     return str;
 }
+void generic_comparison(FILE *fpasm, const char *jump_instruction,
+                        int es_variable1, int es_variable2, int etiqueta) {
+
+    pop_values_for_operation(fpasm, es_variable1, es_variable2);
+    fprintf(fpasm, "%s\n", "cmp eax, ebx");
+    fprintf(fpasm, "%s near match_%d\n", jump_instruction, etiqueta);
+    fprintf(fpasm, "%s\n", "push dword 0");
+    fprintf(fpasm, "jmp near match_%d\n", etiqueta);
+    fprintf(fpasm, "match_%d:\n", etiqueta);
+    fprintf(fpasm, "%s\n", "push dword 1");
+    fprintf(fpasm, "end_%d:\n", etiqueta);
+}
 
 void igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta) {
-    char *assembler_string = NULL;
-    char *comparison_string = tag_string("je equ_", etiqueta);
-    char *equal_string = tag_string("equ_:", etiqueta);
-    char *jump_string = tag_string("jmp fin_", etiqueta);
-    char *end_string = tag_string("fin_:", etiqueta);
-
-    append_string(&assembler_string, "pop dword eax");
-
-    if (es_variable2) {
-        append_string(&assembler_string, "mov eax, [eax]");
-    }
-
-    append_string(&assembler_string, "pop dword ebx");
-
-    if (es_variable1) {
-        append_string(&assembler_string, "mov ebx, [ebx]");
-    }
-
-    append_string(&assembler_string, "cmp eax, ebx");
-    sprintf(comparison_string, "je equ_%d", etiqueta);
-    append_string(&assembler_string, comparison_string);
-    append_string(&assembler_string, "push dword 0");
-    sprintf(jump_string, "jmp fin_%d", etiqueta);
-    append_string(&assembler_string, jump_string);
-    sprintf(equal_string, "equ_%d:", etiqueta);
-    append_string(&assembler_string, equal_string);
-    append_string(&assembler_string, "push dword 1");
-    sprintf(end_string, "fin_%d:", etiqueta);
-    append_string(&assembler_string, end_string);
-
-    fprintf(fpasm, "%s", assembler_string);
+    generic_comparison(fpasm, "je", es_variable1, es_variable2, etiqueta);
 }
 
 void distinto(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta) {
-    char *assembler_string = NULL;
-    char *comparison_string = tag_string("jne dif_", etiqueta);
-    char *different_string = tag_string("dif_:", etiqueta);
-    char *jump_string = tag_string("jmp fin_", etiqueta);
-    char *end_string = tag_string("fin_:", etiqueta);
-
-    append_string(&assembler_string, "pop dword eax");
-
-    if (es_variable2) {
-        append_string(&assembler_string, "mov eax, [eax]");
-    }
-
-    append_string(&assembler_string, "pop dword ebx");
-
-    if (es_variable1) {
-        append_string(&assembler_string, "mov ebx, [ebx]");
-    }
-
-    append_string(&assembler_string, "cmp eax, ebx");
-    sprintf(comparison_string, "jne dif_%d", etiqueta);
-    append_string(&assembler_string, comparison_string);
-    append_string(&assembler_string, "push dword 0");
-    sprintf(jump_string, "jmp fin_%d", etiqueta);
-    append_string(&assembler_string, jump_string);
-    sprintf(different_string, "dif_%d:", etiqueta);
-    append_string(&assembler_string, different_string);
-    append_string(&assembler_string, "push dword 1");
-    sprintf(end_string, "fin_%d:", etiqueta);
-    append_string(&assembler_string, end_string);
-
-    fprintf(fpasm, "%s", assembler_string);
+    generic_comparison(fpasm, "jne", es_variable1, es_variable2, etiqueta);
 }
 
 void menor_igual(FILE *fpasm, int es_variable1, int es_variable2,
                  int etiqueta) {
-    char *assembler_string = NULL;
-    char *comparison_string = tag_string("jle loe_", etiqueta);
-    char *less_equal_string = tag_string("loe_:", etiqueta);
-    char *jump_string = tag_string("jmp fin_", etiqueta);
-    char *end_string = tag_string("fin_:", etiqueta);
-
-    append_string(&assembler_string, "pop dword eax");
-
-    if (es_variable2) {
-        append_string(&assembler_string, "mov eax, [eax]");
-    }
-
-    append_string(&assembler_string, "pop dword ebx");
-
-    if (es_variable1) {
-        append_string(&assembler_string, "mov ebx, [ebx]");
-    }
-
-    append_string(&assembler_string, "cmp eax, ebx");
-    sprintf(comparison_string, "jle loe_%d", etiqueta);
-    append_string(&assembler_string, comparison_string);
-    append_string(&assembler_string, "push dword 0");
-    sprintf(jump_string, "jmp fin_%d", etiqueta);
-    append_string(&assembler_string, jump_string);
-    sprintf(less_equal_string, "loe_%d:", etiqueta);
-    append_string(&assembler_string, less_equal_string);
-    append_string(&assembler_string, "push dword 1");
-    sprintf(end_string, "fin_%d:", etiqueta);
-    append_string(&assembler_string, end_string);
-
-    fprintf(fpasm, "%s", assembler_string);
+    generic_comparison(fpasm, "jle", es_variable1, es_variable2, etiqueta);
 }
 
 void mayor_igual(FILE *fpasm, int es_variable1, int es_variable2,
                  int etiqueta) {
-    char *assembler_string = NULL;
-    char *comparison_string = tag_string("jge goe_", etiqueta);
-    char *greater_equal_string = tag_string("goe_:", etiqueta);
-    char *jump_string = tag_string("jmp fin_", etiqueta);
-    char *end_string = tag_string("fin_:", etiqueta);
-
-    append_string(&assembler_string, "pop dword eax");
-
-    if (es_variable2) {
-        append_string(&assembler_string, "mov eax, [eax]");
-    }
-
-    append_string(&assembler_string, "pop dword ebx");
-
-    if (es_variable1) {
-        append_string(&assembler_string, "mov ebx, [ebx]");
-    }
-
-    append_string(&assembler_string, "cmp eax, ebx");
-    sprintf(comparison_string, "jge goe_%d", etiqueta);
-    append_string(&assembler_string, comparison_string);
-    append_string(&assembler_string, "push dword 0");
-    sprintf(jump_string, "jmp fin_%d", etiqueta);
-    append_string(&assembler_string, jump_string);
-    sprintf(greater_equal_string, "goe_%d:", etiqueta);
-    append_string(&assembler_string, greater_equal_string);
-    append_string(&assembler_string, "push dword 1");
-    sprintf(end_string, "fin_%d:", etiqueta);
-    append_string(&assembler_string, end_string);
-
-    fprintf(fpasm, "%s", assembler_string);
+    generic_comparison(fpasm, "jge", es_variable1, es_variable2, etiqueta);
 }
 
 void menor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta) {
-    char *assembler_string = NULL;
-    char *comparison_string = tag_string("jl lss_", etiqueta);
-    char *lesser_string = tag_string("lss_:", etiqueta);
-    char *jump_string = tag_string("jmp fin_", etiqueta);
-    char *end_string = tag_string("fin_:", etiqueta);
-
-    append_string(&assembler_string, "pop dword eax");
-
-    if (es_variable2) {
-        append_string(&assembler_string, "mov eax, [eax]");
-    }
-
-    append_string(&assembler_string, "pop dword ebx");
-
-    if (es_variable1) {
-        append_string(&assembler_string, "mov ebx, [ebx]");
-    }
-
-    append_string(&assembler_string, "cmp eax, ebx");
-    sprintf(comparison_string, "jl lss_%d", etiqueta);
-    append_string(&assembler_string, comparison_string);
-    append_string(&assembler_string, "push dword 0");
-    sprintf(jump_string, "jmp fin_%d", etiqueta);
-    append_string(&assembler_string, jump_string);
-    sprintf(lesser_string, "lss_%d:", etiqueta);
-    append_string(&assembler_string, lesser_string);
-    append_string(&assembler_string, "push dword 1");
-    sprintf(end_string, "fin_%d:", etiqueta);
-    append_string(&assembler_string, end_string);
-
-    fprintf(fpasm, "%s", assembler_string);
+    generic_comparison(fpasm, "jl", es_variable1, es_variable2, etiqueta);
 }
 
 void mayor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta) {
-    char *assembler_string = NULL;
-    char *comparison_string = tag_string("jg gtr_", etiqueta);
-    char *greater_string = tag_string("gtr_:", etiqueta);
-    char *jump_string = tag_string("jmp fin_", etiqueta);
-    char *end_string = tag_string("fin_:", etiqueta);
-
-    append_string(&assembler_string, "pop dword eax");
-
-    if (es_variable2) {
-        append_string(&assembler_string, "mov eax, [eax]");
-    }
-
-    append_string(&assembler_string, "pop dword ebx");
-
-    if (es_variable1) {
-        append_string(&assembler_string, "mov ebx, [ebx]");
-    }
-
-    append_string(&assembler_string, "cmp eax, ebx");
-    sprintf(comparison_string, "jg gtr_%d", etiqueta);
-    append_string(&assembler_string, comparison_string);
-    append_string(&assembler_string, "push dword 0");
-    sprintf(jump_string, "jmp fin_%d", etiqueta);
-    append_string(&assembler_string, jump_string);
-    sprintf(greater_string, "gtr_%d:", etiqueta);
-    append_string(&assembler_string, greater_string);
-    append_string(&assembler_string, "push dword 1");
-    sprintf(end_string, "fin_%d:", etiqueta);
-    append_string(&assembler_string, end_string);
-
-    fprintf(fpasm, "%s", assembler_string);
+    generic_comparison(fpasm, "jg", es_variable1, es_variable2, etiqueta);
 }
 
 /* FUNCIONES DE ESCRITURA Y LECTURA */
@@ -550,34 +309,32 @@ cada tipo. Se deben insertar en la pila los argumentos necesarios, realizar la
 llamada (call) a la función de librería correspondiente y limpiar la pila.
 */
 void leer(FILE *fpasm, char *nombre, int tipo) {
-    char *assembler_string = NULL;
-    char *pop_string =
-        (char *)malloc(strlen("pop dword [_]") + strlen(nombre) + 10);
 
+    fprintf(fpasm, "push dword _%s\n", nombre);
     if (tipo == ENTERO) {
-        append_string(&assembler_string, "call scan_int");
+        fprintf(fpasm, "%s\n", "call scan_int");
     } else { // for our own sanity let's suppose this can only be BOOLEAN now
-        append_string(&assembler_string, "call scan_boolean");
+        fprintf(fpasm, "%s\n", "call scan_boolean");
     }
-
-    sprintf(pop_string, "pop dword [_%s]", nombre);
-    append_string(&assembler_string, pop_string);
-
-    fprintf(fpasm, "%s", assembler_string);
+    fprintf(fpasm, "%s\n", "add esp, 4");
 }
 
 void escribir(FILE *fpasm, int es_variable, int tipo) {
-    char *assembler_string = NULL;
 
-    if (tipo == ENTERO) {
-        append_string(&assembler_string, "call print_int");
-    } else { // for our own sanity let's suppose this can only be BOOLEAN now
-        append_string(&assembler_string, "call print_boolean");
+    if (es_variable) {
+        fprintf(fpasm, "%s\n", "pop dword eax");
+        fprintf(fpasm, "%s\n", "mov eax, [eax]");
+        fprintf(fpasm, "%s\n", "push dword eax");
     }
 
-    append_string(assembler_string, "add esp, 4");
+    if (tipo == ENTERO) {
+        fprintf(fpasm, "%s\n", "call print_int");
+    } else { // for our own sanity let's suppose this can only be BOOLEAN now
+        fprintf(fpasm, "%s\n", "call print_boolean");
+    }
 
-    fprintf(fpasm, "%s", assembler_string);
+    fprintf(fpasm, "%s\n", "add esp, 4");
+    fprintf(fpasm, "%s\n", "call print_endofline");
 }
 
 void ifthenelse_inicio(FILE *fpasm, int exp_es_variable, int etiqueta);
