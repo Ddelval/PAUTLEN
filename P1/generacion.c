@@ -145,6 +145,12 @@ void pop_values_for_operation(FILE *fpasm, int es_variable_1,
     }
 }
 
+/**
+ * Performs a generic binary operation.
+ * This function can only be used for operations that can be implemented
+ * exactly like an addition. For instance, this function cannot handle
+ * a multiplication
+ */
 void simple_operation(FILE *fpasm, const char *instruction, int es_variable_1,
                       int es_variable_2) {
     pop_values_for_operation(fpasm, es_variable_1, es_variable_2);
@@ -247,25 +253,13 @@ el resto de operaciones. Se deben usar etiquetas para poder gestionar los saltos
 necesarios para implementar las comparaciones.
 */
 
-void append_string(char **dest, const char *line) {
-    int size = strlen(line) + 2;
-
-    if (!(*dest)) {
-        *dest = (char *)calloc(1, size);
-    } else {
-        *dest = (char *)realloc(*dest, strlen(*dest) + size);
-    }
-
-    strcat(*dest, line);
-    strcat(*dest, "\n");
-}
-
-char *tag_string(const char *string, int tag) {
-    char *str = (char *)malloc(
-        ((int)((ceil(log10(tag)) + 1) * sizeof(char)) + strlen(string)) *
-        sizeof(char));
-    return str;
-}
+/**
+ * Performs a comparision between two values. The scenario in which the
+ * value of 1 is pushed to the stack is defined by the jump_instruction
+ * parameter.
+ * The other parameters encode the same values as in all comparison
+ * functions
+ */
 void generic_comparison(FILE *fpasm, const char *jump_instruction,
                         int es_variable1, int es_variable2, int etiqueta) {
 
