@@ -13,7 +13,6 @@ docker create  \
 
 elif [ $1 == "start" ]; then
 docker start ${name} 
-
 elif [ $1 == "stop" ]; then 
 docker stop ${name}
 

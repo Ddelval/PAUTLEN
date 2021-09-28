@@ -1,19 +1,40 @@
 #include "generacion.h"
+#include <stdio.h>
 
-int main() {
-    FILE *f = stdout;
-    escribir_subseccion_data(f);
+int main(int argc, char **argv) {
+    FILE *salida;
+    int cuantos_no = 0;
 
-    escribir_cabecera_bss(f);
-    declarar_variable(f, "a", ENTERO, 1);
+    if (argc != 2) {
+        fprintf(stdout, "ERROR POCOS ARGUMENTOS\n");
+        return -1;
+    }
 
-    escribir_segmento_codigo(f);
-    escribir_inicio_main(f);
-    escribir_operando(f, "a", 1);
-    escribir_operando(f, "32", 0);
-    asignar(f, "a", 0);
-    escribir_fin(f);
-    sumar(f, 0, 0);
+    salida = fopen(argv[1], "w");
 
+    escribir_subseccion_data(salida);
+    escribir_cabecera_bss(salida);
+    declarar_variable(salida, "b1", BOOLEANO, 1);
+
+    escribir_segmento_codigo(salida);
+    escribir_inicio_main(salida);
+
+    /* scanf b1; */
+    leer(salida, "b1", BOOLEANO);
+
+    /* printf !b1; */
+    escribir_operando(salida, "b1", 1);
+    no(salida, 1, cuantos_no++);
+    escribir(salida, 0, BOOLEANO);
+
+    /* printf !!b1; */
+    escribir_operando(salida, "b1", 1);
+    no(salida, 1, cuantos_no++);
+    no(salida, 0, cuantos_no++);
+    escribir(salida, 0, BOOLEANO);
+
+    escribir_fin(salida);
+
+    fclose(salida);
     return 0;
 }
