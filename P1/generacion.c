@@ -176,11 +176,17 @@ void restar(FILE *fpasm, int es_variable_1, int es_variable_2) {
 }
 
 void multiplicar(FILE *fpasm, int es_variable_1, int es_variable_2) {
-    simple_operation(fpasm, "imul", es_variable_1, es_variable_2);
+    pop_values_for_operation(fpasm, es_variable_1, es_variable_2);
+    fprintf(fpasm, "%s\n", "cdq");
+    fprintf(fpasm, "%s\n", "imul ebx");
+    fprintf(fpasm, "%s\n", "push dword eax");
 }
 
 void dividir(FILE *fpasm, int es_variable_1, int es_variable_2) {
-    simple_operation(fpasm, "idiv", es_variable_1, es_variable_2);
+    pop_values_for_operation(fpasm, es_variable_1, es_variable_2);
+    fprintf(fpasm, "%s\n", "cdq");
+    fprintf(fpasm, "%s\n", "idiv ebx");
+    fprintf(fpasm, "%s\n", "push dword eax");
 }
 
 void o(FILE *fpasm, int es_variable_1, int es_variable_2) {
@@ -194,14 +200,13 @@ void y(FILE *fpasm, int es_variable_1, int es_variable_2) {
 void cambiar_signo(FILE *fpasm, int es_variable) {
     char *assembler_string = NULL;
 
+    fprintf(fpasm, "%s\n", "pop dword eax");
     append_string(&assembler_string, "pop dword eax");
     if (es_variable) {
-        append_string(&assembler_string, "mov eax, [eax]");
+        fprintf(fpasm, "%s\n", "mov eax, [eax]");
     }
-    append_string(&assembler_string, "neg dword eax");
-    append_string(&assembler_string, "push dword eax");
-
-    fprintf(fpasm, "%s", assembler_string);
+    fprintf(fpasm, "%s\n", "neg dword eax");
+    fprintf(fpasm, "%s\n", "push dword eax");
 }
 /*
 Función aritmética de cambio de signo.
@@ -212,7 +217,6 @@ void no(FILE *fpasm, int es_variable, int cuantos_no) {
     char *assembler_string = NULL;
     int equal = 0;
 
-    append_string(&assembler_string, "pop dword eax");
     fprintf(fpasm, "%s\n", "pop dword eax");
     if (es_variable) {
         fprintf(fpasm, "%s\n", "mov dword eax, [eax]");
@@ -269,7 +273,7 @@ void generic_comparison(FILE *fpasm, const char *jump_instruction,
     fprintf(fpasm, "%s\n", "cmp eax, ebx");
     fprintf(fpasm, "%s near match_%d\n", jump_instruction, etiqueta);
     fprintf(fpasm, "%s\n", "push dword 0");
-    fprintf(fpasm, "jmp near match_%d\n", etiqueta);
+    fprintf(fpasm, "jmp near end_%d\n", etiqueta);
     fprintf(fpasm, "match_%d:\n", etiqueta);
     fprintf(fpasm, "%s\n", "push dword 1");
     fprintf(fpasm, "end_%d:\n", etiqueta);
