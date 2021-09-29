@@ -110,7 +110,6 @@ segundo se representará tal y como esté en el argumento (34).
 */
 
 void asignar(FILE *fpasm, char *nombre, int es_variable) {
-
     fprintf(fpasm, "%s\n", "pop eax");
     if (es_variable) {
         fprintf(fpasm, "%s\n", "mov eax, [eax]");
@@ -131,7 +130,6 @@ una referencia (1) o ya un valor explícito (0).
  */
 void pop_values_for_operation(FILE *fpasm, int es_variable_1,
                               int es_variable_2) {
-
     // Note that variables shall be popped from the stack in
     // the reverse order
     fprintf(fpasm, "%s\n", "pop dword ebx");
@@ -204,10 +202,7 @@ void y(FILE *fpasm, int es_variable_1, int es_variable_2) {
 }
 
 void cambiar_signo(FILE *fpasm, int es_variable) {
-    char *assembler_string = NULL;
-
     fprintf(fpasm, "%s\n", "pop dword eax");
-    append_string(&assembler_string, "pop dword eax");
     if (es_variable) {
         fprintf(fpasm, "%s\n", "mov eax, [eax]");
     }
@@ -220,9 +215,6 @@ Es análoga a las binarias, excepto que sólo requiere de un acceso a la pila ya
 que sólo usa un operando.
 */
 void no(FILE *fpasm, int es_variable, int cuantos_no) {
-    char *assembler_string = NULL;
-    int equal = 0;
-
     fprintf(fpasm, "%s\n", "pop dword eax");
     if (es_variable) {
         fprintf(fpasm, "%s\n", "mov dword eax, [eax]");
@@ -262,7 +254,6 @@ necesarios para implementar las comparaciones.
  */
 void generic_comparison(FILE *fpasm, const char *jump_instruction,
                         int es_variable1, int es_variable2, int etiqueta) {
-
     pop_values_for_operation(fpasm, es_variable1, es_variable2);
     fprintf(fpasm, "%s\n", "cmp eax, ebx");
     fprintf(fpasm, "%s near match_%d\n", jump_instruction, etiqueta);
@@ -307,18 +298,16 @@ cada tipo. Se deben insertar en la pila los argumentos necesarios, realizar la
 llamada (call) a la función de librería correspondiente y limpiar la pila.
 */
 void leer(FILE *fpasm, char *nombre, int tipo) {
-
     fprintf(fpasm, "push dword _%s\n", nombre);
     if (tipo == ENTERO) {
         fprintf(fpasm, "%s\n", "call scan_int");
     } else { // for our own sanity let's suppose this can only be BOOLEAN now
         fprintf(fpasm, "%s\n", "call scan_boolean");
     }
-    fprintf(fpasm, "%s\n", "add esp, 4");
+    fprintf(fpasm, "%s\n", "add esp, 4");       // TODO: error handling?
 }
 
 void escribir(FILE *fpasm, int es_variable, int tipo) {
-
     if (es_variable) {
         fprintf(fpasm, "%s\n", "pop dword eax");
         fprintf(fpasm, "%s\n", "mov eax, [eax]");
@@ -329,10 +318,10 @@ void escribir(FILE *fpasm, int es_variable, int tipo) {
         fprintf(fpasm, "%s\n", "call print_int");
     } else { // for our own sanity let's suppose this can only be BOOLEAN now
         fprintf(fpasm, "%s\n", "call print_boolean");
-    }
+    }   // TODO: error handling?
 
     fprintf(fpasm, "%s\n", "add esp, 4");
-    fprintf(fpasm, "%s\n", "call print_endofline");
+    fprintf(fpasm, "%s\n", "call print_endofline");       // TODO: error handling?
 }
 
 void ifthenelse_inicio(FILE *fpasm, int exp_es_variable, int etiqueta);
