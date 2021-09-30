@@ -24,7 +24,8 @@ variable.
 void escribir_subseccion_data(FILE *fpasm) {
     const char *assembler_string =
         "segment .data\n"
-        "msg_error_division db \" Error division por 0 \", 0\n";
+        "msg_error_division db \" Error division por 0 \", 0\n"
+        "msg_error_rango db \" Error out of range \", 0\n";
 
     fprintf(fpasm, "%s", assembler_string);
 }
@@ -76,6 +77,26 @@ guarda el puntero de pila en su variable (se recomienda usar __esp).
 void escribir_fin(FILE *fpasm) {
     const char *assembler_string = "mov  esp, [__esp]\n"
                                    "ret\n";
+    fprintf(fpasm, "%s\n", "jmp near fin");
+
+    //Error division
+    fprintf(fpasm, "%s\n", "fin_error_division:");
+    fprintf(fpasm, "%s\n", "push dword msg_error_division");
+    fprintf(fpasm, "%s\n", "call print_string");
+    fprintf(fpasm, "%s\n", "add esp, 4");
+    fprintf(fpasm, "%s\n", "call print_endofline");
+    fprintf(fpasm, "%s\n", "jmp near fin");
+
+    //Error range
+    fprintf(fpasm, "%s\n", "fin_error_rango:");
+    fprintf(fpasm, "%s\n", "push dword msg_error_rango");
+    fprintf(fpasm, "%s\n", "call print_string");
+    fprintf(fpasm, "%s\n", "add esp, 4");
+    fprintf(fpasm, "%s\n", "call print_endofline");
+    fprintf(fpasm, "%s\n", "jmp near fin");
+    
+    //fin
+    fprintf(fpasm, "%s\n", "fin:");
     fprintf(fpasm, "%s", assembler_string);
 }
 /*
