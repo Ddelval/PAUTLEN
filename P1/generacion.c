@@ -24,8 +24,8 @@ variable.
 void escribir_subseccion_data(FILE *fpasm) {
     const char *assembler_string =
         "segment .data\n"
-        "msg_error_division db \" Error division por 0 \", 0\n"
-        "msg_error_rango db \" Error out of range \", 0\n";
+        "msg_error_division db \"Error division por 0 \", 0\n"
+        "msg_error_rango db \"Error out of range \", 0\n";
 
     fprintf(fpasm, "%s", assembler_string);
 }
@@ -209,6 +209,8 @@ void multiplicar(FILE *fpasm, int es_variable_1, int es_variable_2) {
 
 void dividir(FILE *fpasm, int es_variable_1, int es_variable_2) {
     pop_values_for_operation(fpasm, es_variable_1, es_variable_2);
+    fprintf(fpasm, "%s\n", "cmp ebx, 0");
+    fprintf(fpasm, "%s\n", "je fin_error_division");
     fprintf(fpasm, "%s\n", "cdq");
     fprintf(fpasm, "%s\n", "idiv ebx");
     fprintf(fpasm, "%s\n", "push dword eax");
@@ -464,10 +466,12 @@ void escribir_elemento_vector(FILE *fpasm, char *nombre_vector, int tam_max,
     if (exp_es_direccion) {
         fprintf(fpasm, "%s\n", "mov eax, [eax]");
     }
+    fprintf(fpasm, "%s\n", "cmp eax, 0");
+    fprintf(fpasm, "%s\n", "jl fin_error_rango");
+    fprintf(fpasm, "cmp eax, %d\n", tam_max);
+    fprintf(fpasm, "%s\n", "jge fin_error_rango");
 
-    // error control
-
-    fprintf(fpasm, "mov dword edx, _%s\n", nombre_vector);
+        fprintf(fpasm, "mov dword edx, _%s\n", nombre_vector);
     fprintf(fpasm, "%s\n", "lea eax, [edx + eax*4]");
     fprintf(fpasm, "%s\n", "push dword eax");
 }
