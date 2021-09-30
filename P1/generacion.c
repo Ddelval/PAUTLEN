@@ -404,7 +404,19 @@ la última de ellas.
 */
 
 void escribir_elemento_vector(FILE *fpasm, char *nombre_vector, int tam_max,
-                              int exp_es_direccion);
+                              int exp_es_direccion) {
+    fprintf(fpasm, "%s\n", "pop dword eax");
+    
+    if (exp_es_direccion) {
+        fprintf(fpasm, "%s\n", "mov eax, [eax]");
+    }
+
+    // error control
+
+    fprintf(fpasm, "mov dword edx, _%s\n", nombre_vector);
+    fprintf(fpasm, "%s\n", "lea eax, [edx + eax*4]");
+    fprintf(fpasm, "%s\n", "push dword eax");
+}
 /*
 Generación de código para indexar un vector
 Cuyo nombre es nombre_vector
@@ -416,7 +428,11 @@ Según se especifica en el material, es suficiente con utilizar dos registros
 para realizar esta tarea.
 */
 
-void declararFuncion(FILE *fd_asm, char *nombre_funcion, int num_var_loc);
+void declararFuncion(FILE *fd_asm, char *nombre_funcion, int num_var_loc) {
+    fprintf(fd_asm, "_%s:\n", nombre_funcion);
+    fprintf(fd_asm, "%s\n%s\n", "push dword ebp", "mov ebp, esp");
+    fprintf(fd_asm, "sub esp, 4*%d\n", num_var_loc);
+}
 /*
 Generación de código para iniciar la declaración de una función.
 Es necesario proporcionar
@@ -424,7 +440,15 @@ Su nombre
 Su número de variables locales
 */
 
-void retornarFuncion(FILE *fd_asm, int es_variable);
+void retornarFuncion(FILE *fd_asm, int es_variable) {
+    fprintf(fd_asm, "%s\n", "pop dword eax");
+    
+    if (es_variable) {
+        fprintf(fd_asm, "%s\n", "mov dword eax, [eax]");
+    }
+
+    fprintf(fd_asm, "%s\n%s\n%s\n", "mov esp, ebp", "pop dword ebp", "ret");
+}
 /*
 Generación de código para el retorno de una función.
 La expresión que se retorna está en la cima de la pila.
@@ -433,7 +457,9 @@ Puede ser un valor concreto (en ese caso exp_es_direccion vale 0)
 */
 
 void escribirParametro(FILE *fpasm, int pos_parametro,
-                       int num_total_parametros);
+                       int num_total_parametros) {
+    fprintf(fpasm, "");
+}
 /*
 Función para dejar en la cima de la pila la dirección efectiva del parámetro que
 ocupa la posición pos_parametro (recuerda que los parámetros se ordenan con
@@ -447,7 +473,16 @@ local que ocupa la posición posicion_variable_local (recuerda que ordenadas con
 origen 1)
 */
 
-void asignarDestinoEnPila(FILE *fpasm, int es_variable);
+void asignarDestinoEnPila(FILE *fpasm, int es_variable) {
+    fprintf(fpasm, "%s\n", "pop dword ebx");
+    fprintf(fpasm, "%s\n", "pop dword eax");
+    
+    if (es_variable) {
+        fprintf(fpasm, "%s\n", "mov eax, [eax]");
+    }
+
+    fprintf(fpasm, "%s\n", "mov dword [ebx], eax");
+}
 /*
 Función para poder asignar a un destino que no es una variable “global” (tipo
 _x) por ejemplo parámetros o variables locales (ya que en ese caso su nombre
