@@ -79,7 +79,7 @@ void escribir_fin(FILE *fpasm) {
                                    "ret\n";
     fprintf(fpasm, "%s\n", "jmp near fin");
 
-    //Error division
+    // Error division
     fprintf(fpasm, "%s\n", "fin_error_division:");
     fprintf(fpasm, "%s\n", "push dword msg_error_division");
     fprintf(fpasm, "%s\n", "call print_string");
@@ -87,15 +87,15 @@ void escribir_fin(FILE *fpasm) {
     fprintf(fpasm, "%s\n", "call print_endofline");
     fprintf(fpasm, "%s\n", "jmp near fin");
 
-    //Error range
+    // Error range
     fprintf(fpasm, "%s\n", "fin_error_rango:");
     fprintf(fpasm, "%s\n", "push dword msg_error_rango");
     fprintf(fpasm, "%s\n", "call print_string");
     fprintf(fpasm, "%s\n", "add esp, 4");
     fprintf(fpasm, "%s\n", "call print_endofline");
     fprintf(fpasm, "%s\n", "jmp near fin");
-    
-    //fin
+
+    // fin
     fprintf(fpasm, "%s\n", "fin:");
     fprintf(fpasm, "%s", assembler_string);
 }
@@ -462,16 +462,17 @@ la última de ellas.
 void escribir_elemento_vector(FILE *fpasm, char *nombre_vector, int tam_max,
                               int exp_es_direccion) {
     fprintf(fpasm, "%s\n", "pop dword eax");
-    
+
     if (exp_es_direccion) {
         fprintf(fpasm, "%s\n", "mov eax, [eax]");
     }
+
     fprintf(fpasm, "%s\n", "cmp eax, 0");
     fprintf(fpasm, "%s\n", "jl fin_error_rango");
     fprintf(fpasm, "cmp eax, %d\n", tam_max);
     fprintf(fpasm, "%s\n", "jge fin_error_rango");
 
-        fprintf(fpasm, "mov dword edx, _%s\n", nombre_vector);
+    fprintf(fpasm, "mov dword edx, _%s\n", nombre_vector);
     fprintf(fpasm, "%s\n", "lea eax, [edx + eax*4]");
     fprintf(fpasm, "%s\n", "push dword eax");
 }
@@ -500,7 +501,7 @@ Su número de variables locales
 
 void retornarFuncion(FILE *fd_asm, int es_variable) {
     fprintf(fd_asm, "%s\n", "pop dword eax");
-    
+
     if (es_variable) {
         fprintf(fd_asm, "%s\n", "mov dword eax, [eax]");
     }
@@ -541,7 +542,7 @@ origen 1)
 void asignarDestinoEnPila(FILE *fpasm, int es_variable) {
     fprintf(fpasm, "%s\n", "pop dword ebx");
     fprintf(fpasm, "%s\n", "pop dword eax");
-    
+
     if (es_variable) {
         fprintf(fpasm, "%s\n", "mov eax, [eax]");
     }
@@ -564,7 +565,8 @@ Es 0 en caso contrario (constante u otro tipo de expresión)
 void operandoEnPilaAArgumento(FILE *fd_asm, int es_variable) {
     if (es_variable) {
         fprintf(fd_asm, "%s\n", "mov dword eax, [esp]");
-        fprintf(fd_asm, "%s\n", "mov dword [esp], [eax]");
+        fprintf(fd_asm, "%s\n", "mov dword eax, [eax]");
+        fprintf(fd_asm, "%s\n", "mov dword [esp], eax");
     }
 }
 /*
