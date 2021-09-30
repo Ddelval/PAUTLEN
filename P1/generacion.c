@@ -304,7 +304,7 @@ void leer(FILE *fpasm, char *nombre, int tipo) {
     } else { // for our own sanity let's suppose this can only be BOOLEAN now
         fprintf(fpasm, "%s\n", "call scan_boolean");
     }
-    fprintf(fpasm, "%s\n", "add esp, 4");       // TODO: error handling?
+    fprintf(fpasm, "%s\n", "add esp, 4"); // TODO: error handling?
 }
 
 void escribir(FILE *fpasm, int es_variable, int tipo) {
@@ -318,13 +318,20 @@ void escribir(FILE *fpasm, int es_variable, int tipo) {
         fprintf(fpasm, "%s\n", "call print_int");
     } else { // for our own sanity let's suppose this can only be BOOLEAN now
         fprintf(fpasm, "%s\n", "call print_boolean");
-    }   // TODO: error handling?
+    } // TODO: error handling?
 
     fprintf(fpasm, "%s\n", "add esp, 4");
-    fprintf(fpasm, "%s\n", "call print_endofline");       // TODO: error handling?
+    fprintf(fpasm, "%s\n", "call print_endofline"); // TODO: error handling?
 }
 
-void ifthenelse_inicio(FILE *fpasm, int exp_es_variable, int etiqueta);
+void ifthenelse_inicio(FILE *fpasm, int exp_es_variable, int etiqueta) {
+    fprintf(fpasm, "%s\n", "pop dword eax");
+    if (exp_es_variable) {
+        fprintf(fprintf, "%s\n", "mov eax, [eax]");
+    }
+    fprintf(fpasm, "%s\n", "cmp eax, 0");
+    fprintf(fpasm, "je near else%d\n", etiqueta);
+}
 /*
 Generación de código para el inicio de una estructura if-then-else
 Como es el inicio de uno bloque de control de flujo de programa que requiere de
@@ -334,7 +341,14 @@ asimilable a una variable (identificador, elemento de vector) Es 0 en caso
 contrario (constante u otro tipo de expresión)
 */
 
-void ifthen_inicio(FILE *fpasm, int exp_es_variable, int etiqueta);
+void ifthen_inicio(FILE *fpasm, int exp_es_variable, int etiqueta) {
+    fprintf(fpasm, "%s\n", "pop dword eax");
+    if (exp_es_variable) {
+        fprintf(fprintf, "%s\n", "mov dword eax, [eax]");
+    }
+    fprintf(fpasm, "%s\n", "cmp eax, dword 0");
+    fprintf(fpasm, "je near end%d\n", etiqueta);
+}
 /*
 Generación de código para el inicio de una estructura if-then
 Como es el inicio de uno bloque de control de flujo de programa que requiere de
@@ -344,7 +358,9 @@ asimilable a una variable (identificador, elemento de vector) Es 0 en caso
 contrario (constante u otro tipo de expresión)
 */
 
-void ifthen_fin(FILE *fpasm, int etiqueta);
+void ifthen_fin(FILE *fpasm, int etiqueta) {
+    fprintf(fpasm, "end%d\n", etiqueta);
+}
 /*
 Generación de código para el fin de una estructura if-then
 Como es el fin de uno bloque de control de flujo de programa que hace uso de la
@@ -354,7 +370,10 @@ proceso para ajustar la información de las etiquetas puesto que se ha liberado
 la última de ellas.
 */
 
-void ifthenelse_fin_then(FILE *fpasm, int etiqueta);
+void ifthenelse_fin_then(FILE *fpasm, int etiqueta) {
+    fprintf(fpasm, "jmp near end%d\n", etiqueta);
+    fprintf(fpasm, "else%d:\n", etiqueta);
+}
 /*
 Generación de código para el fin de la rama then de una estructura if-then-else
 Sólo necesita usar la etiqueta adecuada, aunque es el final de una rama, luego
@@ -363,7 +382,9 @@ que ajustar las etiquetas por lo que sólo se necesita que se utilice la etiquet
 que corresponde al momento actual.
 */
 
-void ifthenelse_fin(FILE *fpasm, int etiqueta);
+void ifthenelse_fin(FILE *fpasm, int etiqueta) {
+    fprintf(fpasm, "end%d:\n", etiqueta);
+}
 /*
 Generación de código para el fin de una estructura if-then-else
 Como es el fin de uno bloque de control de flujo de programa que hace uso de la
@@ -373,7 +394,9 @@ proceso para ajustar la información de las etiquetas puesto que se ha liberado
 la última de ellas.
 */
 
-void while_inicio(FILE *fpasm, int etiqueta);
+void while_inicio(FILE *fpasm, int etiqueta) {
+    fprintf(fpasm, "start_while%d\n", etiqueta);
+}
 /*
 Generación de código para el inicio de una estructura while
 Como es el inicio de uno bloque de control de flujo de programa que requiere de
@@ -383,7 +406,14 @@ asimilable a una variable (identificador, elemento de vector) Es 0 en caso
 contrario (constante u otro tipo de expresión)
 */
 
-void while_exp_pila(FILE *fpasm, int exp_es_variable, int etiqueta);
+void while_exp_pila(FILE *fpasm, int exp_es_variable, int etiqueta) {
+    fprintf(fpasm, "%s\n", "pop dword eax");
+    if (exp_es_variable) {
+        fprintf(fpasm, "%s\n", "mov eax, [eax]");
+    }
+    fprintf(fpasm, "%s\n", "cmp eax, 0");
+    fprintf(fpasm, "je near end_while%d\n", etiqueta);
+}
 /*
 Generación de código para el momento en el que se ha generado el código de la
 expresión de control del bucle Sólo necesita usar la etiqueta adecuada, por lo
@@ -393,7 +423,10 @@ asimilable a una variable (identificador, o elemento de vector) Es 0 en caso
 contrario (constante u otro tipo de expresión)
 */
 
-void while_fin(FILE *fpasm, int etiqueta);
+void while_fin(FILE *fpasm, int etiqueta) {
+    fprintf(fpasm, "jmp near start_while%d\n", etiqueta);
+    fprintf(fpasm, "end_while%d:\n", etiqueta);
+}
 /*
 Generación de código para el final de una estructura while
 Como es el fin de uno bloque de control de flujo de programa que hace uso de la
