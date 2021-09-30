@@ -512,7 +512,9 @@ Puede ser un valor concreto (en ese caso exp_es_direccion vale 0)
 
 void escribirParametro(FILE *fpasm, int pos_parametro,
                        int num_total_parametros) {
-    fprintf(fpasm, "");
+    int d_ebp = 4 * (1 + num_total_parametros - pos_parametro);
+    fprintf(fpasm, "lea eax, [ebp + %d]\n", d_ebp);
+    fprintf(fpasm, "%s\n", "push dword eax");
 }
 /*
 Función para dejar en la cima de la pila la dirección efectiva del parámetro que
@@ -520,7 +522,12 @@ ocupa la posición pos_parametro (recuerda que los parámetros se ordenan con
 origen 0) de un total de num_total_parametros
 */
 
-void escribirVariableLocal(FILE *fpasm, int posicion_variable_local);
+void escribirVariableLocal(FILE *fpasm, int posicion_variable_local) {
+    int d_ebp = 4 * posicion_variable_local;
+
+    fprintf(fpasm, "lea eax, [ebp - %d]\n", d_ebp);
+    fprintf(fpasm, "%s\n", "push dword eax");
+}
 /*
 Función para dejar en la cima de la pila la dirección efectiva de la variable
 local que ocupa la posición posicion_variable_local (recuerda que ordenadas con
@@ -550,7 +557,12 @@ Es 1 si la expresión que se va a asignar es algo asimilable a una variable
 Es 0 en caso contrario (constante u otro tipo de expresión)
 */
 
-void operandoEnPilaAArgumento(FILE *fd_asm, int es_variable);
+void operandoEnPilaAArgumento(FILE *fd_asm, int es_variable) {
+    if (es_variable) {
+        fprintf(fd_asm, "%s\n", "mov dword eax, [esp]");
+        fprintf(fd_asm, "%s\n", "mov dword [esp], [eax]");
+    }
+}
 /*
 Como habrás visto en el material, nuestro convenio de llamadas a las funciones
 asume que los argumentos se pasan por valor, esto significa que siempre se dejan
@@ -559,7 +571,10 @@ operando escrito en la pila y sabiendo si es variable o no (es_variable) se deja
 en la pila el valor correspondiente
 */
 
-void llamarFuncion(FILE *fd_asm, char *nombre_funcion, int num_argumentos);
+void llamarFuncion(FILE *fd_asm, char *nombre_funcion, int num_argumentos) {
+    fprintf(fd_asm, "call _%s\n", nombre_funcion);
+    limpiarPila(fd_asm, num_argumentos);
+}
 /*
 Esta función genera código para llamar a la función nombre_funcion asumiendo que
 los argumentos están en la pila en el orden fijado en el material de la
@@ -568,7 +583,10 @@ haberla limpiado de sus argumentos Para limpiar la pila puede utilizar la
 función de nombre limpiarPila
 */
 
-void limpiarPila(FILE *fd_asm, int num_argumentos);
+void limpiarPila(FILE *fd_asm, int num_argumentos) {
+    fprintf(fd_asm, "add esp, 4*%d\n", num_argumentos);
+    fprintf(fd_asm, "%s\n", "push dword eax");
+}
 /*
 Genera código para limpiar la pila tras invocar una función
 Esta función es necesaria para completar la llamada a métodos, su gestión
