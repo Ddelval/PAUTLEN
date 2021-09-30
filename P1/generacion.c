@@ -227,12 +227,12 @@ void no(FILE *fpasm, int es_variable, int cuantos_no) {
     if (es_variable) {
         fprintf(fpasm, "%s\n", "mov dword eax, [eax]");
     }
-    fprintf(fpasm, "%s\n", "cmp eax, 0\n");
+    fprintf(fpasm, "%s\n", "cmp eax, 0");
     fprintf(fpasm, "jne match_no_%d\n", cuantos_no);
-    fprintf(fpasm, "%s\n", "push dword 1\n");
+    fprintf(fpasm, "%s\n", "push dword 1");
     fprintf(fpasm, "jmp end_no_%d\n", cuantos_no);
     fprintf(fpasm, "match_no_%d:\n", cuantos_no);
-    fprintf(fpasm, "%s\n", "push dword 0\n");
+    fprintf(fpasm, "%s\n", "push dword 0");
     fprintf(fpasm, "end_no_%d:\n", cuantos_no);
 }
 /*
