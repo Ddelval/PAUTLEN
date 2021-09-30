@@ -395,7 +395,7 @@ la última de ellas.
 */
 
 void while_inicio(FILE *fpasm, int etiqueta) {
-    fprintf(fpasm, "start_while%d\n", etiqueta);
+    fprintf(fpasm, "start_while%d:\n", etiqueta);
 }
 /*
 Generación de código para el inicio de una estructura while
