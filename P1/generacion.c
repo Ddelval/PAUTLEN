@@ -350,7 +350,7 @@ void escribir(FILE *fpasm, int es_variable, int tipo) {
 void ifthenelse_inicio(FILE *fpasm, int exp_es_variable, int etiqueta) {
     fprintf(fpasm, "%s\n", "pop dword eax");
     if (exp_es_variable) {
-        fprintf(fprintf, "%s\n", "mov eax, [eax]");
+        fprintf(fpasm, "%s\n", "mov eax, [eax]");
     }
     fprintf(fpasm, "%s\n", "cmp eax, 0");
     fprintf(fpasm, "je near else%d\n", etiqueta);
@@ -367,7 +367,7 @@ contrario (constante u otro tipo de expresión)
 void ifthen_inicio(FILE *fpasm, int exp_es_variable, int etiqueta) {
     fprintf(fpasm, "%s\n", "pop dword eax");
     if (exp_es_variable) {
-        fprintf(fprintf, "%s\n", "mov dword eax, [eax]");
+        fprintf(fpasm, "%s\n", "mov dword eax, [eax]");
     }
     fprintf(fpasm, "%s\n", "cmp eax, dword 0");
     fprintf(fpasm, "je near end%d\n", etiqueta);

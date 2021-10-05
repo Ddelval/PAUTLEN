@@ -1,5 +1,5 @@
 CC=gcc
-COMPILER_FLAGS=-Wall -lm
+COMPILER_FLAGS=-Wextra -Wall -lm
 TESTS=$(patsubst %.c,%,$(wildcard test*.c))
 TEST_EXEC=$(foreach t, $(TESTS), bin/$(t))
 TEST_ASM=$(foreach t, $(TESTS), asm_gen/$(t)))
