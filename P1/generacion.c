@@ -1,7 +1,5 @@
 #include "generacion.h"
 
-/** PRIVATE PROTOTYPES **/
-void append_string(char **dest, const char *line);
 
 /* OBSERVACIÓN GENERAL A TODAS LAS FUNCIONES:
 Todas ellas escriben el código NASM a un FILE* proporcionado como primer
@@ -24,7 +22,7 @@ variable.
 void escribir_subseccion_data(FILE *fpasm) {
     const char *assembler_string =
         "segment .data\n"
-        "msg_error_division db \"Error division por 0 \", 0\n"
+        "msg_error_division db \"Error division by 0 \", 0\n"
         "msg_error_rango db \"Error out of range \", 0\n";
 
     fprintf(fpasm, "%s", assembler_string);
