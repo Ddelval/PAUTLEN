@@ -48,10 +48,21 @@ int main(int argc, char **argv) {
     escribir_operando(fd_asm, "3", 0);
     escribir(fd_asm, 0, ENTERO);
 
-    // Fin del condicional if. Imprimimos la etiqueta de ambito del fin del
-    etiqueta = etiquetas[cima_etiquetas];
     ifthen_fin(fd_asm, etiqueta);
-    cima_etiquetas--;
+
+    escribir_operando(fd_asm,"m",1);
+    ifthenelse_inicio(fd_asm, 1, etiqueta);
+
+    // printf 2
+    escribir_operando(fd_asm, "2", 0);
+    escribir(fd_asm, 0, ENTERO);
+    ifthenelse_fin_then(fd_asm,etiqueta);
+
+    // printf 3
+    escribir_operando(fd_asm, "3", 0);
+    escribir(fd_asm, 0, ENTERO);
+
+    ifthenelse_fin(fd_asm, etiqueta);
 
     escribir_fin(fd_asm);
 
