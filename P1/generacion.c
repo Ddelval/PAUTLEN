@@ -1,4 +1,10 @@
 #include "generacion.h"
+/**
+ *  Authors:
+ * 	- David del Val
+ * 	- Antón Seoane
+ *  - Pablo Sancho Saiz
+ */
 
 /* OBSERVACIÓN GENERAL A TODAS LAS FUNCIONES:
 Todas ellas escriben el código NASM a un FILE* proporcionado como primer
@@ -145,6 +151,8 @@ una referencia (1) o ya un valor explícito (0).
  * Generate the code to pop the operands from the stack
  * the integer arguments indicate whether the variables are
  * stored in the stack as pointers or as values
+ * The last value that was pushed will be stored in ebx while the
+ * previous one will be stored in eax.
  */
 void pop_values_for_operation(FILE *fpasm, int es_variable_1,
                               int es_variable_2) {
@@ -240,12 +248,12 @@ void no(FILE *fpasm, int es_variable, int cuantos_no) {
         fprintf(fpasm, "%s\n", "mov  dword eax, [eax]");
     }
     fprintf(fpasm, "%s\n", "cmp eax, 0");
-    fprintf(fpasm, "jne match_no_%d\n", cuantos_no);
+    fprintf(fpasm, "jne no_match_%d\n", cuantos_no);
     fprintf(fpasm, "%s\n", "push dword 1");
-    fprintf(fpasm, "jmp end_no_%d\n", cuantos_no);
-    fprintf(fpasm, "match_no_%d:\n", cuantos_no);
+    fprintf(fpasm, "jmp no_end_%d\n", cuantos_no);
+    fprintf(fpasm, "no_match_%d:\n", cuantos_no);
     fprintf(fpasm, "%s\n", "push dword 0");
-    fprintf(fpasm, "end_no_%d:\n", cuantos_no);
+    fprintf(fpasm, "no_end_%d:\n", cuantos_no);
 }
 /*
 Función monádica lógica de negación. No hay un código de operación de la ALU
@@ -277,13 +285,12 @@ void generic_comparison(FILE *fpasm, const char *jump_instruction,
     pop_values_for_operation(fpasm, es_variable1, es_variable2);
     // Make sure that the labels for different comparisons are different
     char prefix[6] = "cmp_xx";
-	if(strlen(jump_instruction)>=2){
-		prefix[4]=jump_instruction[1];
-	}
-	if(strlen(jump_instruction)>=3){
-		prefix[5]=jump_instruction[2];
-	}
-	
+    if (strlen(jump_instruction) >= 2) {
+        prefix[4] = jump_instruction[1];
+    }
+    if (strlen(jump_instruction) >= 3) {
+        prefix[5] = jump_instruction[2];
+    }
 
     fprintf(fpasm, "%s\n", "cmp eax, ebx");
     fprintf(fpasm, "%s near %s_match_%d\n", jump_instruction, prefix, etiqueta);
@@ -331,7 +338,7 @@ void leer(FILE *fpasm, char *nombre, int tipo) {
     fprintf(fpasm, "push dword _%s\n", nombre);
     if (tipo == ENTERO) {
         fprintf(fpasm, "%s\n", "call scan_int");
-    } else { // for our own sanity let's suppose this can only be BOOLEAN now
+    } else {
         fprintf(fpasm, "%s\n", "call scan_boolean");
     }
     fprintf(fpasm, "%s\n", "add esp, 4");
@@ -346,7 +353,7 @@ void escribir(FILE *fpasm, int es_variable, int tipo) {
 
     if (tipo == ENTERO) {
         fprintf(fpasm, "%s\n", "call print_int");
-    } else { // for our own sanity let's suppose this can only be BOOLEAN now
+    } else {
         fprintf(fpasm, "%s\n", "call print_boolean");
     }
 
@@ -376,7 +383,7 @@ void ifthen_inicio(FILE *fpasm, int exp_es_variable, int etiqueta) {
     if (exp_es_variable) {
         fprintf(fpasm, "%s\n", "mov dword dword eax, [eax]");
     }
-    fprintf(fpasm, "%s\n", "cmp eax, dword 0");
+    fprintf(fpasm, "%s\n", "cmp eax, 0");
     fprintf(fpasm, "je near it_end_%d\n", etiqueta);
 }
 /*
@@ -477,7 +484,7 @@ void escribir_elemento_vector(FILE *fpasm, char *nombre_vector, int tam_max,
     fprintf(fpasm, "%s\n", "cmp eax, 0");
     fprintf(fpasm, "%s\n", "jl fin_error_rango");
     fprintf(fpasm, "cmp eax, %d\n", tam_max);
-    fprintf(fpasm, "%s\n", "jge fin_error_rango");
+    fprintf(fpasm, "%s\n", "jge near fin_error_rango");
 
     fprintf(fpasm, "mov dword edx, _%s\n", nombre_vector);
     fprintf(fpasm, "%s\n", "lea eax, [edx + eax*4]");
