@@ -21,5 +21,14 @@ $(MODULES_BIN): bin/%.o: %.c
 	$(CC) -o $@ -c $^ $(COMPILER_FLAGS)
 
 .PHONY:
+test_coverage:
+	clang -fprofile-instr-generate -fcoverage-mapping  generacion.c test99.c -o fullTest.out
+	LLVM_PROFILE_FILE="fullTest.profraw" ./fullTest.out /dev/null
+	/usr/local/Cellar/llvm/12.0.1/bin/llvm-profdata merge -sparse fullTest.profraw  -o fullTest.profdata
+	/usr/local/Cellar/llvm/12.0.1/bin/llvm-cov show ./fullTest.out -instr-profile=fullTest.profdata > coverage.txt 
+	grep " 0|" coverage.txt 
+	rm fullTest.profraw fullTest.profdata coverage.txt
+
+.PHONY:
 clean:
 	rm bin/*
