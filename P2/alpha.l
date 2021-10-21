@@ -1,9 +1,12 @@
 %{
     #include <stdio.h>
     #include "tokens.h"
-    extern int yylen;
+    extern yy_size_t yyleng;
     const char* string_val;
-    #define cret(x)  string_val=#x; return x;
+    int colcount;
+    #define cret(x)  string_val=#x; colcount+=yyleng; return x;
+    #define reset_cols()  colcount=0;
+    #define cret_no_count_cols(x)  string_val=#x;  return x;
 %}
 
 %option noyywrap
@@ -47,13 +50,15 @@ LETTER  [A-Za-z]
 "scanf"  { cret(TOK_SCANF   ); }
 "printf"  { cret(TOK_PRINTF  ); }
 "return"  { cret(TOK_RETURN  ); }
+"\n" { reset_cols();}
 " " { }
 
 "true" {cret(TOK_TRUE);}
 "false" {cret(TOK_FALSE);}
 
-[A-Za-z]([A-Za-z]|[0-9])* { if (yyleng > 100) { cret(TOK_ERROR); } else { cret(TOK_IDENTIFICADOR); } }
+[A-Za-z]([A-Za-z]|[0-9])* { if (yyleng > 100) { cret_no_count_cols(TOK_ERROR); } else { cret(TOK_IDENTIFICADOR); } }
 [0-9]+ { cret(TOK_CONSTANTE_ENTERA); }
+[^A-Za-z]([A-Za-z]|[0-9])* { cret_no_count_cols(TOK_ERROR); }
 
 
 %%

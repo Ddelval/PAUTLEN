@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "tokens.h"
 
 extern FILE *yyin, *yyout;
 extern int yylex();
@@ -13,6 +14,9 @@ int main(int argc, char **argv) {
     yyout = fopen(argv[2], "w");
 
     while ((c = yylex())) {
+        if(c==TOK_ERROR){
+            
+        }
         printf("%s %d %s \n",string_val, c,yytext);
     }
 
