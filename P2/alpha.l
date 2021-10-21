@@ -2,6 +2,8 @@
     #include <stdio.h>
     #include "tokens.h"
     extern int yylen;
+    const char* string_val;
+    #define cret(x)  string_val=#x; return x;
 %}
 
 %option noyywrap
@@ -11,45 +13,47 @@ LETTER  [A-Za-z]
 
 %%
 
-";"   { return TOK_PUNTOYCOMA; }
-","   { return TOK_COMA; }
-"("   { return TOK_PARENTESISIZQUIERDO; }
-")"   { return TOK_PARENTESISDERECHO; }
-"["   { return TOK_CORCHETEIZQUIERDO; }
-"]"   { return TOK_CORCHETEDERECHO; }
-"{"   { return TOK_LLAVEIZQUIERDA; }
-"}"   { return TOK_LLAVEDERECHA; }
-"="   { return TOK_ASIGNACION; }
-"+"   { return TOK_MAS; }
-"-"   { return TOK_MENOS; }
-"/"   { return TOK_DIVISION; }
-"*"   { return TOK_ASTERISCO; }
-"&&"  { return TOK_AND; }
-"||"    { return TOK_OR        ;}
-"!"    { return TOK_NOT       ;}
-"=="    { return TOK_IGUAL     ;}
-"!="    { return TOK_DISTINTO  ;}
-"<="    { return TOK_MENORIGUAL;}
-">="    { return TOK_MAYORIGUAL;}
-"<"    { return TOK_MENOR     ;}
-">"    { return TOK_MAYOR     ;}
-"main"  { return TOK_MAIN    ; }
-"int"  { return TOK_INT     ; }
-"boolean"  { return TOK_BOOLEAN ; }
-"array"  { return TOK_ARRAY   ; }
-"function"  { return TOK_FUNCTION; }
-"if"  { return TOK_IF      ; }
-"else"  { return TOK_ELSE    ; }
-"while"  { return TOK_WHILE   ; }
-"scanf"  { return TOK_SCANF   ; }
-"printf"  { return TOK_PRINTF  ; }
-"return"  { return TOK_RETURN  ; }
-" " { return 9;}
+"//"[^\n]* { }
+";"   { cret(TOK_PUNTOYCOMA); }
+","   { cret(TOK_COMA); }
+"("   { cret(TOK_PARENTESISIZQUIERDO); }
+")"   { cret(TOK_PARENTESISDERECHO); }
+"["   { cret(TOK_CORCHETEIZQUIERDO); }
+"]"   { cret(TOK_CORCHETEDERECHO); }
+"{"   { cret(TOK_LLAVEIZQUIERDA); }
+"}"   { cret(TOK_LLAVEDERECHA); }
+"="   { cret(TOK_ASIGNACION); }
+"+"   { cret(TOK_MAS); }
+"-"   { cret(TOK_MENOS); }
+"/"   { cret(TOK_DIVISION); }
+"*"   { cret(TOK_ASTERISCO); }
+"&&"  { cret(TOK_AND); }
+"||"    { cret(TOK_OR        );}
+"!"    { cret(TOK_NOT       );}
+"=="    { cret(TOK_IGUAL     );}
+"!="    { cret(TOK_DISTINTO  );}
+"<="    { cret(TOK_MENORIGUAL);}
+">="    { cret(TOK_MAYORIGUAL);}
+"<"    { cret(TOK_MENOR     );}
+">"    { cret(TOK_MAYOR     );}
+"main"  { cret(TOK_MAIN    ); }
+"int"  { cret(TOK_INT     ); }
+"boolean"  { cret(TOK_BOOLEAN ); }
+"array"  { cret(TOK_ARRAY   ); }
+"function"  { cret(TOK_FUNCTION); }
+"if"  { cret(TOK_IF      ); }
+"else"  { cret(TOK_ELSE    ); }
+"while"  { cret(TOK_WHILE   ); }
+"scanf"  { cret(TOK_SCANF   ); }
+"printf"  { cret(TOK_PRINTF  ); }
+"return"  { cret(TOK_RETURN  ); }
+" " { }
 
-{LETTER}({LETTER|DIGIT})* { if (yyleng > 100) { return TOK_ERROR; } else { return TOK_IDENTIFICADOR; } }
-{DIGIT}+ { return TOK_CONSTANTE_ENTERA; }
-"true" {return TOK_TRUE;}
-"false" {return TOK_FALSE;}
+"true" {cret(TOK_TRUE);}
+"false" {cret(TOK_FALSE);}
+
+[A-Za-z]([A-Za-z]|[0-9])* { if (yyleng > 100) { cret(TOK_ERROR); } else { cret(TOK_IDENTIFICADOR); } }
+[0-9]+ { cret(TOK_CONSTANTE_ENTERA); }
 
 
 %%

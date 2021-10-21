@@ -12,6 +12,6 @@ int main() {
     }
     int d;
     while (cin >> d) {
-        cout << pos[d] << endl;
+        cout << d<<"->"<<pos[d] << endl;
     }
 }

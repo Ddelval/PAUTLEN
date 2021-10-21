@@ -3,7 +3,8 @@
 
 extern FILE *yyin, *yyout;
 extern int yylex();
-
+extern const char * yytext;
+extern const char* string_val;
 
 int main(int argc, char **argv) {
     int c;
@@ -12,7 +13,7 @@ int main(int argc, char **argv) {
     yyout = fopen(argv[2], "w");
 
     while ((c = yylex())) {
-        printf("%d\n", c);
+        printf("%s %d %s \n",string_val, c,yytext);
     }
 
     return 0;
