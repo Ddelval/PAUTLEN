@@ -1,14 +1,13 @@
 %{
     #include <stdio.h>
     #include "tokens.h"
+    extern int yylen;
 %}
 
 %option noyywrap
 
-digit   [0-9]
-num     {digit}+
-letter  [A-Za-z]
-ident   {letter}({letter|digit))*
+DIGIT   [0-9]
+LETTER  [A-Za-z]
 
 %%
 
@@ -45,24 +44,12 @@ ident   {letter}({letter|digit))*
 "scanf"  { return TOK_SCANF   ; }
 "printf"  { return TOK_PRINTF  ; }
 "return"  { return TOK_RETURN  ; }
+" " { return 9;}
 
-ident { if (yylen > 100) { return TOK_ERROR; } else { return TOK_INDENTIFICADOR; } }
-num { return TOK_CONSTANTE_ENTERA; }
+{LETTER}({LETTER|DIGIT})* { if (yyleng > 100) { return TOK_ERROR; } else { return TOK_IDENTIFICADOR; } }
+{DIGIT}+ { return TOK_CONSTANTE_ENTERA; }
 "true" {return TOK_TRUE;}
 "false" {return TOK_FALSE;}
 
 
 %%
-
-int main(int argc, char **argv) {
-    FILE *yyin, *yyout;
-
-    yyin = fopen(argv[1], "r");
-    yyout = fopen(argv[2], "w");
-
-    return yylex();
-}
-
-int yywrap() { 
-    return 1;
-}
