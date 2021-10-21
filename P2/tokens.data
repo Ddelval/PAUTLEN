@@ -1,0 +1,42 @@
+ TOK_MAIN                100
+ TOK_INT                 101
+ TOK_BOOLEAN             102
+ TOK_ARRAY               103
+ TOK_FUNCTION            104
+ TOK_IF                  105
+ TOK_ELSE                106
+ TOK_WHILE               107
+ TOK_SCANF               108
+ TOK_PRINTF              109
+ TOK_RETURN              110
+
+ TOK_PUNTOYCOMA          200
+ TOK_COMA                201
+ TOK_PARENTESISIZQUIERDO 202
+ TOK_PARENTESISDERECHO   203
+ TOK_CORCHETEIZQUIERDO   204
+ TOK_CORCHETEDERECHO     205
+ TOK_LLAVEIZQUIERDA      206
+ TOK_LLAVEDERECHA        207
+ TOK_ASIGNACION          208
+ TOK_MAS                 209
+ TOK_MENOS               210
+ TOK_DIVISION            211
+ TOK_ASTERISCO           212
+ TOK_AND                 213
+ TOK_OR                  214
+ TOK_NOT                 215
+ TOK_IGUAL               216
+ TOK_DISTINTO            217
+ TOK_MENORIGUAL          218
+ TOK_MAYORIGUAL          219
+ TOK_MENOR               220
+ TOK_MAYOR               221
+
+ TOK_IDENTIFICADOR       300
+
+ TOK_CONSTANTE_ENTERA    400
+ TOK_TRUE                401
+ TOK_FALSE               402
+
+ TOK_ERROR                -1
