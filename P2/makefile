@@ -10,7 +10,5 @@ lex.yy.o: alpha.l
 	flex $^
 	gcc -c -g -o lex.yy.o lex.yy.c
 
-test: pruebaMorfo toName
-	./pruebaMorfo test/entrada1.txt hola.txt 
-toName: toName.cpp
-	g++ toName.cpp -o toName
+test: pruebaMorfo 
+	./pruebaMorfo test/entrada2.txt hola.txt 

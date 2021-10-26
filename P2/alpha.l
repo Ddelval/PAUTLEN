@@ -3,9 +3,11 @@
     #include "tokens.h"
     extern yy_size_t yyleng;
     const char* string_val;
-    int colcount;
+    int colcount=0;
+    int lincount=0;
+    int error_type;
     #define cret(x)  string_val=#x; colcount+=yyleng; return x;
-    #define reset_cols()  colcount=0;
+    #define reset_cols()  colcount=0; lincount++;
     #define cret_no_count_cols(x)  string_val=#x;  return x;
 %}
 
@@ -51,14 +53,14 @@ LETTER  [A-Za-z]
 "printf"  { cret(TOK_PRINTF  ); }
 "return"  { cret(TOK_RETURN  ); }
 "\n" { reset_cols();}
-" " { }
+" " { colcount++;}
 
 "true" {cret(TOK_TRUE);}
 "false" {cret(TOK_FALSE);}
 
-[A-Za-z]([A-Za-z]|[0-9])* { if (yyleng > 100) { cret_no_count_cols(TOK_ERROR); } else { cret(TOK_IDENTIFICADOR); } }
+[A-Za-z]([A-Za-z]|[0-9])* { if (yyleng > 100) { error_type=0; cret_no_count_cols(TOK_ERROR); } else { cret(TOK_IDENTIFICADOR); } }
 [0-9]+ { cret(TOK_CONSTANTE_ENTERA); }
-[^A-Za-z]([A-Za-z]|[0-9])* { cret_no_count_cols(TOK_ERROR); }
+. { error_type=1; cret_no_count_cols(TOK_ERROR); }
 
 
 %%
