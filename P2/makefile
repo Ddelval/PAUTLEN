@@ -1,7 +1,8 @@
 .PHONY: test
+all:  pruebaMorfo
 
 pruebaMorfo: pruebaMorfo.o lex.yy.o
-	gcc -g -o pruebaMorfo $^
+	gcc -g -o $@ $^
 
 pruebaMorfo.o: pruebaMorfo.c
 	gcc -Wall -ansi -pedantic -c -g -o $@ $^
@@ -11,4 +12,7 @@ lex.yy.o: alpha.l
 	gcc -c -g -o lex.yy.o lex.yy.c
 
 test: pruebaMorfo 
-	./pruebaMorfo test/entrada2.txt hola.txt 
+	./check_tests.sh
+
+clean:
+	rm pruebaMorfo *.o
