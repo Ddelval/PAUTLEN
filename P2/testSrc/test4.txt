@@ -1,0 +1,16 @@
+main {
+abc=8*10
+8abc
+}
+
+----------
+TOK_MAIN 100 main 
+TOK_LLAVEIZQUIERDA	206	{
+TOK_IDENTIFICADOR  300 abc
+TOK_ASIGNACION 208 = 
+TOK_CONSTANTE_ENTERA 400 8
+TOK_ASTERISCO 212 *
+TOK_CONSTANTE_ENTERA 400 10
+
+----------
+****Error en [lin 3, col 1]: simbolo no permitido (8abc)

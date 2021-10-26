@@ -1,3 +1,13 @@
+// Programa que eleva un numero al cuadrado
+
+main {
+  int x, resultado;
+
+  scanf x; // Esta linea lee el valor de x
+  resultado = x*x; // Esta linea calcula el cuadrado de x
+  printf resultado; // Esta linea imprime el resultado
+}
+----------
 TOK_MAIN	100	main
 TOK_LLAVEIZQUIERDA	206	{
 TOK_INT	101	int
@@ -18,3 +28,4 @@ TOK_PRINTF	109	printf
 TOK_IDENTIFICADOR	300	resultado
 TOK_PUNTOYCOMA	200	;
 TOK_LLAVEDERECHA	207	}
+----------

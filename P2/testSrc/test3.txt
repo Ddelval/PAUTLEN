@@ -1,0 +1,11 @@
+// **lksjfsó`wifjwwfsñlkfasñlk
+
+main {
+abcç
+}
+
+----------
+TOK_MAIN 100 main 
+TOK_LLAVEIZQUIERDA	206	{
+----------
+****Error en [lin 4, col 1]: simbolo no permitido (�)

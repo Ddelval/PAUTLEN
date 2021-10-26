@@ -1,6 +1,16 @@
 
 mkdir -p testOut
-test_count=$(( $(ls test/entrada*.txt|wc -w) ))
+mkdir -p test
+test_count=$(( $(ls testSrc/test*.txt|wc -w) ))
+
+
+for ((i=1; i<=$test_count; i++)); do
+awk -v number="$i" 'BEGIN{name[0]="entrada"; name[1]="salida"; name[2]="error";n=0}/----------?/{n++}{print >"test/"name[n] number".txt"}' testSrc/test$i.txt
+done
+
+for file in $(ls test/*);do
+    sed -i '' '/^----------$/d' "$file"
+done
 
 printf  "\e[34;4mRunning $test_count tests\e[39;0m\n"
 
@@ -22,4 +32,3 @@ echo $out_dif
 fi
 
 done
-rm -r testOut

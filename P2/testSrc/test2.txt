@@ -1,0 +1,46 @@
+// Programa que eleva un numero x a la potencia y
+
+main {
+// Declarar variables:
+int x,y;
+int i,total;
+
+// ERROR: IDENTIFICADOR DE LONGITUD > 100
+int x0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789;
+
+// Leer x e y:
+scanf x;
+scanf y;
+
+// Calcular la potencia:
+i = 1;
+total = 1;
+  while (i <= y) {
+    total = total*x;
+    i = i + 1;
+  }
+
+// Mostrar resultado:
+printf total;
+}
+
+
+
+
+
+----------
+TOK_MAIN	100	main
+TOK_LLAVEIZQUIERDA	206	{
+TOK_INT	101	int
+TOK_IDENTIFICADOR	300	x
+TOK_COMA	201	,
+TOK_IDENTIFICADOR	300	y
+TOK_PUNTOYCOMA	200	;
+TOK_INT	101	int
+TOK_IDENTIFICADOR	300	i
+TOK_COMA	201	,
+TOK_IDENTIFICADOR	300	total
+TOK_PUNTOYCOMA	200	;
+TOK_INT	101	int
+----------
+****Error en [lin 9, col 5]: identificador demasiado largo (x0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789)

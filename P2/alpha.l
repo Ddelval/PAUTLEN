@@ -15,6 +15,10 @@
 
 DIGIT   [0-9]
 LETTER  [A-Za-z]
+SYMBOL  [;,"()*"]
+NO_SYMBOL  [^;,"()*"]
+NO_SYMBOL_OR_WHITE  [^;,"()*" \n\t]
+WHITESPACE [ \t\n]
 
 %%
 
@@ -60,6 +64,7 @@ LETTER  [A-Za-z]
 
 [A-Za-z]([A-Za-z]|[0-9])* { if (yyleng > 100) { error_type=0; cret_no_count_cols(TOK_ERROR); } else { cret(TOK_IDENTIFICADOR); } }
 [0-9]+ { cret(TOK_CONSTANTE_ENTERA); }
+[0-9]+({NO_SYMBOL_OR_WHITE})* {  error_type=1; cret_no_count_cols(TOK_ERROR); }
 . { error_type=1; cret_no_count_cols(TOK_ERROR); }
 
 
