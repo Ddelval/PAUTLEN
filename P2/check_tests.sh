@@ -9,7 +9,8 @@ awk -v number="$i" 'BEGIN{name[0]="entrada"; name[1]="salida"; name[2]="error";n
 done
 
 for file in $(ls test/*);do
-    sed -i '' '/^----------$/d' "$file"
+    sed -i '' '/^----------/d' "$file"
+    sed -i '' '/^##########/d' "$file"
 done
 
 printf  "\e[34;4mRunning $test_count tests\e[39;0m\n"
@@ -24,9 +25,9 @@ if [[ $(( $count_dif )) -eq 0 ]]; then
 printf  "\e[32;1mTest $i OK\e[39;0m\n"
 else
 printf  "\e[31;1mTest $i ERROR\e[39;0m\n"
-printf  "\e[34;4mDiferencias en error\e[39;0m\n"
+printf  "\e[34;4mDifferences in the errors\e[39;0m\n"
 echo $err_dif
-printf  "\e[34;4mDiferencias en archivo\e[39;0m\n"
+printf  "\e[34;4mDifferences in the output\e[39;0m\n"
 echo $out_dif
 
 fi

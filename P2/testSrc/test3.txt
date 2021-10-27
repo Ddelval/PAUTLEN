@@ -1,3 +1,5 @@
+########## Test identifiers with error at the end
+########## 
 // **lksjfsó`wifjwwfsñlkfasñlk
 
 main {

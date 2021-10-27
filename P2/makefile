@@ -15,4 +15,5 @@ test: pruebaMorfo
 	./check_tests.sh
 
 clean:
-	rm pruebaMorfo *.o
+	rm pruebaMorfo *.o 
+	rm -r test testOut
