@@ -1,4 +1,4 @@
-########## Test operations
+########## Testing to see the moral boundaries of something being valid or not
 ########## 
 main {
 ab/c=8*10

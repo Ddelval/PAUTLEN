@@ -1,7 +1,7 @@
 %{
     #include <stdio.h>
     #include "tokens.h"
-    extern yy_size_t yyleng;
+    extern int yyleng;
     const char* string_val;
     int colcount=0;
     int lincount=0;

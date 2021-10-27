@@ -1,0 +1,11 @@
+########## Testing for what is what
+########## 
+main {
+8{abc
+}
+
+----------
+TOK_MAIN 100 main 
+TOK_LLAVEIZQUIERDA	206	{
+----------
+****Error en [lin 2, col 1]: simbolo no permitido (8{abc)

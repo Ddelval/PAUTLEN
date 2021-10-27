@@ -9,8 +9,8 @@ awk -v number="$i" 'BEGIN{name[0]="entrada"; name[1]="salida"; name[2]="error";n
 done
 
 for file in $(ls test/*);do
-    sed -i '' '/^----------/d' "$file"
-    sed -i '' '/^##########/d' "$file"
+    sed -i '/^----------/d' "$file"
+    sed -i '/^##########/d' "$file"
 done
 
 printf  "\e[34;4mRunning $test_count tests\e[39;0m\n"
