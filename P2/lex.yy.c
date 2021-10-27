@@ -511,7 +511,7 @@ char *yytext;
 #line 2 "alpha.l"
     #include <stdio.h>
     #include "tokens.h"
-    extern int yyleng;
+    extern typeof(yyleng) yyleng;
     const char* string_val;
     int colcount=0;
     int lincount=0;
@@ -875,62 +875,62 @@ YY_RULE_SETUP
 case 16:
 YY_RULE_SETUP
 #line 39 "alpha.l"
-{ cret(TOK_OR        );}
+{ cret(TOK_OR); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 40 "alpha.l"
-{ cret(TOK_NOT       );}
+{ cret(TOK_NOT); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 41 "alpha.l"
-{ cret(TOK_IGUAL     );}
+{ cret(TOK_IGUAL); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 42 "alpha.l"
-{ cret(TOK_DISTINTO  );}
+{ cret(TOK_DISTINTO); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 43 "alpha.l"
-{ cret(TOK_MENORIGUAL);}
+{ cret(TOK_MENORIGUAL); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 44 "alpha.l"
-{ cret(TOK_MAYORIGUAL);}
+{ cret(TOK_MAYORIGUAL); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 45 "alpha.l"
-{ cret(TOK_MENOR     );}
+{ cret(TOK_MENOR); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 46 "alpha.l"
-{ cret(TOK_MAYOR     );}
+{ cret(TOK_MAYOR); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 47 "alpha.l"
-{ cret(TOK_MAIN    ); }
+{ cret(TOK_MAIN); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 48 "alpha.l"
-{ cret(TOK_INT     ); }
+{ cret(TOK_INT); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 49 "alpha.l"
-{ cret(TOK_BOOLEAN ); }
+{ cret(TOK_BOOLEAN); }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 50 "alpha.l"
-{ cret(TOK_ARRAY   ); }
+{ cret(TOK_ARRAY); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
@@ -940,58 +940,58 @@ YY_RULE_SETUP
 case 29:
 YY_RULE_SETUP
 #line 52 "alpha.l"
-{ cret(TOK_IF      ); }
+{ cret(TOK_IF); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 53 "alpha.l"
-{ cret(TOK_ELSE    ); }
+{ cret(TOK_ELSE); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 54 "alpha.l"
-{ cret(TOK_WHILE   ); }
+{ cret(TOK_WHILE); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 55 "alpha.l"
-{ cret(TOK_SCANF   ); }
+{ cret(TOK_SCANF); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 56 "alpha.l"
-{ cret(TOK_PRINTF  ); }
+{ cret(TOK_PRINTF); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 57 "alpha.l"
-{ cret(TOK_RETURN  ); }
+{ cret(TOK_RETURN); }
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
 #line 58 "alpha.l"
-{ reset_cols();}
+{ reset_cols(); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 59 "alpha.l"
-{ colcount++;}
+{ colcount++; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 61 "alpha.l"
-{cret(TOK_TRUE);}
+{ cret(TOK_TRUE); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 62 "alpha.l"
-{cret(TOK_FALSE);}
+{ cret(TOK_FALSE); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 64 "alpha.l"
-{ if (yyleng > 100) { error_type=0; cret_no_count_cols(TOK_ERROR); } else { cret(TOK_IDENTIFICADOR); } }
+{ if (yyleng > 100) { error_type = 0; cret_no_count_cols(TOK_ERROR); } else { cret(TOK_IDENTIFICADOR); } }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
@@ -1001,16 +1001,16 @@ YY_RULE_SETUP
 case 41:
 YY_RULE_SETUP
 #line 66 "alpha.l"
-{  error_type=1; cret_no_count_cols(TOK_ERROR); }
+{ error_type = 1; cret_no_count_cols(TOK_ERROR); }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 67 "alpha.l"
-{ error_type=1; cret_no_count_cols(TOK_ERROR); }
+{ error_type = 1; cret_no_count_cols(TOK_ERROR); }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 70 "alpha.l"
+#line 69 "alpha.l"
 ECHO;
 	YY_BREAK
 #line 1016 "lex.yy.c"
@@ -2018,5 +2018,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 70 "alpha.l"
+#line 69 "alpha.l"
 
