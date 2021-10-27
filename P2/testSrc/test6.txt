@@ -1,0 +1,23 @@
+########## Test operations
+########## 
+main {
+ab/c=8*10
+int i9 = 9in;valid;
+}
+
+----------
+TOK_MAIN 100 main 
+TOK_LLAVEIZQUIERDA	206	{
+TOK_IDENTIFICADOR  300 ab
+TOK_DIVISION  211 /
+TOK_IDENTIFICADOR 300 c
+TOK_ASIGNACION 208 = 
+TOK_CONSTANTE_ENTERA 400 8
+TOK_ASTERISCO 212 *
+TOK_CONSTANTE_ENTERA 400 10
+TOK_INT 101 int
+TOK_IDENTIFICADOR 300 i9
+TOK_ASIGNACION 208 =
+
+----------
+****Error en [lin 3, col 10]: simbolo no permitido (9in;valid;)
