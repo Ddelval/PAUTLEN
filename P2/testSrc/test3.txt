@@ -3,11 +3,12 @@
 // **lksjfsó`wifjwwfsñlkfasñlk
 
 main {
-abcç
+abc#
 }
 
 ----------
 TOK_MAIN 100 main 
 TOK_LLAVEIZQUIERDA	206	{
+TOK_IDENTIFICADOR 300 abc
 ----------
-****Error en [lin 4, col 1]: simbolo no permitido (�)
+****Error en [lin 4, col 4]: simbolo no permitido (#)

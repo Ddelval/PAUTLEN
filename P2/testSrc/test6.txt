@@ -20,4 +20,4 @@ TOK_IDENTIFICADOR 300 i9
 TOK_ASIGNACION 208 =
 
 ----------
-****Error en [lin 3, col 10]: simbolo no permitido (9in;valid;)
+****Error en [lin 3, col 10]: simbolo no permitido (9in)
