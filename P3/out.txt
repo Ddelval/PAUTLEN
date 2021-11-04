@@ -1,0 +1,1 @@
+;R1:	<programa> ::= main { <declaraciones> <funciones> <sentencias> }

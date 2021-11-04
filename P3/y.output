@@ -1,0 +1,150 @@
+Useless nonterminals
+
+   main
+
+
+Terminals which are not used
+
+   TOK_INT
+   TOK_BOOLEAN
+   TOK_ARRAY
+   TOK_FUNCTION
+   TOK_IF
+   TOK_ELSE
+   TOK_WHILE
+   TOK_SCANF
+   TOK_PRINTF
+   TOK_RETURN
+   TOK_PUNTOYCOMA
+   TOK_COMA
+   TOK_PARENTESISIZQUIERDO
+   TOK_PARENTESISDERECHO
+   TOK_CORCHETEIZQUIERDO
+   TOK_CORCHETEDERECHO
+   TOK_ASIGNACION
+   TOK_MAS
+   TOK_MENOS
+   TOK_DIVISION
+   TOK_ASTERISCO
+   TOK_AND
+   TOK_OR
+   TOK_NOT
+   TOK_IGUAL
+   TOK_DISTINTO
+   TOK_MENORIGUAL
+   TOK_MAYORIGUAL
+   TOK_MENOR
+   TOK_MAYOR
+   TOK_IDENTIFICADOR
+   TOK_CONSTANTE_ENTERA
+   TOK_TRUE
+   TOK_FALSE
+   TOK_ERROR
+
+
+Useless rules
+
+    2 main: TOK_MAIN
+
+
+Grammar
+
+    0 $accept: programa $end
+
+    1 programa: TOK_MAIN TOK_LLAVEIZQUIERDA TOK_LLAVEDERECHA
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+TOK_MAIN (258) 1
+TOK_INT (259)
+TOK_BOOLEAN (260)
+TOK_ARRAY (261)
+TOK_FUNCTION (262)
+TOK_IF (263)
+TOK_ELSE (264)
+TOK_WHILE (265)
+TOK_SCANF (266)
+TOK_PRINTF (267)
+TOK_RETURN (268)
+TOK_PUNTOYCOMA (269)
+TOK_COMA (270)
+TOK_PARENTESISIZQUIERDO (271)
+TOK_PARENTESISDERECHO (272)
+TOK_CORCHETEIZQUIERDO (273)
+TOK_CORCHETEDERECHO (274)
+TOK_LLAVEIZQUIERDA (275) 1
+TOK_LLAVEDERECHA (276) 1
+TOK_ASIGNACION (277)
+TOK_MAS (278)
+TOK_MENOS (279)
+TOK_DIVISION (280)
+TOK_ASTERISCO (281)
+TOK_AND (282)
+TOK_OR (283)
+TOK_NOT (284)
+TOK_IGUAL (285)
+TOK_DISTINTO (286)
+TOK_MENORIGUAL (287)
+TOK_MAYORIGUAL (288)
+TOK_MENOR (289)
+TOK_MAYOR (290)
+TOK_IDENTIFICADOR (291)
+TOK_CONSTANTE_ENTERA (292)
+TOK_TRUE (293)
+TOK_FALSE (294)
+TOK_ERROR (295)
+
+
+Nonterminals, with rules where they appear
+
+$accept (41)
+    on left: 0
+programa (42)
+    on left: 1, on right: 0
+
+
+state 0
+
+    0 $accept: . programa $end
+
+    TOK_MAIN  shift, and go to state 1
+
+    programa  go to state 2
+
+
+state 1
+
+    1 programa: TOK_MAIN . TOK_LLAVEIZQUIERDA TOK_LLAVEDERECHA
+
+    TOK_LLAVEIZQUIERDA  shift, and go to state 3
+
+
+state 2
+
+    0 $accept: programa . $end
+
+    $end  shift, and go to state 4
+
+
+state 3
+
+    1 programa: TOK_MAIN TOK_LLAVEIZQUIERDA . TOK_LLAVEDERECHA
+
+    TOK_LLAVEDERECHA  shift, and go to state 5
+
+
+state 4
+
+    0 $accept: programa $end .
+
+    $default  accept
+
+
+state 5
+
+    1 programa: TOK_MAIN TOK_LLAVEIZQUIERDA TOK_LLAVEDERECHA .
+
+    $default  reduce using rule 1 (programa)
