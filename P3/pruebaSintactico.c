@@ -13,7 +13,7 @@ extern int error_type;
 
 void yyerror(const char *s) {
     printf("Error:%s", s);
-    exit(1); // TODO: CHECK
+    exit(1); /* TODO: CHECK*/
 }
 
 int main(int argc, char **argv) {

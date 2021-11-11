@@ -6,7 +6,7 @@
     int colcount=0;
     int lincount=0;
     int error_type;
-    #define cret(x)  fprintf(";D:\t%s",yytext); colcount+=yyleng; return x;
+    #define cret(x)  printf(";D:\t%s\n",yytext); colcount+=yyleng; return x;
     #define reset_cols()  colcount=0; lincount++;
     #define cret_no_count_cols(x)  string_val=#x;  return x;
 %}

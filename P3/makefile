@@ -1,19 +1,19 @@
-.PHONY: test
+#.PHONY: test
 all:  pruebaSintactico
-
+CC = gcc
 pruebaSintactico: pruebaSintactico.o lex.yy.o y.tab.o
-	gcc -g -o $@ $^
+	$(CC) -g -o $@ $^
 
 pruebaSintactico.o: pruebaSintactico.c
-	gcc -Wall -ansi -pedantic -c -g -o $@ $^
+	$(CC) -Wall -ansi -pedantic -c -g -o $@ $^
 
 lex.yy.o: alfa.l
 	flex $^
-	gcc -c -g -o lex.yy.o lex.yy.c
+	$(CC) -c -g -o lex.yy.o lex.yy.c
 
 y.tab.o: alfa.y
 	bison -dyv $^
-	gcc -c -g -o y.tab.o y.tab.c
+	$(CC) -c -g -o y.tab.o y.tab.c
 #test: pruebaSintactico 
 #	./check_tests.sh
 

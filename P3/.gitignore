@@ -2,3 +2,7 @@ testOut
 test/*
 pruebaMorfo
 lex.yy.c
+
+y.output
+y.tab.h
+y.tab.c
