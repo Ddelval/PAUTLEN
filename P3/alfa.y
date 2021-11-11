@@ -75,9 +75,9 @@ clase_escalar: tipo
 {fprintf(yyout, ";R9:\t<clase_escalar> ::= <tipo>");};
 
 tipo: TOK_INT
-{fprintf(yyout, ";R10:\t<tipo> ::= TOK_INT");};
+{fprintf(yyout, ";R10:\t<tipo> ::= int");};
 tipo: TOK_BOOLEAN
-{fprintf(yyout, ";R11:\t<tipo> ::= TOK_BOOLEAN");};
+{fprintf(yyout, ";R11:\t<tipo> ::= boolean");};
 
 clase_vector: TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO constante_entera TOK_CORCHETEDERECHO;
 

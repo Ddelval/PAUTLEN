@@ -58,5 +58,5 @@
 {fprintf(yyout, ";R100:\t<constante> ::= <constante_entera>");};
 {fprintf(yyout, ";R102:\t<constante_logica> ::= true");};
 {fprintf(yyout, ";R103:\t<constante_logica> ::= false");};
-{fprintf(yyout, ";R104:\t<constante_entera> ::= <numero>");};
+{fprintf(yyout, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA");};
 {fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR");};
