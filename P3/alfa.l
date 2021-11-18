@@ -5,8 +5,9 @@
     extern FILE* yyout;
     int colcount=0;
     int lincount=0;
-    int error_type;
-    #define cret(x)  printf(";D:\t%s\n",yytext); colcount+=yyleng; return x;
+    int lastlen=0;
+    int error_type=-1;
+    #define cret(x)  fprintf(yyout,";D:\t\t%s\n",yytext); colcount+=yyleng; lastlen=yyleng; return x;
     #define reset_cols()  colcount=0; lincount++;
     #define cret_no_count_cols(x)  string_val=#x;  return x;
 %}

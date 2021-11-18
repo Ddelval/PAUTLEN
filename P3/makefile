@@ -1,7 +1,7 @@
-#.PHONY: test
+.PHONY: test
 all:  pruebaSintactico
 CC = gcc
-pruebaSintactico: pruebaSintactico.o lex.yy.o y.tab.o
+pruebaSintactico: pruebaSintactico.o y.tab.o lex.yy.o 
 	$(CC) -g -o $@ $^
 
 pruebaSintactico.o: pruebaSintactico.c
@@ -14,8 +14,11 @@ lex.yy.o: alfa.l
 y.tab.o: alfa.y
 	bison -dyv $^
 	$(CC) -c -g -o y.tab.o y.tab.c
-#test: pruebaSintactico 
-#	./check_tests.sh
+
+testSimple: pruebaSintactico
+	./pruebaSintactico test.txt out.txt
+test: pruebaSintactico 
+	./check_tests.sh
 
 clean:
 	rm pruebaSintactico *.o lex.yy.c 

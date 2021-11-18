@@ -22,7 +22,7 @@ done
 printf  "\e[34;4mRunning $test_count tests\e[39;0m\n"
 
 for ((i=1; i<=$test_count; i++)); do
-./pruebaMorfo test/entrada${i}.txt testOut/salida${i}.txt >testOut/error${i}.txt
+./pruebaSintactico test/entrada${i}.txt testOut/salida${i}.txt >testOut/error${i}.txt
 out_dif=$(diff -Bb test/salida$i.txt testOut/salida$i.txt)
 err_dif=$(diff -Bb test/error$i.txt testOut/error$i.txt)
 count_dif=$(echo $out_dif $err_dif |wc -w)

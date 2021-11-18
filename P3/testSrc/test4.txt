@@ -1,4 +1,4 @@
-########## Third given test
+########## Unariy minus given test
 ########## 
 main
 {
@@ -6,14 +6,9 @@ int x;
 int y;
 int z;
 
-z=x+y;
-printf $;
+z=-x+1;
 
 }
-
-// Este programa tiene un error morfologico que genera
-// el siguiente mensaje
-// ****Error en [lin 8, col 8]: simbolo no permitido ($)
 
 ----------
 ;D:	main
@@ -52,20 +47,23 @@ printf $;
 ;R21:	<funciones> ::=
 ;R108:	<identificador> ::= TOK_IDENTIFICADOR
 ;D:	=
-;D:	x
+;D:		-
+;D:		x
 ;R108:	<identificador> ::= TOK_IDENTIFICADOR
-;D:	+
+;D:		+
 ;R80:	<exp> ::= <identificador>
-;D:	y
-;R108:	<identificador> ::= TOK_IDENTIFICADOR
-;D:	;
-;R80:	<exp> ::= <identificador>
+;R76:	<exp> ::= - <exp>
+;D:		1
+;R104:	<constante_entera> ::= TOK_CONSTANTE_ENTERA
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:		;
 ;R72:	<exp> ::= <exp> + <exp>
 ;R43:	<asignacion> ::= <identificador> = <exp>
 ;R34:	<sentencia_simple> ::= <asignacion>
 ;R32:	<sentencia> ::= <sentencia_simple> ;
-;D:	printf
+;D:		}
+;R30:	<sentencias> ::= <sentencia>
+;R1:	<programa> ::= main { <declaraciones> <funciones> <sentencias> }
 
 ----------
-
-****Error en [lin 8, col 8]: simbolo no permitido ($)
