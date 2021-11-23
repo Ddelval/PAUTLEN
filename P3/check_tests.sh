@@ -2,11 +2,12 @@
 
 sed="sed -i"
 if [[ $OSTYPE == 'darwin'* ]];then 
-sed="sed -i ''"
+sed="sed -i .back "
 fi
 
 mkdir -p testOut
 mkdir -p test
+rm test/*
 test_count=$(( $(ls testSrc/test*.txt|wc -w) ))
 
 
