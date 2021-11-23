@@ -1,7 +1,7 @@
 .PHONY: test
 all:  pruebaSintactico
 CC = gcc
-pruebaSintactico: pruebaSintactico.o y.tab.o lex.yy.o 
+pruebaSintactico: y.tab.o lex.yy.o pruebaSintactico.o
 	$(CC) -g -o $@ $^
 
 pruebaSintactico.o: pruebaSintactico.c

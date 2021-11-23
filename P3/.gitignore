@@ -1,6 +1,6 @@
 testOut
 test/*
-pruebaMorfo
+pruebaSintactico
 lex.yy.c
 
 y.output
