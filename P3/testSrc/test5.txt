@@ -1,0 +1,19 @@
+########## General test #1
+########## 
+main
+{
+int main {return 0;}
+}
+
+----------
+;D:		main
+;D:		{
+;D:		int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:		main
+
+----------
+
+****Error sintactico en [lin 3, col 5]

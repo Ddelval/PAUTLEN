@@ -1,0 +1,45 @@
+########## General test #2
+########## 
+main
+{
+int i, n, t;
+
+return 0;
+}
+
+----------
+;D:		main
+;D:		{
+;D:		int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:		i
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:		,
+;D:		n
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:		,
+;D:		t
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:		;
+;R18:	<identificadores> ::= <identificador>
+;R19:	<identificadores> ::= <identificador> , <identificadores>
+;R19:	<identificadores> ::= <identificador> , <identificadores>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:		return
+;R2:	<declaraciones> ::= <declaracion>
+;R21:	<funciones> ::=
+;D:		0
+;R104:	<constante_entera> ::= TOK_CONSTANTE_ENTERA
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:		;
+;R61:	<retorno_funcion> ::= return <exp>
+;R38:	<sentencia_simple> ::= <retorno_funcion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:		}
+;R30:	<sentencias> ::= <sentencia>
+;R1:	<programa> ::= main { <declaraciones> <funciones> <sentencias> }
+
+----------
