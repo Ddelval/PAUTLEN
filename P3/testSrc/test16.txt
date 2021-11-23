@@ -1,0 +1,25 @@
+########## Imported tests number 16
+########## 
+
+main {
+
+  function int cuadrado(int num){
+    return num*num;
+  }
+
+  int x, resultado;
+
+  scanf x; // Esta linea lee el valor de x
+  resultado = cuadrado(x); // Esta linea llama a la funcion definida
+  printf resultado; // Esta linea imprime el resultado
+}
+
+// Este programa tiene un error sintactico, las declaraciones deben ir antes de las declaraciones de funciones,
+// que genera el siguiente mensaje
+//    ****Error sintactico en [lin 4, col 3]
+----------
+;D:	main
+;D:	{
+;D:	function
+----------\n
+****Error sintactico en [lin 4, col 3]

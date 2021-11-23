@@ -120,7 +120,7 @@ funcion: TOK_FUNCTION tipo identificador TOK_PARENTESISIZQUIERDO
 {fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");};
     
 parametros_funcion: parametro_funcion resto_parametros_funcion
-{fprintf(yyout, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>");};
+{fprintf(yyout, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");};
 
 parametros_funcion:
 {fprintf(yyout, ";R24:\t<parametros_funcion> ::=\n");};
@@ -222,7 +222,7 @@ exp: exp TOK_AND exp
 exp: exp TOK_OR exp
 {fprintf(yyout, ";R78:\t<exp> ::= <exp> || <exp>\n");};
 
-exp: exp TOK_NOT exp
+exp: TOK_NOT exp
 {fprintf(yyout, ";R79:\t<exp> ::= ! <exp>\n");};
 
 exp: identificador

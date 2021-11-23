@@ -1,0 +1,46 @@
+########## Imported tests number 25
+########## 
+main{
+int i;
+i = 0;
+
+while(i < 5) // Error porque faltan los paréntesis de la comparación
+printf i;
+i = i+1;
+}
+// Este programa tiene un error sintáctico que genera
+// el siguiente mensaje
+// ****Error sintáctico en [lin 5 col 9]
+----------
+;D:	main
+;D:	{
+;D:	int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	i
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	i
+;R2:	<declaraciones> ::= <declaracion>
+;R21:	<funciones> ::= 
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	=
+;D:	0
+;R104:	<constante_entera> ::= TOK_CONSTANTE_ENTERA
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	;
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	while
+;D:	(
+;D:	i
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	<
+;R80:	<exp> ::= <identificador>
+----------\n
+****Error sintactico en [lin 5, col 9]

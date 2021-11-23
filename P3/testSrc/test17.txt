@@ -1,0 +1,75 @@
+########## Imported tests number 17
+########## 
+
+main {
+  int x, resultado;
+
+  scanf x; // Esta linea lee el valor de x
+  resultado = cuadrado(x); // Esta linea llama a la funcion definida
+  printf resultado; // Esta linea imprime el resultado
+
+
+  function int cuadrado(int num){
+    return num*num;
+  }
+}
+
+// Este programa tiene un error sintactico, las declaraciones de funciones deben ir antes de las sentencias,
+// que genera el siguiente mensaje
+//    ****Error sintactico en [lin 10, col 3]
+----------
+;D:	main
+;D:	{
+;D:	int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	,
+;D:	resultado
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R19:	<identificadores> ::= <identificador> , <identificadores>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	scanf
+;R2:	<declaraciones> ::= <declaracion>
+;R21:	<funciones> ::= 
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;R54:	<lectura> ::= scanf <identificador>
+;R35:	<sentencia_simple> ::= <lectura>
+;D:	;
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	resultado
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	=
+;D:	cuadrado
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	(
+;D:	x
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	)
+;R80:	<exp> ::= <identificador>
+;R92:	<resto_lista_expresiones> ::= 
+;R89:	<lista_expresiones> ::= <exp> <resto_lista_expresiones>
+;R88:	<exp> ::= <identificador> ( <lista_expresiones> )
+;D:	;
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	printf
+;D:	resultado
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R80:	<exp> ::= <identificador>
+;R56:	<escritura> ::= printf <exp>
+;R36:	<sentencia_simple> ::= <escritura>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	function
+;R30:	<sentencias> ::= <sentencia>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+----------\n
+****Error sintactico en [lin 10, col 3]

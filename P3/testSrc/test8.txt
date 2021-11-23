@@ -1,0 +1,68 @@
+########## Imported tests number 8
+########## 
+main
+{
+int a,b,c;
+
+
+scanf a;
+scanf b;
+scanf c;
+
+int total = a+b+c;
+
+printf total;
+}
+
+// Este programa tiene un error sintáctico que genera
+// el siguiente mensaje
+// ****Error sintáctico en [lin 10 col 1]
+----------
+;D:	main
+;D:	{
+;D:	int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	a
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	,
+;D:	b
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	,
+;D:	c
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R19:	<identificadores> ::= <identificador> , <identificadores>
+;R19:	<identificadores> ::= <identificador> , <identificadores>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	scanf
+;R2:	<declaraciones> ::= <declaracion>
+;R21:	<funciones> ::= 
+;D:	a
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;R54:	<lectura> ::= scanf <identificador>
+;R35:	<sentencia_simple> ::= <lectura>
+;D:	;
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	scanf
+;D:	b
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;R54:	<lectura> ::= scanf <identificador>
+;R35:	<sentencia_simple> ::= <lectura>
+;D:	;
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	scanf
+;D:	c
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;R54:	<lectura> ::= scanf <identificador>
+;R35:	<sentencia_simple> ::= <lectura>
+;D:	;
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	int
+;R30:	<sentencias> ::= <sentencia>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+----------\n
+****Error sintactico en [lin 10, col 1]

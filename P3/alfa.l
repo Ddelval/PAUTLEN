@@ -58,6 +58,7 @@ WHITESPACE [ \t\n]
 "return"    { cret(TOK_RETURN); }
 "\n"        { reset_cols(); }
 " "         { colcount++; }
+"\t"         { colcount+=4; }
 
 "true"      { cret(TOK_TRUE); }
 "false"     { cret(TOK_FALSE); }

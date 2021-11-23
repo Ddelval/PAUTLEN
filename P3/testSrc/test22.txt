@@ -1,0 +1,75 @@
+########## Imported tests number 22
+########## 
+main{
+int a;
+
+while((a < 5)){
+  printf a;
+  a = a+1;
+}
+
+}
+----------
+;D:	main
+;D:	{
+;D:	int
+;R10:	<tipo> ::= int
+;R9:	<clase_escalar> ::= <tipo>
+;R5:	<clase> ::= <clase_escalar>
+;D:	a
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	while
+;R2:	<declaraciones> ::= <declaracion>
+;R21:	<funciones> ::= 
+;D:	(
+;D:	(
+;D:	a
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	<
+;R80:	<exp> ::= <identificador>
+;D:	5
+;R104:	<constante_entera> ::= TOK_CONSTANTE_ENTERA
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	)
+;R97:	<comparacion> ::= <exp> < <exp>
+;R83:	<exp> ::= ( <comparacion> )
+;D:	)
+;D:	{
+;D:	printf
+;D:	a
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R80:	<exp> ::= <identificador>
+;R56:	<escritura> ::= printf <exp>
+;R36:	<sentencia_simple> ::= <escritura>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	a
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	=
+;D:	a
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	+
+;R80:	<exp> ::= <identificador>
+;D:	1
+;R104:	<constante_entera> ::= TOK_CONSTANTE_ENTERA
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	;
+;R72:	<exp> ::= <exp> + <exp>
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	}
+;R30:	<sentencias> ::= <sentencia>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R52:	<bucle> ::= while ( <exp> ) { <sentencias> }
+;R41:	<bloque> ::= <bucle>
+;R33:	<sentencia> ::= <bloque>
+;D:	}
+;R30:	<sentencias> ::= <sentencia>
+;R1:	<programa> ::= main { <declaraciones> <funciones> <sentencias> }
+----------\n

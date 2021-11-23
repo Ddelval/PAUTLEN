@@ -1,0 +1,12 @@
+########## Imported tests number 9
+########## 
+int a = 0;
+print a;
+
+ // Este programa tiene un error sintáctico que genera
+ // el siguiente mensaje
+ // ****Error sintáctico en [lin 1 col 1]
+----------
+;D:	int
+----------\n
+****Error sintactico en [lin 1, col 1]
