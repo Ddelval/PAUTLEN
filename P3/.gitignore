@@ -2,6 +2,7 @@ testOut
 test/*
 pruebaSintactico
 lex.yy.c
+unknown_tests
 
 y.output
 y.tab.h
