@@ -15,16 +15,16 @@ typedef struct {
 
 // Hash table structure: create with ht_create, free with ht_destroy.
 struct ht {
-    ht_entry *entries;          // hash slots
-    size_t capacity;            // size of _entries array
-    size_t length;              // number of items in hash table
-    void (*free_element)(void); // free elments
+    ht_entry *entries; // hash slots
+    size_t capacity;   // size of _entries array
+    size_t length;     // number of items in hash table
+    free_function free_element;
 };
 typedef unsigned long long ull;
 
 #define INITIAL_CAPACITY 16 // must not be zero
 
-ht *ht_create(void (*free_element)(void)) {
+ht *ht_create(free_function fun) {
     // Allocate space for hash table struct.
     ht *table = malloc(sizeof(ht));
     if (table == NULL) {
@@ -32,7 +32,7 @@ ht *ht_create(void (*free_element)(void)) {
     }
     table->length = 0;
     table->capacity = INITIAL_CAPACITY;
-    table->free_element = free_element;
+    table->free_element = fun;
 
     // Allocate (zero'd) space for entry buckets.
     table->entries = calloc(table->capacity, sizeof(ht_entry));
@@ -48,6 +48,7 @@ void ht_destroy(ht *table) {
     for (size_t i = 0; i < table->capacity; i++) {
         if (table->entries[i].key != NULL) {
             free((void *)table->entries[i].key);
+            table->free_element(table->entries[i].value);
         }
     }
 

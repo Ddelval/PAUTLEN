@@ -9,9 +9,10 @@
 
 // Hash table structure: create with ht_create, free with ht_destroy.
 typedef struct ht ht;
+typedef void* (*free_function)(void*) ;
 
 // Create hash table and return pointer to it, or NULL if out of memory.
-ht *ht_create(void (*free_element)(void));
+ht *ht_create(free_function fun);
 
 // Free memory allocated for hash table, including allocated keys.
 void ht_destroy(ht *table);

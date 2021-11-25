@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 int main(int argc, char **argv) {
     FILE *in, *out;
     in = fopen(argv[1], "r");
