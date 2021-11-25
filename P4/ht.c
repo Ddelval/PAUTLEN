@@ -92,7 +92,7 @@ void *ht_get(ht *table, const char *key) {
     return NULL;
 }
 
-int ht_present(ht *table, const char *key) {
+bool ht_present(ht *table, const char *key) {
     // AND hash with capacity-1 to ensure it's within entries array.
     ull hash = hash_key(key);
     size_t index = (size_t)(hash & (ull)(table->capacity - 1));
@@ -106,6 +106,30 @@ int ht_present(ht *table, const char *key) {
         // Key wasn't in this slot, move to next (linear probing).
         index++;
         if (index >= table->capacity) {
+            // At end of entries array, wrap around.
+            index = 0;
+        }
+    }
+    return false;
+}
+
+bool ht_pop(ht *table, const char *key) {
+    ht_entry *entries = table->entries;
+    size_t capacity = table->capacity;
+    ull hash = hash_key(key);
+    size_t index = (size_t)(hash & (ull)(capacity - 1));
+
+    // Loop till we find an empty entry.
+    while (entries[index].key != NULL) {
+        if (strcmp(key, entries[index].key) == 0) {
+            // Found key (it already exists), update value.
+            free((void *)table->entries[index].key);
+            table->free_element(table->entries[index].value);
+            return true;
+        }
+        // Key wasn't in this slot, move to next (linear probing).
+        index++;
+        if (index >= capacity) {
             // At end of entries array, wrap around.
             index = 0;
         }
@@ -204,7 +228,7 @@ hti ht_iterator(ht *table) {
     return it;
 }
 
-int ht_next(hti *it) {
+bool ht_next(hti *it) {
     // Loop till we've hit end of entries array.
     ht *table = it->_table;
     while (it->_index < table->capacity) {
