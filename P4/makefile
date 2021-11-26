@@ -1,6 +1,6 @@
 .PHONY: test
 all:  tablaSimbolos
-CC = gcc
+CC = gcc-11 -fsanitize=address
 tablaSimbolos: tablaSimbolos.o syTable.o ht.o
 	$(CC) -g  -o $@ $^
  

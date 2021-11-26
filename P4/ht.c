@@ -44,6 +44,7 @@ ht *ht_create(free_function fun) {
 }
 
 void ht_destroy(ht *table) {
+    if (!table) return;
     // First free allocated keys.
     for (size_t i = 0; i < table->capacity; i++) {
         if (table->entries[i].key != NULL) {

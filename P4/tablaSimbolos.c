@@ -51,5 +51,6 @@ int main(int argc, char **argv) {
             fprintf(stderr, "%d\t%s\t%d\n", n_filled, id, arg);
         }
     }
+    syTable_destroy(st);
     return 0;
 }
