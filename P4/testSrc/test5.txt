@@ -1,0 +1,28 @@
+########## Created test 4
+########## 
+uno 2
+uno
+funcion1 -10
+tres 3
+uno
+tres
+cinco
+tres
+uno
+cierre -999
+tres
+uno
+----------
+uno
+uno 2
+funcion1
+tres
+uno 2
+tres 3
+cinco -1
+tres 3
+uno 2
+cierre
+tres -1
+uno 2
+----------

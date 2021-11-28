@@ -5,7 +5,7 @@ tablaSimbolos: tablaSimbolos.o syTable.o ht.o
 	$(CC) -g  -o $@ $^
  
 %.o: %.c
-	$(CC) -Wall   -c -g -o $@ $^
+	$(CC) -Wall -c -g -o $@ $^
 
 test: tablaSimbolos 
 	./check_tests.sh
