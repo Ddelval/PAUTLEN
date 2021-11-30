@@ -1,7 +1,7 @@
 .PHONY: clean
 
 CC=g++-11
-FLAGS= -g -fsanitize=address
+FLAGS= -g 
 
 test: ht.o main.o
 	$(CC) $(FLAGS) -o $@ $^

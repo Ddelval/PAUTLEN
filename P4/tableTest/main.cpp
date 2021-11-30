@@ -122,17 +122,51 @@ bool test_random_keys(int amount) {
     cout << "Random deletions ok" << endl;
     return true;
 }
+bool test_different_keys(int amount) {
+    hashUnion uni = hashUnion();
+    srand(1);
+
+    for (int i = 0; i < amount; ++i) {
+        string s = "";
+        for (int j = 0; j < 4; ++j) {
+            s += char('a' + rand() % 26);
+        }
+        int value = rand() % 1000;
+        //cerr << "Inserted " << s << endl;
+        if (!uni.check_insert(s, value)) {
+            cout << "insert failure:" << s << " " << value << endl;
+            return false;
+        }
+        if (i && i % 4 == 0) {
+            string s = "";
+            for (int j = 0; j < 4; ++j) {
+                s += char('a' + rand() % 26);
+            }
+            //cerr << "Deleted " << s << endl;
+            if (!uni.check_delete(s)) {
+                cout << "delete failure" << endl;
+                return false;
+            }
+        }
+    }
+    cout << "Different deletions ok" << endl;
+    return true;
+}
 
 int main() {
+    /*
     if (!testInsertions(1000000)) {
         return 1;
-    }
-    if (!testDeletions(10000)) {
+    }*/
+    if (!testDeletions(100000)) {
         return 1;
     }
+    /*
     if (!test_random_keys(1000000)) {
         return 1;
+    }if (!test_different_keys(1000000)) {
+        return 1;
     }
-
+*/
     return 0;
 }
