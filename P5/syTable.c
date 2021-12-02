@@ -1,87 +1,87 @@
 #include "syTable.h"
 #include "ht.h"
+#include "tableNode.h"
 #include <stdio.h>
 #include <stdlib.h>
 struct _syTable {
     ht *global;
     ht *local;
 };
-
-void free_element(void *element) { free(element); }
+void free_wrap(void *var) { free_node((Node *)var); }
 
 syTable *syTable_create() {
     syTable *st = calloc(1, sizeof(syTable));
     if (st == NULL) {
         return NULL;
     }
-    st->global = ht_create(free_element);
+    st->global = ht_create(free_wrap);
     if (st->global == NULL) {
         free(st);
         return NULL;
     }
     return st;
 }
+
 void syTable_destroy(syTable *table) {
     ht_destroy(table->global);
     ht_destroy(table->local);
     free(table);
 }
-static bool syTable_insert_into_table(ht *table, const char *name, int val) {
-    if (ht_present(table, name)) {
+
+static bool syTable_insert_into_table(ht *table, Node node) {
+
+    if (ht_present(table, node.name)) {
         return false;
     }
-    int *elem = calloc(1, sizeof(int));
-    if (!elem) {
-        return false;
+    Node *new_node = node_copy(&node);
+    if (!new_node) {
+        node_free(new_node);
     }
-    *elem = val;
-    if (ht_set(table, name, elem)) {
+    if (ht_set(table, new_node->name, new_node)) {
         return true;
     } else {
-        free(elem);
+        node_free(new_node);
         return false;
     }
 }
-static bool syTable_insert_global(syTable *st, const char *name, int val) {
-    return syTable_insert_into_table(st->global, name, val);
+static bool syTable_insert_global(syTable *st, Node node) {
+    return syTable_insert_into_table(st->global, node);
 }
-static bool syTable_insert_local(syTable *st, const char *name, int val) {
-    return syTable_insert_into_table(st->local, name, val);
+
+static bool syTable_insert_local(syTable *st, Node node) {
+    return syTable_insert_into_table(st->local, node);
 }
-bool syTable_insert(syTable *st, const char *name, int val) {
+
+static bool syTable_pop_global(syTable *st, Node node) {
+    return ht_pop(st->global, node.name);
+}
+
+bool syTable_insert(syTable *st, Node node) {
     if (st->local) {
-        return syTable_insert_local(st, name, val);
+        bool status = syTable_insert_local(st, node);
+        return status;
     }
-    return syTable_insert_global(st, name, val);
+    bool status = syTable_insert_global(st, node);
+    return status;
 }
 
-/*
-static bool syTable_pop_local(syTable *st, const char *name) {
-    return ht_pop(st->local, name);
-}
-*/
-
-static bool syTable_pop_global(syTable *st, const char *name) {
-    return ht_pop(st->global, name);
-}
-
-bool syTable_create_scope(syTable *st, const char *name, int arg) {
+bool syTable_create_scope(syTable *st, Node node) {
     if (st->local) {
         return false;
     }
-    if (!syTable_insert_global(st, name, arg)) {
+    if (!syTable_insert_global(st, node)) {
         return false;
     }
-    st->local = ht_create(free_element);
+    st->local = ht_create(free_wrap);
     if (!st->local) {
         // undo actions
-        syTable_pop_global(st, name);
+        syTable_pop_global(st, node);
         return false;
     }
-    if (!syTable_insert_local(st, name, arg)) {
+    if (!syTable_insert_local(st, node)) {
         // undo actions
         ht_destroy(st->local);
-        syTable_pop_global(st, name);
+        syTable_pop_global(st, node);
         return false;
     }
     return true;
@@ -96,12 +96,12 @@ bool syTable_close_scope(syTable *st) {
     return false;
 }
 
-const int *syTable_search(syTable *st, const char *name) {
+const int *syTable_search(syTable *st, Node node) {
     if (st->local) {
-        int *loc = ht_get(st->local, name);
+        int *loc = ht_get(st->local, node.name);
         if (loc) {
             return loc;
         }
     }
-    return ht_get(st->global, name);
+    return ht_get(st->global, node.name);
 }
