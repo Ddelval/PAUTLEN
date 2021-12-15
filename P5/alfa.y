@@ -366,13 +366,20 @@ comparacion: exp TOK_IGUAL exp
 comparacion: exp TOK_DISTINTO exp
 {
 	fprintf(yyout, ";R94:\t<comparacion> ::= <exp> != <exp>\n");
+	not_equal($1, $3);
 };
 
 comparacion: exp TOK_MENORIGUAL exp
-{fprintf(yyout, ";R95:\t<comparacion> ::= <exp> <= <exp>\n");};
+{
+	fprintf(yyout, ";R95:\t<comparacion> ::= <exp> <= <exp>\n");
+	le($1, $3);
+};
 
 comparacion: exp TOK_MAYORIGUAL exp
-{fprintf(yyout, ";R96:\t<comparacion> ::= <exp> >= <exp>\n");};
+{
+	fprintf(yyout, ";R96:\t<comparacion> ::= <exp> >= <exp>\n");
+	ge(
+};
 
 comparacion: exp TOK_MENOR exp
 {fprintf(yyout, ";R97:\t<comparacion> ::= <exp> < <exp>\n");};
