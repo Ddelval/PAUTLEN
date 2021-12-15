@@ -21,7 +21,7 @@ void returns(attributes_t $2);
 void add(attributes_t *$$, attributes_t $1, attributes_t $3);
 void substract(attributes_t *$$, attributes_t $1, attributes_t $3);
 void divide(attributes_t *$$, attributes_t $1, attributes_t $3);
-void amultiply(attributes_t *$$, attributes_t $1, attributes_t $3);
+void multiply(attributes_t *$$, attributes_t $1, attributes_t $3);
 
 void uminus(attributes_t *$$, attributes_t $2);
 
