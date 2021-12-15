@@ -358,10 +358,15 @@ resto_lista_expresiones:
 {fprintf(yyout, ";R92:\t<resto_lista_expresiones> ::=\n");};
 
 comparacion: exp TOK_IGUAL exp
-{fprintf(yyout, ";R93:\t<comparacion> ::= <exp> == <exp>\n");};
+{
+	fprintf(yyout, ";R93:\t<comparacion> ::= <exp> == <exp>\n");
+	equal($1, $3);
+};
 
 comparacion: exp TOK_DISTINTO exp
-{fprintf(yyout, ";R94:\t<comparacion> ::= <exp> != <exp>\n");};
+{
+	fprintf(yyout, ";R94:\t<comparacion> ::= <exp> != <exp>\n");
+};
 
 comparacion: exp TOK_MENORIGUAL exp
 {fprintf(yyout, ";R95:\t<comparacion> ::= <exp> <= <exp>\n");};
@@ -376,7 +381,9 @@ comparacion: exp TOK_MAYOR exp
 {fprintf(yyout, ";R98:\t<comparacion> ::= <exp> > <exp>\n");};
 
 constante: constante_logica
-{fprintf(yyout, ";R99:\t<constante> ::= <constante_logica>\n");};
+{
+	fprintf(yyout, ";R99:\t<constante> ::= <constante_logica>\n");
+};
 
 constante: constante_entera
 {
