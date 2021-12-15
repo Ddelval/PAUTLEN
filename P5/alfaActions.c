@@ -7,6 +7,7 @@
 dataType current_type;
 variableType current_class;
 int labels = 0;
+int noes = 0;
 bool in_function = false;
 bool returning = false;
 extern syTable *symbolTable;
@@ -222,9 +223,10 @@ void or(attributes_t *$$, attributes_t $1, attributes_t $3) {
 }
 
 void not(attributes_t *$$, attributes_t $2) {
-    if ($1.data_type != BOOLEAN || $3.data_type != BOOLEAN) {
+    if ($2.data_type != BOOLEAN) {
         //TODO: Error
     }
-    $$->is_address = false;
     $$->data_type = BOOLEAN;
+    $$->is_address = false;
+    no(yyout, $2.is_address, noes++);
 }
