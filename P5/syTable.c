@@ -7,7 +7,7 @@ struct _syTable {
     ht *global;
     ht *local;
 };
-void free_wrap(void *var) { free_node((Node *)var); }
+void free_wrap(void *var) { node_free((Node *)var); }
 
 syTable *syTable_create() {
     syTable *st = calloc(1, sizeof(syTable));

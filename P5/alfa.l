@@ -4,6 +4,7 @@
     #include "y.tab.h"
     const char* string_val;
     extern FILE* yyout;
+    extern YYSTYPE yylval;
     int colcount=0;
     int lincount=0;
     int lastlen=0;
@@ -65,7 +66,7 @@ WHITESPACE [ \t\n]
 "false"     { cret(TOK_FALSE); }
 
 [A-Za-z]([A-Za-z]|[0-9])*   { if (yyleng > MAX_IDENTIFIER_LENGTH) { error_type = 0; cret_no_count_cols(TOK_ERROR); } else { strcpy(yylval.attributes.lexeme, yytext); cret(TOK_IDENTIFICADOR); } }
-[0-9]+                      { yyval.attributes.value_int = atoi(yytext); cret(TOK_CONSTANTE_ENTERA); }
+[0-9]+                      { yylval.attributes.value_int = atoi(yytext); cret(TOK_CONSTANTE_ENTERA); }
 [0-9]+{NO_SYMBOL_OR_WHITE}* { error_type = 1; cret_no_count_cols(TOK_ERROR); }
 .                           { error_type = 1; cret_no_count_cols(TOK_ERROR); }
 

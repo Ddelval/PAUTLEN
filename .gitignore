@@ -64,3 +64,4 @@ dkms.conf
 # executables:
 **/bin
 **/asm_gen
+P1/delVal_Seoane_Sancho/generacion.c

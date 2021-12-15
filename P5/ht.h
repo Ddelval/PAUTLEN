@@ -5,7 +5,7 @@
 
 
 #include <stddef.h>
-
+#include "alfa.h"
 // Hash table structure: create with ht_create, free with ht_destroy.
 typedef struct ht ht;
 typedef void (*free_function)(void*) ;

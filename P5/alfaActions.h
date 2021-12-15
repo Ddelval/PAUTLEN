@@ -4,4 +4,6 @@
 void set_class(variableType class);
 void set_type(dataType type);
 void identifier(attributes_t $1);
+
+void initialize();
 #endif

@@ -20,15 +20,17 @@ void identifier(attributes_t $1) {
         //TODO: Handle vectors
         Node *n = create_variable(current_type, current_class,
                                   1, $1.lexeme, -1);
-        syTable_insert(symbolTable, n);
+        syTable_insert(symbolTable, *n);
         node_free(n);
+        declarar_variable(yyout,$1.lexeme, current_type,1);
+
     }
 }
 void initialize(){
     symbolTable = syTable_create();
     if (!symbolTable){
         fprintf(stderr,"Error allocating symbol table");
-        return -1;
+        exit(-1);
     }
     escribir_subseccion_data(yyout);
     escribir_cabecera_bss(yyout);

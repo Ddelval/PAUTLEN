@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "alfaActions.h"
+#include "generacion.h"
 
 extern int yylex();
 extern int yyparse();
@@ -88,7 +89,7 @@ extern int error_type;
 
 %%
 programa: TOK_MAIN inicio TOK_LLAVEIZQUIERDA declaraciones escribir_TS funciones escribir_MAIN sentencias TOK_LLAVEDERECHA
-{fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");};
+{fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n"); escribir_fin(yyout);};
 
 inicio:
 {initialize(); }
@@ -123,7 +124,7 @@ clase_escalar: tipo
 tipo: TOK_INT
 {
     fprintf(yyout, ";R10:\t<tipo> ::= int\n");
-    set_type(INT)
+    set_type(INT);
 };
 
 tipo: TOK_BOOLEAN
@@ -326,7 +327,7 @@ constante_entera: TOK_CONSTANTE_ENTERA
 {fprintf(yyout, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");};
 
 identificador: TOK_IDENTIFICADOR
-{fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n"); identfier($1)};
+{fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n"); identifier($1);};
 %%
 
 

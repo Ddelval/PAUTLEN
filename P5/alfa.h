@@ -9,7 +9,7 @@
 typedef enum { false = 0, true = 1 } bool;
 
 typedef enum { VARIABLE, PARAMETRO, FUNCION } elementType;
-typedef enum { BOOLEAN, INT } dataType;
+typedef enum { BOOLEAN=1, INT=0 } dataType;
 typedef enum { SCALAR, VECTOR } variableType;
 
 typedef struct {

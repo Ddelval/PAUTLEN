@@ -1,11 +1,11 @@
 #.PHONY: test
-all:  pruebaSintactico
-CC = gcc
-pruebaSintactico: y.tab.o lex.yy.o pruebaSintactico.o
+all:  alfa
+CC = gcc-11
+alfa: y.tab.o lex.yy.o syTable.o tableNode.o ht.o generacion.o launcher.o alfaActions.o
 	$(CC) -g -o $@ $^
 
-pruebaSintactico.o: pruebaSintactico.c
-	$(CC) -Wall -ansi -pedantic -c -g -o $@ $^
+%.o: %.c
+	$(CC) -Wall -c -g -o $@ $^
 
 lex.yy.o: alfa.l
 	flex $^
@@ -21,5 +21,5 @@ y.tab.o: alfa.y
 #	./check_tests.sh
 
 clean:
-	rm pruebaSintactico *.o lex.yy.c  y.tab.c y.tab.h y.output
+	rm alfa *.o lex.yy.c  y.tab.c y.tab.h y.output
 #	rm -r test testOut
