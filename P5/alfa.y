@@ -1,6 +1,7 @@
 %{
 #include <stdlib.h>
 #include <stdio.h>
+#include "alfaActions.h"
 
 extern int yylex();
 extern int yyparse();
@@ -12,9 +13,14 @@ extern int colcount;
 extern int lincount;
 extern int lastlen;
 extern int error_type;
+
+
 %}
 
 
+%union{
+    attributes_t attributes;
+}
 
 %token TOK_MAIN
 %token TOK_INT                 
@@ -53,12 +59,21 @@ extern int error_type;
 %token TOK_MENOR               
 %token TOK_MAYOR               
 
-%token TOK_IDENTIFICADOR
-%token TOK_CONSTANTE_ENTERA
+%token <attributes> TOK_IDENTIFICADOR
+%token <attributes> TOK_CONSTANTE_ENTERA
 %token TOK_TRUE
 %token TOK_FALSE
 
 %token TOK_ERROR
+
+%type <attributes> condicional
+%type <attributes> comparacion
+%type <attributes> elemento_vector
+%type <attributes> exp
+%type <attributes> constante
+%type <attributes> constante_entera
+%type <attributes> constante_logica
+%type <attributes> identificador
 
 // Following the C operator precedence standard:
 
@@ -72,8 +87,17 @@ extern int error_type;
 
 
 %%
-programa: TOK_MAIN TOK_LLAVEIZQUIERDA declaraciones funciones sentencias TOK_LLAVEDERECHA 
+programa: TOK_MAIN inicio TOK_LLAVEIZQUIERDA declaraciones escribir_TS funciones escribir_MAIN sentencias TOK_LLAVEDERECHA
 {fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");};
+
+inicio:
+{initialize(); }
+
+escribir_TS:
+{escribir_segmento_codigo(yyout);}
+
+escribir_MAIN:
+{escribir_inicio_main(yyout);}
 
 declaraciones: declaracion
 {fprintf(yyout, ";R2:\t<declaraciones> ::= <declaracion>\n");};
@@ -88,19 +112,31 @@ clase: clase_escalar
 {fprintf(yyout, ";R5:\t<clase> ::= <clase_escalar>\n");};
 
 clase: clase_vector
-{fprintf(yyout, ";R7:\t<clase> ::= <clase_vector>\n");};
+{
+    fprintf(yyout, ";R7:\t<clase> ::= <clase_vector>\n");
+    set_class(SCALAR);
+};
 
 clase_escalar: tipo
 {fprintf(yyout, ";R9:\t<clase_escalar> ::= <tipo>\n");};
 
 tipo: TOK_INT
-{fprintf(yyout, ";R10:\t<tipo> ::= int\n");};
+{
+    fprintf(yyout, ";R10:\t<tipo> ::= int\n");
+    set_type(INT)
+};
 
 tipo: TOK_BOOLEAN
-{fprintf(yyout, ";R11:\t<tipo> ::= boolean\n");};
+{
+    fprintf(yyout, ";R11:\t<tipo> ::= boolean\n");
+    set_type(BOOLEAN);
+};
 
 clase_vector: TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO constante_entera TOK_CORCHETEDERECHO
-{fprintf(yyout, ";R15:\t<clase_vector> ::= array <tipo> [ <constante_entera> ]\n");};
+{
+    fprintf(yyout, ";R15:\t<clase_vector> ::= array <tipo> [ <constante_entera> ]\n");
+    set_class(VECTOR);
+};
 
 identificadores: identificador
 {fprintf(yyout, ";R18:\t<identificadores> ::= <identificador>\n");};
@@ -170,7 +206,7 @@ bloque: condicional
 bloque: bucle
 {fprintf(yyout, ";R41:\t<bloque> ::= <bucle>\n");};
 
-asignacion: identificador TOK_ASIGNACION exp
+asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp
 {fprintf(yyout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");};
 
 asignacion: elemento_vector TOK_ASIGNACION exp
@@ -225,7 +261,7 @@ exp: exp TOK_OR exp
 exp: TOK_NOT exp
 {fprintf(yyout, ";R79:\t<exp> ::= ! <exp>\n");};
 
-exp: identificador
+exp: TOK_IDENTIFICADOR
 {fprintf(yyout, ";R80:\t<exp> ::= <identificador>\n");};
 
 exp: constante
@@ -290,7 +326,7 @@ constante_entera: TOK_CONSTANTE_ENTERA
 {fprintf(yyout, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");};
 
 identificador: TOK_IDENTIFICADOR
-{fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");};
+{fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n"); identfier($1)};
 %%
 
 

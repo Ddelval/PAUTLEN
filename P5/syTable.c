@@ -96,12 +96,12 @@ bool syTable_close_scope(syTable *st) {
     return false;
 }
 
-const int *syTable_search(syTable *st, Node node) {
+const Node *syTable_search(syTable *st,const char * name) {
     if (st->local) {
-        int *loc = ht_get(st->local, node.name);
+        Node *loc = ht_get(st->local, name);
         if (loc) {
             return loc;
         }
     }
-    return ht_get(st->global, node.name);
+    return ht_get(st->global, name);
 }

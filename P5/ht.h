@@ -3,7 +3,7 @@
 #ifndef _HT_H
 #define _HT_H
 
-typedef enum {false=0, true=1}bool;
+
 #include <stddef.h>
 
 // Hash table structure: create with ht_create, free with ht_destroy.

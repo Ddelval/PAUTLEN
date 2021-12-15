@@ -1,5 +1,6 @@
 %{
     #include <stdio.h>
+    #include "alfa.h"
     #include "y.tab.h"
     const char* string_val;
     extern FILE* yyout;
@@ -63,8 +64,8 @@ WHITESPACE [ \t\n]
 "true"      { cret(TOK_TRUE); }
 "false"     { cret(TOK_FALSE); }
 
-[A-Za-z]([A-Za-z]|[0-9])*   { if (yyleng > 100) { error_type = 0; cret_no_count_cols(TOK_ERROR); } else { cret(TOK_IDENTIFICADOR); } }
-[0-9]+                      { cret(TOK_CONSTANTE_ENTERA); }
+[A-Za-z]([A-Za-z]|[0-9])*   { if (yyleng > MAX_IDENTIFIER_LENGTH) { error_type = 0; cret_no_count_cols(TOK_ERROR); } else { strcpy(yylval.attributes.lexeme, yytext); cret(TOK_IDENTIFICADOR); } }
+[0-9]+                      { yyval.attributes.value_int = atoi(yytext); cret(TOK_CONSTANTE_ENTERA); }
 [0-9]+{NO_SYMBOL_OR_WHITE}* { error_type = 1; cret_no_count_cols(TOK_ERROR); }
 .                           { error_type = 1; cret_no_count_cols(TOK_ERROR); }
 

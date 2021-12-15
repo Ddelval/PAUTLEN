@@ -1,9 +1,7 @@
 
 #ifndef _TABLE_NODE_H
 #define _TABLE_NODE_H
-typedef enum { VARIABLE, PARAMETRO, FUNCION } elementType;
-typedef enum { BOOLEAN, INT } dataType;
-typedef enum { SCALAR, VECTOR } variableType;
+#include "alfa.h"
 
 typedef struct {
     elementType type;
