@@ -21,7 +21,7 @@ tests: $(TEST_EXEC)
 test_compilation: alfa
 	./alfa test1.txt test1.asm
 	nasm -g -o output.o -f elf32 test1.asm
-	gcc -Wall -g -m32 test1 test1.o alfalib.o
+	gcc -Wall -g -m32 -o test1 test1.o alfalib.o
 	./test1
 
 docker_test_compilation:

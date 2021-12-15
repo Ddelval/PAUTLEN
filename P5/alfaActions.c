@@ -8,7 +8,7 @@ dataType current_type;
 variableType current_class;
 int labels = 0;
 extern syTable *symbolTable;
-extern FILE* yyout;
+extern FILE *yyout;
 
 void set_class(variableType class) { current_class = class; }
 
@@ -23,38 +23,39 @@ void identifier(attributes_t $1) {
                                   1, $1.lexeme, -1);
         syTable_insert(symbolTable, *n);
         node_free(n);
-        declarar_variable(yyout,$1.lexeme, current_type,1);
+        declarar_variable(yyout, $1.lexeme, current_type, 1);
 
     }
 }
+
 void initialize() {
     symbolTable = syTable_create();
-    if (!symbolTable){
-        fprintf(stderr,"Error allocating symbol table");
+    if (!symbolTable) {
+        fprintf(stderr, "Error allocating symbol table");
         exit(-1);
     }
     escribir_subseccion_data(yyout);
     escribir_cabecera_bss(yyout);
 }
 
-void constant(attributes_t $$, attributes_t $1) {
-    $$.type = INT;
-    $$.is_address = false;
-    $$.value_int = $1.value_int;
+void constant(attributes_t *$$, attributes_t $1) {
+    $$->data_type = INT;
+    $$->is_address = false;
+    $$->value_int = $1.value_int;
 
     char digits[MAX_INT_DIGITS];
     sprintf(digits, "%d", $1.value_int);
     escribir_operando(yyout, digits, 0);
 }
 
-void constant_propagate(attributes_t $$, attributes_t $1) {
-    $$.type = $1.type;
-    $$.is_address = $1.is_address;
+void constant_propagate(attributes_t *$$, attributes_t $1) {
+    $$->data_type = $1.data_type;
+    $$->is_address = $1.is_address;
 }
 
-void constant_logic(attributes_t $$) {
-    $$.type = BOOLEAN;
-    $$.is_address = false;
+void constant_logic(attributes_t *$$) {
+    $$->data_type = BOOLEAN;
+    $$->is_address = false;
 }
 
 void initialize_if(attributes_t $$, attributes_t $3, bool is_else) {
@@ -62,7 +63,7 @@ void initialize_if(attributes_t $$, attributes_t $3, bool is_else) {
         //TODO: Error
     }
 
-    $$.label = labels++;
+    $$->label = labels++;
 
     if (is_else) {
         ifthenelse_inicio(yyout, 0, $$.label);
@@ -73,4 +74,24 @@ void initialize_if(attributes_t $$, attributes_t $3, bool is_else) {
 
 void if_propagate(attributes_t $$, attributes_t $1) {
     $$.label = $1.label;
+}
+
+void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    Node *match = syTable_search(symbolTable, $1.lexeme);
+    if (!match) {
+        // TODO: Error symbol not found
+    }
+    if (match->type == FUNCION) {
+        // TODO: Error funcion
+    }
+    if (match->type == VECTOR) {
+        // TODO: Error funcion
+    }
+    if(match->data_type != $3.data_type){
+        // TODO: Error type mismatch
+    }
+    asignar(yyout, match->name, $3.is_address);
+
+
+
 }

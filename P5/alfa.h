@@ -14,7 +14,7 @@ typedef enum { SCALAR, VECTOR } variableType;
 
 typedef struct {
     char lexeme[MAX_IDENTIFIER_LENGTH + 1];
-    dataType type;
+    dataType data_type;
     int value_int;
     bool is_address;
     int label;

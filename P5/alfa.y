@@ -212,7 +212,10 @@ bloque: bucle
 {fprintf(yyout, ";R41:\t<bloque> ::= <bucle>\n");};
 
 asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp
-{fprintf(yyout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");};
+{
+	fprintf(yyout, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
+	asign_scalar(&$$, $1, $3);
+};
 
 asignacion: elemento_vector TOK_ASIGNACION exp
 {fprintf(yyout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");};
@@ -237,7 +240,7 @@ condicional_exp: condicional_if sentencias
     if_propagate($$, $1);
 };
 
-condicional_exp_else: condicional_if_else sentencias
+condicional_exp_else: condicional_exp TOK_LLAVEDERECHA TOK_ELSE
 {
     if_propagate($$, $1);
     ifthenelse_fin_then(yyout, $1.label);
@@ -253,7 +256,7 @@ condicional_if_else: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TO
     initialize_if($$, $3, true);
 };
 
-bucle: TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO 
+bucle: TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO
             TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
 {fprintf(yyout, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");};
 
