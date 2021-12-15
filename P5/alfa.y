@@ -68,6 +68,10 @@ extern int error_type;
 %token TOK_ERROR
 
 %type <attributes> condicional
+%type <attributes> condicional_exp
+%type <attributes> condicional_exp_else
+%type <attributes> condicional_if
+%type <attributes> condicional_if_else
 %type <attributes> comparacion
 %type <attributes> elemento_vector
 %type <attributes> exp
@@ -216,14 +220,38 @@ asignacion: elemento_vector TOK_ASIGNACION exp
 elemento_vector: identificador TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
 {fprintf(yyout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");};
 
-condicional: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO 
-            TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
-{fprintf(yyout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");};
+condicional: condicional_exp TOK_LLAVEDERECHA
+{
+    fprintf(yyout, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");
+    ifthen_fin(yyout, $1.label);
+};
 
-condicional: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO 
-            TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE 
-            TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
-{fprintf(yyout, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");};
+condicional: condicional_exp_else TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
+{
+    fprintf(yyout, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");
+    ifthenelse_fin(yyout, $1.label);
+};
+
+condicional_exp: condicional_if sentencias
+{
+    if_propagate($$, $1);
+};
+
+condicional_exp_else: condicional_if_else sentencias
+{
+    if_propagate($$, $1);
+    ifthenelse_fin_then(yyout, $1.label);
+};
+
+condicional_if: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA
+{
+    initialize_if($$, $3, false);
+};
+
+condicional_if_else: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA
+{
+    initialize_if($$, $3, true);
+};
 
 bucle: TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO 
             TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
@@ -324,7 +352,10 @@ constante: constante_entera
 };
 
 constante_logica: TOK_TRUE
-{fprintf(yyout, ";R102:\t<constante_logica> ::= true\n");};
+{
+    fprintf(yyout, ";R102:\t<constante_logica> ::= true\n");
+    constant_logic($$);
+};
 
 constante_logica: TOK_FALSE
 {fprintf(yyout, ";R103:\t<constante_logica> ::= false\n");};

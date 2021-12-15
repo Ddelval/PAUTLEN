@@ -6,6 +6,7 @@
 
 dataType current_type;
 variableType current_class;
+int labels = 0;
 extern syTable *symbolTable;
 extern FILE* yyout;
 
@@ -49,4 +50,27 @@ void constant(attributes_t $$, attributes_t $1) {
 void constant_propagate(attributes_t $$, attributes_t $1) {
     $$.type = $1.type;
     $$.is_address = $1.is_address;
+}
+
+void constant_logic(attributes_t $$) {
+    $$.type = BOOLEAN;
+    $$.is_address = false;
+}
+
+void initialize_if(attributes_t $$, attributes_t $3, bool is_else) {
+    if ($3.type != BOOLEAN) {
+        //TODO: Error
+    }
+
+    $$.label = labels++;
+
+    if (is_else) {
+        ifthenelse_inicio(yyout, 0, $$.label);
+    } else {
+        ifthen_inicio(yyout, 0, $$.label);
+    }
+}
+
+void if_propagate(attributes_t $$, attributes_t $1) {
+    $$.label = $1.label;
 }
