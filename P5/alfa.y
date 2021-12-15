@@ -67,11 +67,11 @@ extern int error_type;
 
 %token TOK_ERROR
 
+%type <attributes> asignacion
 %type <attributes> condicional
 %type <attributes> condicional_exp
 %type <attributes> condicional_exp_else
 %type <attributes> condicional_if
-%type <attributes> condicional_if_else
 %type <attributes> comparacion
 %type <attributes> elemento_vector
 %type <attributes> exp
@@ -229,7 +229,7 @@ condicional: condicional_exp TOK_LLAVEDERECHA
     ifthen_fin(yyout, $1.label);
 };
 
-condicional: condicional_exp_else TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
+condicional: condicional_exp_else TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
 {
     fprintf(yyout, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");
     ifthenelse_fin(yyout, $1.label);
@@ -237,61 +237,88 @@ condicional: condicional_exp_else TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA s
 
 condicional_exp: condicional_if sentencias
 {
-    if_propagate($$, $1);
+    if_propagate(&$$, $1);
 };
 
 condicional_exp_else: condicional_exp TOK_LLAVEDERECHA TOK_ELSE
 {
-    if_propagate($$, $1);
     ifthenelse_fin_then(yyout, $1.label);
 };
 
 condicional_if: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA
 {
-    initialize_if($$, $3, false);
-};
-
-condicional_if_else: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA
-{
-    initialize_if($$, $3, true);
+    initialize_if(&$$, $3);
 };
 
 bucle: TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO
             TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
 {fprintf(yyout, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");};
 
-lectura: TOK_SCANF identificador
-{fprintf(yyout, ";R54:\t<lectura> ::= scanf <identificador>\n");};
+lectura: TOK_SCANF TOK_IDENTIFICADOR
+{
+	fprintf(yyout, ";R54:\t<lectura> ::= scanf <identificador>\n");
+	read($2);
+};
 
 escritura: TOK_PRINTF exp
-{fprintf(yyout, ";R56:\t<escritura> ::= printf <exp>\n");};
+{
+	fprintf(yyout, ";R56:\t<escritura> ::= printf <exp>\n");
+	escribir(yyout, $2.is_address, $2.data_type);
+};
 
 retorno_funcion: TOK_RETURN exp
-{fprintf(yyout, ";R61:\t<retorno_funcion> ::= return <exp>\n");};
+{
+	fprintf(yyout, ";R61:\t<retorno_funcion> ::= return <exp>\n");
+	returns($2);
+};
 
 exp: exp TOK_MAS exp
-{fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n");};
+{
+	fprintf(yyout, ";R72:\t<exp> ::= <exp> + <exp>\n");
+	add(&$$, $1, $3);
+};
 
 exp: exp TOK_MENOS exp
-{fprintf(yyout, ";R73:\t<exp> ::= <exp> - <exp>\n");};
+{
+	fprintf(yyout, ";R73:\t<exp> ::= <exp> - <exp>\n");
+	substract(&$$, $1, $3);
+};
 
 exp: exp TOK_DIVISION exp
-{fprintf(yyout, ";R74:\t<exp> ::= <exp> / <exp>\n");};
+{
+	fprintf(yyout, ";R74:\t<exp> ::= <exp> / <exp>\n");
+	divide(&$$, $1, $3);
+};
 
 exp: exp TOK_ASTERISCO exp
-{fprintf(yyout, ";R75:\t<exp> ::= <exp> * <exp>\n");};
+{
+	fprintf(yyout, ";R75:\t<exp> ::= <exp> * <exp>\n");
+	multiply(&$$, $1, $3);
+};
 
 exp: TOK_MENOS exp %prec MENOSU
-{fprintf(yyout, ";R76:\t<exp> ::= - <exp>\n");};
+{
+	fprintf(yyout, ";R76:\t<exp> ::= - <exp>\n");
+	uminus(&$$, $2);
+};
 
 exp: exp TOK_AND exp
-{fprintf(yyout, ";R77:\t<exp> ::= <exp> && <exp>\n");};
+{
+	fprintf(yyout, ";R77:\t<exp> ::= <exp> && <exp>\n");
+	and(&$$, $1, $3);
+};
 
 exp: exp TOK_OR exp
-{fprintf(yyout, ";R78:\t<exp> ::= <exp> || <exp>\n");};
+{
+	fprintf(yyout, ";R78:\t<exp> ::= <exp> || <exp>\n");
+	or(&$$, $1, $3);
+};
 
 exp: TOK_NOT exp
-{fprintf(yyout, ";R79:\t<exp> ::= ! <exp>\n");};
+{
+	fprintf(yyout, ";R79:\t<exp> ::= ! <exp>\n");
+	not(&$$, $2);
+};
 
 exp: TOK_IDENTIFICADOR
 {
@@ -302,7 +329,7 @@ exp: TOK_IDENTIFICADOR
 exp: constante
 {
 	fprintf(yyout, ";R81:\t<exp> ::= <constante>\n");
-	constant_propagate($$, $1);
+	constant_propagate(&$$, $1);
 };
 
 exp: TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO
@@ -354,13 +381,13 @@ constante: constante_logica
 constante: constante_entera
 {
 	fprintf(yyout, ";R100:\t<constante> ::= <constante_entera>\n");
-	constant_propagate($$, $1);
+	constant_propagate(&$$, $1);
 };
 
 constante_logica: TOK_TRUE
 {
     fprintf(yyout, ";R102:\t<constante_logica> ::= true\n");
-    constant_logic($$);
+    constant_logic(&$$);
 };
 
 constante_logica: TOK_FALSE
@@ -369,7 +396,7 @@ constante_logica: TOK_FALSE
 constante_entera: TOK_CONSTANTE_ENTERA
 {
 	fprintf(yyout, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");
-	constant($$, $1);
+	constant(&$$, $1);
 };
 
 identificador: TOK_IDENTIFICADOR

@@ -367,7 +367,7 @@ void ifthenelse_inicio(FILE *fpasm, int exp_es_variable, int etiqueta) {
         fprintf(fpasm, "%s\n", "mov dword eax, [eax]");
     }
     fprintf(fpasm, "%s\n", "cmp eax, 0");
-    fprintf(fpasm, "je near ite_else_%d\n", etiqueta);
+    fprintf(fpasm, "je near it_end_%d\n", etiqueta);   // Changed from ite_else
 }
 /*
 Generación de código para el inicio de una estructura if-then-else
@@ -408,8 +408,8 @@ la última de ellas.
 */
 
 void ifthenelse_fin_then(FILE *fpasm, int etiqueta) {
-    fprintf(fpasm, "jmp near ite_end_%d\n", etiqueta);
-    fprintf(fpasm, "ite_else_%d:\n", etiqueta);
+    fprintf(fpasm, "jmp near ite_endelse_%d\n", etiqueta);  // Changed from ite_end
+    fprintf(fpasm, "it_end_%d:\n", etiqueta);  // Changed from ite_else
 }
 /*
 Generación de código para el fin de la rama then de una estructura if-then-else
@@ -420,7 +420,7 @@ que corresponde al momento actual.
 */
 
 void ifthenelse_fin(FILE *fpasm, int etiqueta) {
-    fprintf(fpasm, "ite_end_%d:\n", etiqueta);
+    fprintf(fpasm, "ite_endelse_%d:\n", etiqueta);  // Changed from ite_end
 }
 /*
 Generación de código para el fin de una estructura if-then-else

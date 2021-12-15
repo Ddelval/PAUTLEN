@@ -7,6 +7,8 @@
 dataType current_type;
 variableType current_class;
 int labels = 0;
+bool in_function = false;
+bool returning = false;
 extern syTable *symbolTable;
 extern FILE *yyout;
 extern int lincount;
@@ -98,22 +100,18 @@ void constant_logic(attributes_t *$$) {
     $$->is_address = false;
 }
 
-void initialize_if(attributes_t $$, attributes_t $3, bool is_else) {
-    if ($3.type != BOOLEAN) {
-        //TODO: Error
+void initialize_if(attributes_t *$$, attributes_t $3) {
+    if ($3.data_type != BOOLEAN) {
+        exit_error(errors.conditional_with_int,"");
     }
 
     $$->label = labels++;
 
-    if (is_else) {
-        ifthenelse_inicio(yyout, 0, $$.label);
-    } else {
-        ifthen_inicio(yyout, 0, $$.label);
-    }
+    ifthen_inicio(yyout, 0, $$->label);
 }
 
-void if_propagate(attributes_t $$, attributes_t $1) {
-    $$.label = $1.label;
+void if_propagate(attributes_t *$$, attributes_t $1) {
+    $$->label = $1.label;
 }
 
 const Node *getSymbol(const char *name) {
@@ -216,4 +214,17 @@ void set_result_logic(attributes_t *$$, attributes_t $1, attributes_t $3) {
 void and(attributes_t *$$, attributes_t $1, attributes_t $3) {
     set_result_logic($$, $1, $3);
     y(yyout, $1.is_address, $3.is_address);
+}
+
+void or(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    set_result_logic($$, $1, $3);
+    o(yyout, $1.is_address, $3.is_address);
+}
+
+void not(attributes_t *$$, attributes_t $2) {
+    if ($1.data_type != BOOLEAN || $3.data_type != BOOLEAN) {
+        //TODO: Error
+    }
+    $$->is_address = false;
+    $$->data_type = BOOLEAN;
 }

@@ -7,9 +7,9 @@ void identifier(attributes_t $1);
 
 void initialize();
 
-void constant(attributes_t $$, attributes_t $1);
-void constant_propagate(attributes_t $$, attributes_t $1);
-void constant_logic(attributes_t $$);
+void constant(attributes_t* $$, attributes_t $1);
+void constant_propagate(attributes_t *$$, attributes_t $1);
+void constant_logic(attributes_t *$$);
 
 void initialize_if(attributes_t *$$, attributes_t $3);
 void if_propagate(attributes_t *$$, attributes_t $1);
