@@ -21,7 +21,7 @@ tests: $(TEST_EXEC)
 test_compilation: alfa
 	./alfa test1.txt test1.asm
 	nasm -g -o output.o -f elf32 test1.asm
-	gcc -Wall -g -m32 -o test1 test1.o alfalib.o
+	gcc -Wall -g -m32 -o test1 output.o alfalib.o
 	./test1
 
 docker_test_compilation:
@@ -33,5 +33,7 @@ docker_test_compilation:
 #	./check_tests.sh
 
 clean:
+	cp alfalib.o alfalib.v
 	rm -fr alfa *.o lex.yy.c  y.tab.c y.tab.h y.output
+	mv alfalib.v alfalib.o
 #	rm -r test testOut

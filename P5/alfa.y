@@ -294,7 +294,10 @@ exp: TOK_NOT exp
 {fprintf(yyout, ";R79:\t<exp> ::= ! <exp>\n");};
 
 exp: TOK_IDENTIFICADOR
-{fprintf(yyout, ";R80:\t<exp> ::= <identificador>\n");};
+{
+	fprintf(yyout, ";R80:\t<exp> ::= <identificador>\n");
+	exp_identificador(&$$,$1);
+};
 
 exp: constante
 {
