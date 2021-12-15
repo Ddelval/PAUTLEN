@@ -59,7 +59,7 @@ void set_type(dataType type) { current_type = type; }
 
 void identifier(attributes_t $1) {
     if (syTable_search(symbolTable, $1.lexeme)) {
-        exit_error(errors.duplicated_declaration,"");
+        exit_error(errors.duplicated_declaration, "");
     } else {
         //TODO: Handle vectors
         Node *n = create_variable(current_type, current_class,
@@ -96,19 +96,21 @@ void constant_propagate(attributes_t *$$, attributes_t $1) {
     $$->is_address = $1.is_address;
 }
 
-void constant_logic(attributes_t *$$) {
+void constant_logic(attributes_t *$$, int val) {
     $$->data_type = BOOLEAN;
+    $$->value_int = val;
     $$->is_address = false;
+    escribir_operando(yyout, val ? "1" : "0", 0);
 }
 
 void initialize_if(attributes_t *$$, attributes_t $3) {
     if ($3.data_type != BOOLEAN) {
-        exit_error(errors.conditional_with_int,"");
+        exit_error(errors.conditional_with_int, "");
     }
 
     $$->label = labels++;
 
-    ifthen_inicio(yyout, 0, $$->label);
+    ifthen_inicio(yyout, $3.is_address, $$->label);
 }
 
 void if_propagate(attributes_t *$$, attributes_t $1) {
@@ -118,7 +120,7 @@ void if_propagate(attributes_t *$$, attributes_t $1) {
 const Node *getSymbol(const char *name) {
     const Node *match = syTable_search(symbolTable, name);
     if (!match) {
-        exit_error(errors.no_declarated,name);
+        exit_error(errors.no_declarated, name);
     }
     return match;
 }
@@ -127,10 +129,10 @@ void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
     const Node *match = getSymbol($1.lexeme);
 
     if (match->type == FUNCION || match->type == PARAMETRO) {
-        exit_error(errors.incompatible_assign,"");
+        exit_error(errors.incompatible_assign, "");
     }
     if (match->data_type != $3.data_type) {
-        exit_error(errors.incompatible_assign,"");
+        exit_error(errors.incompatible_assign, "");
     }
     asignar(yyout, match->name, $3.is_address);
 }

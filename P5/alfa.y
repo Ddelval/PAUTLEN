@@ -387,11 +387,14 @@ constante: constante_entera
 constante_logica: TOK_TRUE
 {
     fprintf(yyout, ";R102:\t<constante_logica> ::= true\n");
-    constant_logic(&$$);
+    constant_logic(&$$,1);
 };
 
 constante_logica: TOK_FALSE
-{fprintf(yyout, ";R103:\t<constante_logica> ::= false\n");};
+{
+	fprintf(yyout, ";R103:\t<constante_logica> ::= false\n");
+	constant_logic(&$$,0);
+};
 
 constante_entera: TOK_CONSTANTE_ENTERA
 {

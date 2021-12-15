@@ -62,8 +62,8 @@ WHITESPACE [ \t\n]
 " "         { colcount++; }
 "\t"         { colcount+=4; }
 
-"true"      { cret(TOK_TRUE); }
-"false"     { cret(TOK_FALSE); }
+"true"      {cret(TOK_TRUE); }
+"false"     {cret(TOK_FALSE); }
 
 [A-Za-z]([A-Za-z]|[0-9])*   { if (yyleng > MAX_IDENTIFIER_LENGTH) { error_type = 0; cret_no_count_cols(TOK_ERROR); } else { strcpy(yylval.attributes.lexeme, yytext); cret(TOK_IDENTIFICADOR); } }
 [0-9]+                      { yylval.attributes.value_int = atoi(yytext); cret(TOK_CONSTANTE_ENTERA); }

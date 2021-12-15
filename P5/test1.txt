@@ -2,8 +2,11 @@ main{
     boolean z;
     int x;
     x = 8;
-    z = true;
-    if (z) {
+    scanf z;
+    if (!z) {
     printf x;
+    }
+    else{
+    printf x*2;
     }
 }
