@@ -3,7 +3,7 @@ name="pautlencontainer"
 image="pautlenrom"
 
 if [ $1 == "buildImage" ]; then
-docker build -t ${image} -f DockerFile  . 
+docker build -t ${image} -f DockerFile  .
 elif [ $1 == "create" ]; then
 docker create  \
   -it \
