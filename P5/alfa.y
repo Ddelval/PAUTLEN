@@ -19,7 +19,7 @@ extern int error_type;
 %}
 
 
-%union{
+%union {
     attributes_t attributes;
 }
 
@@ -266,7 +266,10 @@ exp: TOK_IDENTIFICADOR
 {fprintf(yyout, ";R80:\t<exp> ::= <identificador>\n");};
 
 exp: constante
-{fprintf(yyout, ";R81:\t<exp> ::= <constante>\n");};
+{
+	fprintf(yyout, ";R81:\t<exp> ::= <constante>\n");
+	constant_propagate($$, $1);
+};
 
 exp: TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO
 {fprintf(yyout, ";R82:\t<exp> ::= ( <exp> )\n");};
@@ -315,7 +318,10 @@ constante: constante_logica
 {fprintf(yyout, ";R99:\t<constante> ::= <constante_logica>\n");};
 
 constante: constante_entera
-{fprintf(yyout, ";R100:\t<constante> ::= <constante_entera>\n");};
+{
+	fprintf(yyout, ";R100:\t<constante> ::= <constante_entera>\n");
+	constant_propagate($$, $1);
+};
 
 constante_logica: TOK_TRUE
 {fprintf(yyout, ";R102:\t<constante_logica> ::= true\n");};
@@ -324,7 +330,10 @@ constante_logica: TOK_FALSE
 {fprintf(yyout, ";R103:\t<constante_logica> ::= false\n");};
 
 constante_entera: TOK_CONSTANTE_ENTERA
-{fprintf(yyout, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");};
+{
+	fprintf(yyout, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");
+	constant($$, $1);
+};
 
 identificador: TOK_IDENTIFICADOR
 {fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n"); identifier($1);};

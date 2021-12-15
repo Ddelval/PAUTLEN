@@ -26,7 +26,7 @@ void identifier(attributes_t $1) {
 
     }
 }
-void initialize(){
+void initialize() {
     symbolTable = syTable_create();
     if (!symbolTable){
         fprintf(stderr,"Error allocating symbol table");
@@ -34,4 +34,19 @@ void initialize(){
     }
     escribir_subseccion_data(yyout);
     escribir_cabecera_bss(yyout);
+}
+
+void constant(attributes_t $$, attributes_t $1) {
+    $$.type = INT;
+    $$.is_address = false;
+    $$.value_int = $1.value_int;
+
+    char digits[MAX_INT_DIGITS];
+    sprintf(digits, "%d", $1.value_int);
+    escribir_operando(yyout, digits, 0);
+}
+
+void constant_propagate(attributes_t $$, attributes_t $1) {
+    $$.type = $1.type;
+    $$.is_address = $1.is_address;
 }
