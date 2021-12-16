@@ -1,12 +1,11 @@
 main{
     int x;
-
-    function int a() {
+    function int abc(){
         int y;
-
-        y=1;
+        y=2;
+        printf y;
         return y;
     }
-
-    printf 0;
+    x = abc(0);
+    printf x;
 }

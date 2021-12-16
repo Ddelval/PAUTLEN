@@ -370,7 +370,7 @@ void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
         //TODO: Error
     }
 
-    if (!syTable_insert(symbolTable, *match)) {
+    if (syTable_create_scope(symbolTable, *match)) {
         //TODO: Error
     }
 
@@ -386,6 +386,7 @@ void end_function() {
     }
 
     function_body = false;
+    num_local_vars = 0;
 }
 
 void add_parameter(attributes_t $1) {
