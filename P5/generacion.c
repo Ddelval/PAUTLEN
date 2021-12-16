@@ -284,7 +284,7 @@ void generic_comparison(FILE *fpasm, const char *jump_instruction,
                         int es_variable1, int es_variable2, int etiqueta) {
     pop_values_for_operation(fpasm, es_variable1, es_variable2);
     // Make sure that the labels for different comparisons are different
-    char prefix[6] = "cmp_xx";
+    char prefix[7] = "cmp_xx";
     if (strlen(jump_instruction) >= 2) {
         prefix[4] = jump_instruction[1];
     }

@@ -27,7 +27,7 @@ struct error_c {
     error_str no_return, return_out_function;
     error_str call_as_param, local_no_scalar;
 };
-struct error_c errors = {"Error semantico en lin %d",
+struct error_c errors = {"Error semantico en lin %d: %s\n",
                          "Declaracion duplicada.",
                          "Acceso a variable no declarada(%s).",
                          "Operacion aritmetica con operandos boolean.",
@@ -46,7 +46,7 @@ struct error_c errors = {"Error semantico en lin %d",
                          "Variable local de tipo no escalar."};
 
 void exit_error(error_str error, const char *optional) {
-    fprintf(stdout, error, lincount, optional);
+    fprintf(stdout, errors.base, lincount, error, optional);
     exit(-1);
 }
 

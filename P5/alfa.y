@@ -79,6 +79,8 @@ extern int error_type;
 %type <attributes> constante_entera
 %type <attributes> constante_logica
 %type <attributes> identificador
+%type <attributes> while_start
+%type <attributes> while_condition
 
 // Following the C operator precedence standard:
 
@@ -250,9 +252,20 @@ condicional_if: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLA
     initialize_if(&$$, $3);
 };
 
-bucle: TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO
-            TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
-{fprintf(yyout, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");};
+bucle: while_condition TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
+{
+fprintf(yyout, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");
+wh_end($1);
+};
+
+while_condition: while_start TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO
+{
+	wh_condition(&$$,$1,$3);
+}
+while_start: TOK_WHILE
+{
+	wh_start(&$$);
+}
 
 lectura: TOK_SCANF TOK_IDENTIFICADOR
 {
@@ -336,7 +349,10 @@ exp: TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO
 {fprintf(yyout, ";R82:\t<exp> ::= ( <exp> )\n");};
 
 exp: TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO
-{fprintf(yyout, ";R83:\t<exp> ::= ( <comparacion> )\n");};
+{
+	fprintf(yyout, ";R83:\t<exp> ::= ( <comparacion> )\n");
+	push_type_up(&$$,$2);
+};
 
 exp: elemento_vector
 {fprintf(yyout, ";R85:\t<exp> ::= <elemento_vector>\n");};

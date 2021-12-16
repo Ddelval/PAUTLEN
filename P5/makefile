@@ -1,6 +1,6 @@
 #.PHONY: test
 all:  alfa
-CC = gcc
+CC = gcc -fsanitize=address
 alfa: y.tab.o lex.yy.o syTable.o tableNode.o ht.o generacion.o launcher.o alfaActions.o
 	$(CC) -g -o $@ $^
 
