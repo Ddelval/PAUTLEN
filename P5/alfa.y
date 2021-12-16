@@ -82,6 +82,10 @@ extern int error_type;
 %type <attributes> while_start
 %type <attributes> while_condition
 
+%type <attributes> funcion_tipo
+%type <attributes> funcion_decl
+%type <attributes> parametros_funcion
+
 // Following the C operator precedence standard:
 
 %left TOK_OR
@@ -116,12 +120,15 @@ declaracion: clase identificadores TOK_PUNTOYCOMA
 {fprintf(yyout, ";R4:\t<declaracion> ::= <clase> <identificadores> ;\n");};
 
 clase: clase_escalar
-{fprintf(yyout, ";R5:\t<clase> ::= <clase_escalar>\n");};
+{
+	fprintf(yyout, ";R5:\t<clase> ::= <clase_escalar>\n");
+	set_class(SCALAR);
+};
 
 clase: clase_vector
 {
-    fprintf(yyout, ";R7:\t<clase> ::= <clase_vector>\n");
-    set_class(SCALAR);
+	fprintf(yyout, ";R7:\t<clase> ::= <clase_vector>\n");
+	set_class(VECTOR);
 };
 
 clase_escalar: tipo
@@ -142,7 +149,7 @@ tipo: TOK_BOOLEAN
 clase_vector: TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO constante_entera TOK_CORCHETEDERECHO
 {
     fprintf(yyout, ";R15:\t<clase_vector> ::= array <tipo> [ <constante_entera> ]\n");
-    set_class(VECTOR);
+    set_vector_size($4);
 };
 
 identificadores: identificador
@@ -230,8 +237,11 @@ asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp
 asignacion: elemento_vector TOK_ASIGNACION exp
 {fprintf(yyout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");};
 
-elemento_vector: identificador TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
-{fprintf(yyout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");};
+elemento_vector: TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
+{
+fprintf(yyout, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");
+vector_element(&$$,$1,$3);
+};
 
 condicional: condicional_exp TOK_LLAVEDERECHA
 {
@@ -351,6 +361,7 @@ exp: constante
 {
 	fprintf(yyout, ";R81:\t<exp> ::= <constante>\n");
 	constant_propagate(&$$, $1);
+	constant_to_stack($1);
 };
 
 exp: TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO
@@ -420,6 +431,7 @@ comparacion: exp TOK_MAYOR exp
 constante: constante_logica
 {
 	fprintf(yyout, ";R99:\t<constante> ::= <constante_logica>\n");
+	constant_propagate(&$$, $1);
 };
 
 constante: constante_entera
@@ -443,7 +455,7 @@ constante_logica: TOK_FALSE
 constante_entera: TOK_CONSTANTE_ENTERA
 {
 	fprintf(yyout, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");
-	constant(&$$, $1);
+	constant_int(&$$, $1);
 };
 
 identificador: TOK_IDENTIFICADOR

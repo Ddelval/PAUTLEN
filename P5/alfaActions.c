@@ -6,6 +6,8 @@
 
 dataType current_type;
 variableType current_class;
+int vector_size = 0;
+
 int labels = 0;
 int noes = 0;
 int comparisons = 0;
@@ -58,16 +60,24 @@ void set_class(variableType class) { current_class = class; }
 
 void set_type(dataType type) { current_type = type; }
 
+void set_vector_size(attributes_t $4) {
+    vector_size = $4.value_int;
+}
+
 void identifier(attributes_t $1) {
     if (syTable_search(symbolTable, $1.lexeme)) {
         exit_error(errors.duplicated_declaration, "");
     } else {
         //TODO: Handle vectors
+
+        int size = current_class == VECTOR ? vector_size : 1;
+
         Node *n = create_variable(current_type, current_class,
-                                  1, $1.lexeme, -1);
+                                  size, $1.lexeme, -1);
         syTable_insert(symbolTable, *n);
         node_free(n);
-        declarar_variable(yyout, $1.lexeme, current_type, 1);
+
+        declarar_variable(yyout, $1.lexeme, current_type, size);
 
     }
 }
@@ -82,26 +92,50 @@ void initialize() {
     escribir_cabecera_bss(yyout);
 }
 
-void constant(attributes_t *$$, attributes_t $1) {
+void constant_int(attributes_t *$$, attributes_t $1) {
     $$->data_type = INT;
     $$->is_address = false;
     $$->value_int = $1.value_int;
-
-    char digits[MAX_INT_DIGITS];
-    sprintf(digits, "%d", $1.value_int);
-    escribir_operando(yyout, digits, 0);
 }
 
 void constant_propagate(attributes_t *$$, attributes_t $1) {
     $$->data_type = $1.data_type;
     $$->is_address = $1.is_address;
+    $$->value_int = $1.value_int;
 }
 
 void constant_logic(attributes_t *$$, int val) {
     $$->data_type = BOOLEAN;
     $$->value_int = val;
     $$->is_address = false;
-    escribir_operando(yyout, val ? "1" : "0", 0);
+}
+
+void constant_to_stack(attributes_t $1) {
+    char digits[MAX_INT_DIGITS];
+    sprintf(digits, "%d", $1.value_int);
+    escribir_operando(yyout, digits, 0);
+}
+
+const Node *getSymbol(const char *name) {
+    const Node *match = syTable_search(symbolTable, name);
+    if (!match) {
+        exit_error(errors.no_declarated, name);
+    }
+    return match;
+}
+
+void vector_element(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    const Node *match = getSymbol($1.lexeme);
+    if (match->variable_type == SCALAR) {
+        exit_error(errors.index_of_no_vector, "");
+    }
+    if ($1.data_type != INT) {
+        exit_error(errors.index_no_int, "");
+    }
+    escribir_elemento_vector(yyout, $1.lexeme,
+                             match->size, $3.is_address);
+    $$->is_address = true;
+    $$->data_type = match->data_type;
 }
 
 void initialize_if(attributes_t *$$, attributes_t $3) {
@@ -118,16 +152,11 @@ void if_propagate(attributes_t *$$, attributes_t $1) {
     $$->label = $1.label;
 }
 
-const Node *getSymbol(const char *name) {
-    const Node *match = syTable_search(symbolTable, name);
-    if (!match) {
-        exit_error(errors.no_declarated, name);
-    }
-    return match;
-}
 
 void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
     const Node *match = getSymbol($1.lexeme);
+
+    // TODO: Vector sizes
 
     if (match->type == FUNCION || match->type == PARAMETRO) {
         exit_error(errors.incompatible_assign, "");
@@ -136,6 +165,9 @@ void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
         exit_error(errors.incompatible_assign, "");
     }
     asignar(yyout, match->name, $3.is_address);
+}
+void asign_vector(attributes_t *$$, attributes_t $1, attributes_t $3){
+    asignarDestinoEnPila(yyout,0);
 }
 
 void exp_identificador(attributes_t *$$, attributes_t $1) {
@@ -277,16 +309,16 @@ void wh_start(attributes_t *$$) {
     while_inicio(yyout, $$->label);
 }
 
-void wh_condition(attributes_t* $$,attributes_t $1,attributes_t $3){
+void wh_condition(attributes_t *$$, attributes_t $1, attributes_t $3) {
     $$->label = $1.label;
-    while_exp_pila(yyout,$1.is_address,$$->label);
+    while_exp_pila(yyout, $1.is_address, $$->label);
 }
 
-void wh_end(attributes_t $1){
-    while_fin(yyout,$1.label);
+void wh_end(attributes_t $1) {
+    while_fin(yyout, $1.label);
 }
 
-void push_type_up(attributes_t*$$, attributes_t $1){
+void push_type_up(attributes_t *$$, attributes_t $1) {
     $$->data_type = $1.data_type;
 }
 
