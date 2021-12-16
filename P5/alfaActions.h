@@ -30,4 +30,15 @@ void or(attributes_t *$$, attributes_t $1, attributes_t $3);
 
 void not(attributes_t *$$, attributes_t $2);
 
+void equal(attributes_t *$, attributes_t $1, attributes_t $3);
+void not_equal(attributes_t *$, attributes_t $1, attributes_t $3);
+void gte(attributes_t *$, attributes_t $1, attributes_t $3);
+void lte(attributes_t *$, attributes_t $1, attributes_t $3);
+void gt(attributes_t *$, attributes_t $1, attributes_t $3);
+void lt(attributes_t *$, attributes_t $1, attributes_t $3);
+
+void wh_start(attributes_t* $$);
+void wh_condition(attributes_t* $$, attributes_t $1,attributes_t $3);
+void wh_end(attributes_t $1);
+void push_type_up(attributes_t*$$, attributes_t $1);
 #endif

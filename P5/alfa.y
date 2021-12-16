@@ -157,10 +157,18 @@ funciones: funcion funciones
 funciones: 
 {fprintf(yyout, ";R21:\t<funciones> ::=\n");};
 
-funcion: TOK_FUNCTION tipo identificador TOK_PARENTESISIZQUIERDO 
-        parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA 
-        declaraciones_funcion sentencias TOK_LLAVEDERECHA
+funcion: funcion_decl sentencias TOK_LLAVEDERECHA
 {fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");};
+
+funcion_decl: funcion_tipo TOK_PARENTESISIZQUIERDO
+              parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA
+              declaraciones_funcion
+{};
+
+funcion_tipo: TOK_FUNCTION tipo TOK_IDENTIFICADOR
+{
+	new_function(&$$, $3);
+};
     
 parametros_funcion: parametro_funcion resto_parametros_funcion
 {fprintf(yyout, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");};
@@ -376,32 +384,38 @@ resto_lista_expresiones:
 comparacion: exp TOK_IGUAL exp
 {
 	fprintf(yyout, ";R93:\t<comparacion> ::= <exp> == <exp>\n");
-	equal($1, $3);
+	equal(&$$, $1, $3);
 };
 
 comparacion: exp TOK_DISTINTO exp
 {
 	fprintf(yyout, ";R94:\t<comparacion> ::= <exp> != <exp>\n");
-	not_equal($1, $3);
+	not_equal(&$$, $1, $3);
 };
 
 comparacion: exp TOK_MENORIGUAL exp
 {
 	fprintf(yyout, ";R95:\t<comparacion> ::= <exp> <= <exp>\n");
-	le($1, $3);
+	lte(&$$, $1, $3);
 };
 
 comparacion: exp TOK_MAYORIGUAL exp
 {
 	fprintf(yyout, ";R96:\t<comparacion> ::= <exp> >= <exp>\n");
-	ge(
+	gte(&$$, $1, $3);
 };
 
 comparacion: exp TOK_MENOR exp
-{fprintf(yyout, ";R97:\t<comparacion> ::= <exp> < <exp>\n");};
+{
+	fprintf(yyout, ";R97:\t<comparacion> ::= <exp> < <exp>\n");
+	lt(&$$, $1, $3);
+};
 
 comparacion: exp TOK_MAYOR exp
-{fprintf(yyout, ";R98:\t<comparacion> ::= <exp> > <exp>\n");};
+{
+	fprintf(yyout, ";R98:\t<comparacion> ::= <exp> > <exp>\n");
+	gt(&$$, $1, $3);
+};
 
 constante: constante_logica
 {

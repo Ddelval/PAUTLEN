@@ -1,15 +1,9 @@
 main{
-    boolean z;
-    int x;
-    x = 8;
-    scanf z;
-    if (!z) {
-    printf x;
-    if (!z) {
-    printf x+1;
-    }
-    }
-    else{
-    printf x*2;
+    int x,y;
+    x = 10;
+    while ((x>5)){
+        printf x;
+        x = x-1;
+        printf x;
     }
 }

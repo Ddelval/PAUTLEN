@@ -8,6 +8,7 @@ dataType current_type;
 variableType current_class;
 int labels = 0;
 int noes = 0;
+int comparisons = 0;
 bool in_function = false;
 bool returning = false;
 extern syTable *symbolTable;
@@ -231,4 +232,75 @@ void not(attributes_t *$$, attributes_t $2) {
     $$->data_type = BOOLEAN;
     $$->is_address = false;
     no(yyout, $2.is_address, noes++);
+}
+
+void check_comparison(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    if ($1.data_type != INT || $3.data_type != INT) {
+        //TODO: Error
+    }
+    $$->data_type = BOOLEAN;
+}
+
+void equal(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    check_comparison($$, $1, $3);
+    igual(yyout, $1.is_address, $3.is_address, comparisons++);
+}
+
+void not_equal(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    check_comparison($$, $1, $3);
+    distinto(yyout, $1.is_address, $3.is_address, comparisons++);
+}
+
+void gte(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    check_comparison($$, $1, $3);
+    mayor_igual(yyout, $1.is_address, $3.is_address, comparisons++);
+}
+
+void lte(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    check_comparison($$, $1, $3);
+    menor_igual(yyout, $1.is_address, $3.is_address, comparisons++);
+}
+
+void gt(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    check_comparison($$, $1, $3);
+    mayor(yyout, $1.is_address, $3.is_address, comparisons++);
+}
+
+void lt(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    check_comparison($$, $1, $3);
+    menor(yyout, $1.is_address, $3.is_address, comparisons++);
+}
+
+
+void wh_start(attributes_t *$$) {
+    $$->label = labels++;
+    while_inicio(yyout, $$->label);
+}
+
+void wh_condition(attributes_t* $$,attributes_t $1,attributes_t $3){
+    $$->label = $1.label;
+    while_exp_pila(yyout,$1.is_address,$$->label);
+}
+
+void wh_end(attributes_t $1){
+    while_fin(yyout,$1.label);
+}
+
+void push_type_up(attributes_t*$$, attributes_t $1){
+    $$->data_type = $1.data_type;
+}
+
+void new_function(attributes_t *$$, attributes_t $1) {
+    const Node* match = syTable_search(symbolTable, $3.lexeme);
+    if (match) {
+        //TODO: Error
+    }
+
+    match = create_function(current_type, $3.lexeme, -1, -1);
+    if (!match) {
+        //TODO: Error
+    }
+
+    if (!syTable_insert(symbolTable, *match))
+
 }
