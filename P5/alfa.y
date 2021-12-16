@@ -165,12 +165,17 @@ funciones:
 {fprintf(yyout, ";R21:\t<funciones> ::=\n");};
 
 funcion: funcion_decl sentencias TOK_LLAVEDERECHA
-{fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");};
+{
+	fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");
+	end_function();
+};
 
 funcion_decl: funcion_tipo TOK_PARENTESISIZQUIERDO
               parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA
               declaraciones_funcion
-{};
+{
+	declare_function(&$$, $1, $3);
+};
 
 funcion_tipo: TOK_FUNCTION tipo TOK_IDENTIFICADOR
 {
@@ -189,8 +194,14 @@ resto_parametros_funcion: TOK_PUNTOYCOMA parametro_funcion resto_parametros_func
 resto_parametros_funcion: 
 {fprintf(yyout, ";R26:\t<resto_parametros_funcion> ::=\n");};
 
-parametro_funcion: tipo identificador
+parametro_funcion: tipo funcion_identificador
 {fprintf(yyout, ";R27:\t<parametro_funcion> ::= <tipo> <identificador>\n");};
+
+funcion_identificador: TOK_IDENTIFICADOR
+{
+	//TODO: Add print rule?
+	add_parameter($1);
+};
 
 declaraciones_funcion: declaraciones
 {fprintf(yyout, ";R28:\t<declaraciones_funcion> ::= <declaraciones>\n");};
@@ -235,7 +246,10 @@ asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp
 };
 
 asignacion: elemento_vector TOK_ASIGNACION exp
-{fprintf(yyout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");};
+{
+	fprintf(yyout, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
+	asign_vector(&$$, $1, $3);
+};
 
 elemento_vector: TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
 {

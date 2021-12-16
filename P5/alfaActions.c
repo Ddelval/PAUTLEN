@@ -11,8 +11,15 @@ int vector_size = 0;
 int labels = 0;
 int noes = 0;
 int comparisons = 0;
-bool in_function = false;
 bool returning = false;
+
+dataType current_function_type;
+int num_params = 0;
+int pos_param = 0;
+int num_local_vars = 0;
+int pos_local_vars = 0;
+bool function_body = true;
+
 extern syTable *symbolTable;
 extern FILE *yyout;
 extern int lincount;
@@ -195,7 +202,7 @@ void read(attributes_t $2) {
 }
 
 void returns(attributes_t $2) {
-    if (!in_function) {
+    if (!function_body) {
         //TODO: Error
     }
     returning = true;
@@ -322,17 +329,61 @@ void push_type_up(attributes_t *$$, attributes_t $1) {
     $$->data_type = $1.data_type;
 }
 
-void new_function(attributes_t *$$, attributes_t $1) {
-    const Node* match = syTable_search(symbolTable, $3.lexeme);
+void new_function(attributes_t *$$, attributes_t $3) {
+    const Node *match = syTable_search(symbolTable, $3.lexeme);
     if (match) {
         //TODO: Error
     }
 
-    match = create_function(current_type, $3.lexeme, -1, -1);
+    current_function_type = current_type;
+    num_params = 0;
+    pos_param = 0;
+    num_local_vars = 0;
+    pos_local_vars = 0;
+    function_body = true;
+    returning = false;
+
+    strcpy($$->lexeme, $3.lexeme);
+}
+
+void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    const Node *match = create_function(current_function_type, $3.lexeme, num_params, num_local_vars);
     if (!match) {
         //TODO: Error
     }
 
-    if (!syTable_insert(symbolTable, *match))
+    if (!syTable_insert(symbolTable, *match)) {
+        //TODO: Error
+    }
 
+    declararFuncion(yyout, $$->lexeme, num_local_vars);
+}
+
+void end_function() {
+    if (!returning) {
+        //TODO: Error
+    }
+    if (!syTable_close_scope(symbolTable)) {
+        //TODO: Error
+    }
+
+    function_body = false;
+}
+
+void add_parameter(attributes_t $1) {
+    const Node *match = syTable_search(symbolTable, $1.lexeme);
+    if (match) {
+        //TODO: Error
+    }
+
+    match = create_parameter(current_type, $1.lexeme, ++pos_param);
+    if (!match) {
+        //TODO: Error
+    }
+
+    if (!syTable_insert(symbolTable, *match)) {
+        //TODO: Error
+    }
+
+    num_params++;
 }

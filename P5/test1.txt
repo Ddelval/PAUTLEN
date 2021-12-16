@@ -7,4 +7,6 @@ main{
         y=1;
         return y;
     }
+
+    printf 0;
 }
