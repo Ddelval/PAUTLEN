@@ -18,6 +18,7 @@ typedef struct {
     int value_int;
     bool is_address;
     int label;
+    int length;
 
 } attributes_t;
 

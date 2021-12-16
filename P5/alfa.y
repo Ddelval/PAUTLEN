@@ -85,6 +85,9 @@ extern int error_type;
 %type <attributes> funcion_tipo
 %type <attributes> funcion_decl
 %type <attributes> parametros_funcion
+%type <attributes> lista_expresiones
+%type <attributes> declaraciones_funcion
+%type <attributes> declaraciones
 
 // Following the C operator precedence standard:
 
@@ -111,10 +114,14 @@ escribir_MAIN:
 {escribir_inicio_main(yyout);}
 
 declaraciones: declaracion
-{fprintf(yyout, ";R2:\t<declaraciones> ::= <declaracion>\n");};
+{
+	fprintf(yyout, ";R2:\t<declaraciones> ::= <declaracion>\n");
+};
 
 declaraciones: declaracion declaraciones
-{fprintf(yyout, ";R3:\t<declaraciones> ::= <declaracion> <declaraciones>\n");};
+{
+	fprintf(yyout, ";R3:\t<declaraciones> ::= <declaracion> <declaraciones>\n");
+};
 
 declaracion: clase identificadores TOK_PUNTOYCOMA
 {fprintf(yyout, ";R4:\t<declaracion> ::= <clase> <identificadores> ;\n");};
@@ -204,7 +211,9 @@ funcion_identificador: TOK_IDENTIFICADOR
 };
 
 declaraciones_funcion: declaraciones
-{fprintf(yyout, ";R28:\t<declaraciones_funcion> ::= <declaraciones>\n");};
+{
+	fprintf(yyout, ";R28:\t<declaraciones_funcion> ::= <declaraciones>\n");
+};
 
 declaraciones_funcion: 
 {fprintf(yyout, ";R29:\t<declaraciones_funcion> ::=\n");};
@@ -390,12 +399,18 @@ exp: TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO
 exp: elemento_vector
 {fprintf(yyout, ";R85:\t<exp> ::= <elemento_vector>\n");};
 
-exp: identificador TOK_PARENTESISIZQUIERDO 
+exp: TOK_IDENTIFICADOR TOK_PARENTESISIZQUIERDO
     lista_expresiones TOK_PARENTESISDERECHO
-{fprintf(yyout, ";R88:\t<exp> ::= <identificador> ( <lista_expresiones> )\n");};
+{
+fprintf(yyout, ";R88:\t<exp> ::= <identificador> ( <lista_expresiones> )\n");
+function_call(&$$,$1,$3);
+};
 
 lista_expresiones: exp resto_lista_expresiones
-{fprintf(yyout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");};
+{
+fprintf(yyout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");
+accumulate_size(&$$,$1);
+};
 
 lista_expresiones: 
 {fprintf(yyout, ";R90:\t<lista_expresiones> ::=\n");};

@@ -1,6 +1,6 @@
 #.PHONY: test
 all:  alfa
-CC = gcc -fsanitize=address
+CC = gcc
 alfa: y.tab.o lex.yy.o syTable.o tableNode.o ht.o generacion.o launcher.o alfaActions.o
 	$(CC) -g -o $@ $^
 
@@ -22,7 +22,7 @@ test_compilation: alfa
 	./alfa test1.txt test1.asm
 	nasm -g -o output.o -f elf32 test1.asm
 	gcc -Wall -g -m32 -o test1 output.o alfalib.o
-	./test1
+	-./test1
 
 docker_test_compilation:
 	docker exec -ti "pautlencontainer"   bash -c "cd data; make test_compilation"

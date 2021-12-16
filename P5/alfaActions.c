@@ -18,7 +18,7 @@ int num_params = 0;
 int pos_param = 0;
 int num_local_vars = 0;
 int pos_local_vars = 0;
-bool function_body = true;
+bool function_body = 0;
 
 extern syTable *symbolTable;
 extern FILE *yyout;
@@ -78,13 +78,18 @@ void identifier(attributes_t $1) {
         //TODO: Handle vectors
 
         int size = current_class == VECTOR ? vector_size : 1;
+        int pos_local_var = function_body ? num_local_vars : -1;
 
         Node *n = create_variable(current_type, current_class,
-                                  size, $1.lexeme, -1);
+                                  size, $1.lexeme, pos_local_var);
         syTable_insert(symbolTable, *n);
         node_free(n);
 
-        declarar_variable(yyout, $1.lexeme, current_type, size);
+        if (function_body) {
+            num_local_vars++;
+        } else {
+            declarar_variable(yyout, $1.lexeme, current_type, size);
+        }
 
     }
 }
@@ -97,6 +102,7 @@ void initialize() {
     }
     escribir_subseccion_data(yyout);
     escribir_cabecera_bss(yyout);
+    fflush(yyout);
 }
 
 void constant_int(attributes_t *$$, attributes_t $1) {
@@ -171,10 +177,17 @@ void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
     if (match->data_type != $3.data_type) {
         exit_error(errors.incompatible_assign, "");
     }
-    asignar(yyout, match->name, $3.is_address);
+    fprintf(yyout, ";local: %d\n",match->pos_local_variable);
+    if (match->pos_local_variable >= 0) {
+        escribirVariableLocal(yyout, match->pos_local_variable);
+        asignarDestinoEnPila(yyout, $3.is_address);
+    } else {
+        asignar(yyout, match->name, $3.is_address);
+    }
 }
-void asign_vector(attributes_t *$$, attributes_t $1, attributes_t $3){
-    asignarDestinoEnPila(yyout,0);
+
+void asign_vector(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    asignarDestinoEnPila(yyout, 0);
 }
 
 void exp_identificador(attributes_t *$$, attributes_t $1) {
@@ -186,7 +199,12 @@ void exp_identificador(attributes_t *$$, attributes_t $1) {
 
     $$->data_type = match->data_type;
     $$->is_address = true;
-    escribir_operando(yyout, match->name, 1);
+    fprintf(yyout, ";loc:%d\n",match->pos_local_variable);
+    if (match->pos_local_variable >= 0) {
+        escribirVariableLocal(yyout, match->pos_local_variable);
+    } else {
+        escribir_operando(yyout, match->name, 1);
+    }
 }
 
 void read(attributes_t $2) {
@@ -386,4 +404,31 @@ void add_parameter(attributes_t $1) {
     }
 
     num_params++;
+}
+
+void accumulate_size(attributes_t *$$, attributes_t $1) {
+    $$->length = $1.length + 1;
+}
+
+void set_length(attributes_t *$$, int len) {
+    $$->length = len;
+}
+
+void add_length(attributes_t *$$, attributes_t $2, int len) {
+    $$->length = len + $2.length;
+}
+
+void propagate_size(attributes_t *$$, attributes_t $1) {
+    $$->length = $1.length;
+}
+
+void function_call(attributes_t *$$, attributes_t $1, attributes_t $2) {
+    const Node *match = syTable_search(symbolTable, $1.lexeme);
+    if (match->type != FUNCION) {
+        // TODO: Error
+    }
+    if (match->n_parameters != $2.length) {
+        // TODO: Error
+    }
+    llamarFuncion(yyout, $1.lexeme, $2.length);
 }

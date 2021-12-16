@@ -15,6 +15,8 @@ int main(int argc, char **argv) {
     yyin = fopen(argv[1], "r");
     yyout = fopen(argv[2], "w");
     ret = yyparse();
+    //fflush(yyout);
+    //fflush(stdout);
 
     return ret;
 }
