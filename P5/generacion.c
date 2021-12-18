@@ -346,7 +346,7 @@ cada tipo. Se deben insertar en la pila los argumentos necesarios, realizar la
 llamada (call) a la función de librería correspondiente y limpiar la pila.
 */
 void leer(FILE *fpasm, char *nombre, int tipo) {
-    fprintf(fpasm, "push dword _%s\n", nombre);
+    //fprintf(fpasm, "push dword _%s\n", nombre);
     if (tipo == ENTERO) {
         fprintf(fpasm, "%s\n", "call scan_int");
     } else {

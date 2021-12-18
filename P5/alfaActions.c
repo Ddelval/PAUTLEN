@@ -74,7 +74,7 @@ void set_vector_size(attributes_t $4) {
 }
 
 void identifier(attributes_t $1) {
-    if (syTable_search(symbolTable, $1.lexeme)) {
+    if (syTable_duplicated(symbolTable, $1.lexeme)) {
         exit_error(errors.duplicated_declaration, "");
     } else {
         //TODO: Handle vectors
@@ -259,7 +259,14 @@ void read(attributes_t $2) {
     } else if (match->variable_type != SCALAR) {
         //TODO: Error
     } else {
-        leer(yyout, $2.lexeme, match->data_type);
+        if (match->pos_local_variable >= 0) {
+            escribirVariableLocal(yyout, match->pos_local_variable);
+            leer(yyout, $2.lexeme, match->data_type);
+        }
+        else{
+            escribir_operando(yyout,$2.lexeme,1);
+            leer(yyout, $2.lexeme, match->data_type);
+        }
     }
 }
 
@@ -415,8 +422,10 @@ void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
     }
 
     if (syTable_create_scope(symbolTable, *match)) {
+        fprintf(stderr, "Unable to create scope\n");
         //TODO: Error
     }
+    node_free((Node*)match);
 
     declararFuncion(yyout, $$->lexeme, num_local_vars);
 }

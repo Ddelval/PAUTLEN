@@ -19,10 +19,10 @@ tests: $(TEST_EXEC)
 	@printf  "\e[32mTests compiled successfully\e[39;0m\n"
 
 test_compilation: alfa
-	./alfa test2.txt test2.asm
-	nasm -g -o output.o -f elf32 test2.asm
-	gcc -Wall -g -m32 -o test2 output.o alfalib.o
-	-./test2
+	./alfa test1.txt test1.asm
+	nasm -g -o output.o -f elf32 test1.asm
+	gcc -Wall -g -m32 -o test output.o alfalib.o
+	-./test
 
 docker_test_compilation:
 	docker exec -ti "pautlencontainer"   bash -c "cd data; make test_compilation"

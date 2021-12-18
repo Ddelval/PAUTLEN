@@ -11,4 +11,5 @@ bool syTable_insert(syTable *st, Node node);
 bool syTable_create_scope(syTable *st, Node node);
 bool syTable_close_scope(syTable *st);
 const Node *syTable_search(syTable *st, const char * name);
+const Node *syTable_duplicated(syTable *st, const char * name);
 #endif

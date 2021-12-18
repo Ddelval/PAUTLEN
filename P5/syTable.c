@@ -3,11 +3,13 @@
 #include "tableNode.h"
 #include <stdio.h>
 #include <stdlib.h>
+
 struct _syTable {
     ht *global;
     ht *local;
 };
-void free_wrap(void *var) { node_free((Node *)var); }
+
+void free_wrap(void *var) { node_free((Node *) var); }
 
 syTable *syTable_create() {
     syTable *st = calloc(1, sizeof(syTable));
@@ -44,6 +46,7 @@ static bool syTable_insert_into_table(ht *table, Node node) {
         return false;
     }
 }
+
 static bool syTable_insert_global(syTable *st, Node node) {
     return syTable_insert_into_table(st->global, node);
 }
@@ -96,12 +99,19 @@ bool syTable_close_scope(syTable *st) {
     return false;
 }
 
-const Node *syTable_search(syTable *st,const char * name) {
+const Node *syTable_search(syTable *st, const char *name) {
     if (st->local) {
         Node *loc = ht_get(st->local, name);
         if (loc) {
             return loc;
         }
+    }
+    return ht_get(st->global, name);
+}
+
+const Node *syTable_duplicated(syTable *st, const char *name) {
+    if (st->local) {
+        return ht_get(st->local, name);
     }
     return ht_get(st->global, name);
 }
