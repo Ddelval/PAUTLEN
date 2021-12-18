@@ -403,7 +403,7 @@ exp: TOK_IDENTIFICADOR set_calling TOK_PARENTESISIZQUIERDO
     lista_expresiones TOK_PARENTESISDERECHO
 {
 fprintf(yyout, ";R88:\t<exp> ::= <identificador> ( <lista_expresiones> )\n");
-function_call(&$$,$1,$3);
+function_call(&$$,$1,$4);
 };
 
 set_calling:

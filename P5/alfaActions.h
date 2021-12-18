@@ -53,6 +53,7 @@ void end_function();
 void add_parameter(attributes_t $1);
 
 void function_call(attributes_t* $$, attributes_t $1, attributes_t $3);
+void check_calling();
 void accumulate_size(attributes_t *$$, attributes_t $1);
 void add_length(attributes_t *$$, attributes_t $2, int len);
 void set_length(attributes_t *$$, int len);
