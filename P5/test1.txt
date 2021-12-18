@@ -1,11 +1,14 @@
 main{
     int x;
-    function int abc(){
+    function int abc(){     // Parameters are being declared as global variables
         int y;
-        y=2;
+        //int x;            // This shouldn't give a problem but (a) it does, and (b) it yields error the line before (are we counting lines right?)
+
+        scanf y;            // This tries to access y as global variable and, of course, fails
+        y=2*y;
         printf y;
         return y;
     }
-    x = abc(0);
+    x = abc();
     printf x;
 }

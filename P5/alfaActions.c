@@ -20,6 +20,7 @@ int num_local_vars = 0;
 int pos_local_vars = 0;
 bool function_body = false;
 bool function_calling = false;
+int calling_params = 0;
 
 extern syTable *symbolTable;
 extern FILE *yyout;
@@ -409,39 +410,49 @@ void add_parameter(attributes_t $1) {
     num_params++;
 }
 
-void accumulate_size(attributes_t *$$, attributes_t $1) {
-    $$->length = $1.length + 1;
+void accumulate_size() {
+    calling_params++;
 }
 
-void set_length(attributes_t *$$, int len) {
-    $$->length = len;
-}
-
-void add_length(attributes_t *$$, attributes_t $2, int len) {
-    $$->length = len + $2.length;
-}
-
-void propagate_size(attributes_t *$$, attributes_t $1) {
-    $$->length = $1.length;
-}
-
-void function_call(attributes_t *$$, attributes_t $1, attributes_t $2) {
+void function_call(attributes_t *$$, attributes_t $1, attributes_t $3) {
     const Node *match = syTable_search(symbolTable, $1.lexeme);
+    
+    // This checkings are ridiculous as we have already done them, but just in case
+    // we change something in the middle I'm keeping them. The more, the merrier
+    if (!match) {
+        // TODO: Error
+    }
     if (match->type != FUNCION) {
         // TODO: Error
     }
-    if (match->n_parameters != $2.length) {
+
+    if (match->n_parameters != calling_params) {
         // TODO: Error
     }
     
-    llamarFuncion(yyout, $1.lexeme, $2.length);
+    llamarFuncion(yyout, $1.lexeme, calling_params);
     function_calling = false;
+    calling_params = 0;
+
+    $$->is_address = false;
+    $$->data_type = match->data_type;
 }
 
-void check_calling() {
+void check_calling(attributes_t *$$, attributes_t $1) {
+    const Node *match = syTable_search(symbolTable, $1.lexeme);
+    if (!match) {
+        // TODO: Error
+    }
+    if (match->type != FUNCION) {
+        // TODO: Error
+    }
+
     if (function_calling) {
-        //TODO: Error
+        // TODO: Error
     }
 
     function_calling = true;
+    calling_params = 0;
+
+    strcpy($$->lexeme, $1.lexeme);
 }
