@@ -18,7 +18,8 @@ int num_params = 0;
 int pos_param = 0;
 int num_local_vars = 0;
 int pos_local_vars = 0;
-bool function_body = 0;
+bool function_body = false;
+bool function_calling = false;
 
 extern syTable *symbolTable;
 extern FILE *yyout;
@@ -149,6 +150,7 @@ void vector_element(attributes_t *$$, attributes_t $1, attributes_t $3) {
                              match->size, $3.is_address);
     $$->is_address = true;
     $$->data_type = match->data_type;
+    strcpy($$->lexeme, $1.lexeme);
 }
 
 void initialize_if(attributes_t *$$, attributes_t $3) {
@@ -431,5 +433,15 @@ void function_call(attributes_t *$$, attributes_t $1, attributes_t $2) {
     if (match->n_parameters != $2.length) {
         // TODO: Error
     }
+    
     llamarFuncion(yyout, $1.lexeme, $2.length);
+    function_calling = false;
+}
+
+void check_calling() {
+    if (function_calling) {
+        //TODO: Error
+    }
+
+    function_calling = true;
 }

@@ -399,11 +399,16 @@ exp: TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO
 exp: elemento_vector
 {fprintf(yyout, ";R85:\t<exp> ::= <elemento_vector>\n");};
 
-exp: TOK_IDENTIFICADOR TOK_PARENTESISIZQUIERDO
+exp: TOK_IDENTIFICADOR set_calling TOK_PARENTESISIZQUIERDO
     lista_expresiones TOK_PARENTESISDERECHO
 {
 fprintf(yyout, ";R88:\t<exp> ::= <identificador> ( <lista_expresiones> )\n");
 function_call(&$$,$1,$3);
+};
+
+set_calling:
+{
+	check_calling();
 };
 
 lista_expresiones: exp resto_lista_expresiones
