@@ -85,6 +85,7 @@ extern int error_type;
 %type <attributes> funcion_tipo
 %type <attributes> funcion_decl
 %type <attributes> parametros_funcion
+%type <attributes> idf_llamada_funcion
 %type <attributes> lista_expresiones
 %type <attributes> declaraciones_funcion
 %type <attributes> declaraciones
@@ -399,24 +400,32 @@ exp: TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO
 exp: elemento_vector
 {fprintf(yyout, ";R85:\t<exp> ::= <elemento_vector>\n");};
 
-exp: TOK_IDENTIFICADOR TOK_PARENTESISIZQUIERDO
+exp: idf_llamada_funcion TOK_PARENTESISIZQUIERDO
     lista_expresiones TOK_PARENTESISDERECHO
 {
-fprintf(yyout, ";R88:\t<exp> ::= <identificador> ( <lista_expresiones> )\n");
-function_call(&$$,$1,$3);
+	fprintf(yyout, ";R88:\t<exp> ::= <identificador> ( <lista_expresiones> )\n");
+	function_call(&$$,$1,$3);
+};
+
+idf_llamada_funcion: TOK_IDENTIFICADOR
+{
+	check_calling(&$$, $1);
 };
 
 lista_expresiones: exp resto_lista_expresiones
 {
-fprintf(yyout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");
-accumulate_size(&$$,$1);
+	fprintf(yyout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");
+	accumulate_size();
 };
 
 lista_expresiones: 
 {fprintf(yyout, ";R90:\t<lista_expresiones> ::=\n");};
 
 resto_lista_expresiones: TOK_COMA exp resto_lista_expresiones
-{fprintf(yyout, ";R91:\t<resto_lista_expresiones> ::= , <exp> <resto_lista_expresiones>\n");};
+{
+	fprintf(yyout, ";R91:\t<resto_lista_expresiones> ::= , <exp> <resto_lista_expresiones>\n");
+	accumulate_size();
+};
 
 resto_lista_expresiones: 
 {fprintf(yyout, ";R92:\t<resto_lista_expresiones> ::=\n");};

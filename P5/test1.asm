@@ -37,20 +37,42 @@ extern print_endofline, print_blank, print_string
 ;D:		;
 ;R18:	<identificadores> ::= <identificador>
 ;R4:	<declaracion> ::= <clase> <identificadores> ;
-;D:		y
+;D:		scanf
 ;R2:	<declaraciones> ::= <declaracion>
 ;R28:	<declaraciones_funcion> ::= <declaraciones>
 _abc:
 push dword ebp
 mov dword ebp, esp
 sub esp, 4*1
+;D:		y
+;R54:	<lectura> ::= scanf <identificador>
+push dword _y
+call scan_int
+add esp, 4
+;R35:	<sentencia_simple> ::= <lectura>
+;D:		;
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:		y
 ;D:		=
 ;D:		2
 ;R104:	<constante_entera> ::= TOK_CONSTANTE_ENTERA
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 push dword 2
+;D:		*
+;D:		y
 ;D:		;
+;R80:	<exp> ::= <identificador>
+;loc:0
+lea eax, [ebp - 0]
+push dword eax
+;R75:	<exp> ::= <exp> * <exp>
+pop dword ebx
+mov dword ebx, [ebx]
+pop dword eax
+cdq
+imul ebx
+push dword eax
 ;R43:	<asignacion> ::= <identificador> = <exp>
 ;local: 0
 lea eax, [ebp - 0]
@@ -95,6 +117,7 @@ ret
 ;R30:	<sentencias> ::= <sentencia>
 ;R31:	<sentencias> ::= <sentencia> <sentencias>
 ;R31:	<sentencias> ::= <sentencia> <sentencias>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
 ;R22:	<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }
 ;D:		x
 ;R21:	<funciones> ::=
@@ -104,17 +127,11 @@ mov dword [__esp], esp
 ;D:		=
 ;D:		abc
 ;D:		(
-;D:		0
-;R104:	<constante_entera> ::= TOK_CONSTANTE_ENTERA
-;R100:	<constante> ::= <constante_entera>
-;R81:	<exp> ::= <constante>
-push dword 0
 ;D:		)
-;R92:	<resto_lista_expresiones> ::=
-;R89:	<lista_expresiones> ::= <exp> <resto_lista_expresiones>
+;R90:	<lista_expresiones> ::=
 ;R88:	<exp> ::= <identificador> ( <lista_expresiones> )
 call _abc
-add esp, 4*1
+add esp, 4*0
 push dword eax
 ;D:		;
 ;R43:	<asignacion> ::= <identificador> = <exp>
