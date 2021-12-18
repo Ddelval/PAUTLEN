@@ -20,6 +20,7 @@ void if_propagate(attributes_t *$$, attributes_t $1);
 void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3);
 void asign_vector(attributes_t *$$, attributes_t $1, attributes_t $3);
 void exp_identificador(attributes_t* $$, attributes_t $1);
+void exp_vector(attributes_t *$$, attributes_t $1);
 
 void read(attributes_t $2);
 void returns(attributes_t $2);

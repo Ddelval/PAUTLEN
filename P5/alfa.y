@@ -398,7 +398,10 @@ exp: TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO
 };
 
 exp: elemento_vector
-{fprintf(yyout, ";R85:\t<exp> ::= <elemento_vector>\n");};
+{
+	fprintf(yyout, ";R85:\t<exp> ::= <elemento_vector>\n");
+	exp_vector(&$$,$1);
+};
 
 exp: idf_llamada_funcion TOK_PARENTESISIZQUIERDO
     lista_expresiones TOK_PARENTESISDERECHO

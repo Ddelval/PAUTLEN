@@ -17,6 +17,7 @@ void escribir_cabecera_bss(FILE *fpasm) {
 
     fprintf(fpasm, "%s", assembler_string);
 }
+
 /*
 Código para el principio de la sección .bss.
 Con seguridad sabes que deberás reservar una variable entera para guardar el
@@ -26,12 +27,13 @@ variable.
 
 void escribir_subseccion_data(FILE *fpasm) {
     const char *assembler_string =
-        "segment .data\n"
-        "msg_error_division db \"Error division by 0 \", 0\n"
-        "msg_error_rango db \"Error out of range \", 0\n";
+            "segment .data\n"
+            "msg_error_division db \"Error division by 0 \", 0\n"
+            "msg_error_rango db \"Error out of range \", 0\n";
 
     fprintf(fpasm, "%s", assembler_string);
 }
+
 /*
 Declaración (con directiva db) de las variables que contienen el texto de los
 mensajes para la identificación de errores en tiempo de ejecución.
@@ -42,6 +44,7 @@ void declarar_variable(FILE *fpasm, char *nombre, int tipo, int tamano) {
     const char *assembler_string = "_%s resd %d\n";
     fprintf(fpasm, assembler_string, nombre, tamano);
 }
+
 /*
 Para ser invocada en la sección .bss cada vez que se quiera declarar una
 variable:
@@ -55,12 +58,13 @@ primera práctica siempre recibirá el valor 1.
 
 void escribir_segmento_codigo(FILE *fpasm) {
     const char *assembler_string =
-        "segment .text\n"
-        "global main\n"
-        "extern scan_int, print_int, scan_boolean, print_boolean\n"
-        "extern print_endofline, print_blank, print_string\n";
+            "segment .text\n"
+            "global main\n"
+            "extern scan_int, print_int, scan_boolean, print_boolean\n"
+            "extern print_endofline, print_blank, print_string\n";
     fprintf(fpasm, "%s", assembler_string);
 }
+
 /*
 Para escribir el comienzo del segmento .text, básicamente se indica que se
 exporta la etiqueta main y que se usarán las funciones declaradas en la librería
@@ -72,6 +76,7 @@ void escribir_inicio_main(FILE *fpasm) {
                                    "mov dword [__esp], esp\n";
     fprintf(fpasm, "%s", assembler_string);
 }
+
 /*
 En este punto se debe escribir, al menos, la etiqueta main y la sentencia que
 guarda el puntero de pila en su variable (se recomienda usar __esp).
@@ -80,6 +85,7 @@ guarda el puntero de pila en su variable (se recomienda usar __esp).
 void escribir_fin(FILE *fpasm) {
     const char *assembler_string = "mov dword esp, [__esp]\n"
                                    "ret\n";
+    fprintf(fpasm, "%s\n", "mov eax, 0");
     fprintf(fpasm, "%s\n", "jmp near fin");
 
     // Error division
@@ -89,6 +95,7 @@ void escribir_fin(FILE *fpasm) {
     fprintf(fpasm, "%s\n", "add esp, 4");
     fprintf(fpasm, "%s\n", "call print_endofline");
     fprintf(fpasm, "%s\n", "jmp near fin");
+    fprintf(fpasm, "%s\n", "mov eax, 1");
 
     // Error range
     fprintf(fpasm, "%s\n", "fin_error_rango:");
@@ -97,11 +104,13 @@ void escribir_fin(FILE *fpasm) {
     fprintf(fpasm, "%s\n", "add esp, 4");
     fprintf(fpasm, "%s\n", "call print_endofline");
     fprintf(fpasm, "%s\n", "jmp near fin");
+    fprintf(fpasm, "%s\n", "mov eax, 1");
 
     // fin
     fprintf(fpasm, "%s\n", "fin:");
     fprintf(fpasm, "%s", assembler_string);
 }
+
 /*
 Al final del programa se escribe:
 - El código NASM para salir de manera controlada cuando se detecta un error
@@ -122,6 +131,7 @@ void escribir_operando(FILE *fpasm, char *nombre, int es_variable) {
     }
     fprintf(fpasm, assembler_string, nombre);
 }
+
 /*
 Función que debe ser invocada cuando se sabe un operando de una operación
 aritmético-lógica y se necesita introducirlo en la pila.
@@ -237,6 +247,7 @@ void cambiar_signo(FILE *fpasm, int es_variable) {
     fprintf(fpasm, "%s\n", "neg dword eax");
     fprintf(fpasm, "%s\n", "push dword eax");
 }
+
 /*
 Función aritmética de cambio de signo.
 Es análoga a las binarias, excepto que sólo requiere de un acceso a la pila ya
@@ -369,6 +380,7 @@ void ifthenelse_inicio(FILE *fpasm, int exp_es_variable, int etiqueta) {
     fprintf(fpasm, "%s\n", "cmp eax, 0");
     fprintf(fpasm, "je near it_end_%d\n", etiqueta);   // Changed from ite_else
 }
+
 /*
 Generación de código para el inicio de una estructura if-then-else
 Como es el inicio de uno bloque de control de flujo de programa que requiere de
@@ -386,6 +398,7 @@ void ifthen_inicio(FILE *fpasm, int exp_es_variable, int etiqueta) {
     fprintf(fpasm, "%s\n", "cmp eax, 0");
     fprintf(fpasm, "je near it_end_%d\n", etiqueta);
 }
+
 /*
 Generación de código para el inicio de una estructura if-then
 Como es el inicio de uno bloque de control de flujo de programa que requiere de
@@ -398,6 +411,7 @@ contrario (constante u otro tipo de expresión)
 void ifthen_fin(FILE *fpasm, int etiqueta) {
     fprintf(fpasm, "it_end_%d:\n", etiqueta);
 }
+
 /*
 Generación de código para el fin de una estructura if-then
 Como es el fin de uno bloque de control de flujo de programa que hace uso de la
@@ -411,6 +425,7 @@ void ifthenelse_fin_then(FILE *fpasm, int etiqueta) {
     fprintf(fpasm, "jmp near ite_endelse_%d\n", etiqueta);  // Changed from ite_end
     fprintf(fpasm, "it_end_%d:\n", etiqueta);  // Changed from ite_else
 }
+
 /*
 Generación de código para el fin de la rama then de una estructura if-then-else
 Sólo necesita usar la etiqueta adecuada, aunque es el final de una rama, luego
@@ -422,6 +437,7 @@ que corresponde al momento actual.
 void ifthenelse_fin(FILE *fpasm, int etiqueta) {
     fprintf(fpasm, "ite_endelse_%d:\n", etiqueta);  // Changed from ite_end
 }
+
 /*
 Generación de código para el fin de una estructura if-then-else
 Como es el fin de uno bloque de control de flujo de programa que hace uso de la
@@ -434,6 +450,7 @@ la última de ellas.
 void while_inicio(FILE *fpasm, int etiqueta) {
     fprintf(fpasm, "while_start_%d:\n", etiqueta);
 }
+
 /*
 Generación de código para el inicio de una estructura while
 Como es el inicio de uno bloque de control de flujo de programa que requiere de
@@ -451,6 +468,7 @@ void while_exp_pila(FILE *fpasm, int exp_es_variable, int etiqueta) {
     fprintf(fpasm, "%s\n", "cmp eax, 0");
     fprintf(fpasm, "je near while_end_%d\n", etiqueta);
 }
+
 /*
 Generación de código para el momento en el que se ha generado el código de la
 expresión de control del bucle Sólo necesita usar la etiqueta adecuada, por lo
@@ -464,6 +482,7 @@ void while_fin(FILE *fpasm, int etiqueta) {
     fprintf(fpasm, "jmp near while_start_%d\n", etiqueta);
     fprintf(fpasm, "while_end_%d:\n", etiqueta);
 }
+
 /*
 Generación de código para el final de una estructura while
 Como es el fin de uno bloque de control de flujo de programa que hace uso de la
@@ -490,6 +509,7 @@ void escribir_elemento_vector(FILE *fpasm, char *nombre_vector, int tam_max,
     fprintf(fpasm, "%s\n", "lea eax, [edx + eax*4]");
     fprintf(fpasm, "%s\n", "push dword eax");
 }
+
 /*
 Generación de código para indexar un vector
 Cuyo nombre es nombre_vector
@@ -506,6 +526,7 @@ void declararFuncion(FILE *fd_asm, char *nombre_funcion, int num_var_loc) {
     fprintf(fd_asm, "%s\n%s\n", "push dword ebp", "mov dword ebp, esp");
     fprintf(fd_asm, "sub esp, 4*%d\n", num_var_loc);
 }
+
 /*
 Generación de código para iniciar la declaración de una función.
 Es necesario proporcionar
@@ -522,6 +543,7 @@ void retornarFuncion(FILE *fd_asm, int es_variable) {
 
     fprintf(fd_asm, "%s\n%s\n%s\n", "mov dword esp, ebp", "pop dword ebp", "ret");
 }
+
 /*
 Generación de código para el retorno de una función.
 La expresión que se retorna está en la cima de la pila.
@@ -535,6 +557,7 @@ void escribirParametro(FILE *fpasm, int pos_parametro,
     fprintf(fpasm, "lea eax, [ebp + %d]\n", d_ebp);
     fprintf(fpasm, "%s\n", "push dword eax");
 }
+
 /*
 Función para dejar en la cima de la pila la dirección efectiva del parámetro que
 ocupa la posición pos_parametro (recuerda que los parámetros se ordenan con
@@ -547,6 +570,7 @@ void escribirVariableLocal(FILE *fpasm, int posicion_variable_local) {
     fprintf(fpasm, "lea eax, [ebp - %d]\n", d_ebp);
     fprintf(fpasm, "%s\n", "push dword eax");
 }
+
 /*
 Función para dejar en la cima de la pila la dirección efectiva de la variable
 local que ocupa la posición posicion_variable_local (recuerda que ordenadas con
@@ -563,6 +587,7 @@ void asignarDestinoEnPila(FILE *fpasm, int es_variable) {
 
     fprintf(fpasm, "%s\n", "mov dword [ebx], eax");
 }
+
 /*
 Función para poder asignar a un destino que no es una variable “global” (tipo
 _x) por ejemplo parámetros o variables locales (ya que en ese caso su nombre
@@ -583,6 +608,7 @@ void operandoEnPilaAArgumento(FILE *fd_asm, int es_variable) {
         fprintf(fd_asm, "%s\n", "mov dword [esp], eax");
     }
 }
+
 /*
 Como habrás visto en el material, nuestro convenio de llamadas a las funciones
 asume que los argumentos se pasan por valor, esto significa que siempre se dejan
@@ -595,6 +621,7 @@ void llamarFuncion(FILE *fd_asm, char *nombre_funcion, int num_argumentos) {
     fprintf(fd_asm, "call _%s\n", nombre_funcion);
     limpiarPila(fd_asm, num_argumentos);
 }
+
 /*
 Esta función genera código para llamar a la función nombre_funcion asumiendo que
 los argumentos están en la pila en el orden fijado en el material de la
@@ -607,9 +634,17 @@ void limpiarPila(FILE *fd_asm, int num_argumentos) {
     fprintf(fd_asm, "add esp, 4*%d\n", num_argumentos);
     fprintf(fd_asm, "%s\n", "push dword eax");
 }
+
 /*
 Genera código para limpiar la pila tras invocar una función
 Esta función es necesaria para completar la llamada a métodos, su gestión
 dificulta el conocimiento por parte de la función de llamada del número de
 argumentos que hay en la pila
 */
+
+void removeFromStack(FILE *fd_asm, int num_elems) {
+    fprintf(fd_asm, "add esp, 4*%d\n", num_elems);
+}
+/*
+Remove values from the stack
+ */

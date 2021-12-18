@@ -110,18 +110,21 @@ void initialize() {
 void constant_int(attributes_t *$$, attributes_t $1) {
     $$->data_type = INT;
     $$->is_address = false;
+    $$->is_constexpr = true;
     $$->value_int = $1.value_int;
 }
 
 void constant_propagate(attributes_t *$$, attributes_t $1) {
     $$->data_type = $1.data_type;
     $$->is_address = $1.is_address;
+    $$->is_constexpr = true;
     $$->value_int = $1.value_int;
 }
 
 void constant_logic(attributes_t *$$, int val) {
     $$->data_type = BOOLEAN;
     $$->value_int = val;
+    $$->is_constexpr = true;
     $$->is_address = false;
 }
 
@@ -139,16 +142,45 @@ const Node *getSymbol(const char *name) {
     return match;
 }
 
+void push_vector_address(attributes_t vector) {
+    const Node *match = getSymbol(vector.lexeme);
+
+    fprintf(stderr, "%d\n", vector.index_attributes.is_constexpr);
+
+    if (vector.index_attributes.is_constexpr) {
+        char intbuffer[MAX_INT_DIGITS];
+        sprintf(intbuffer, "%d", vector.index_attributes.value_int);
+        escribir_operando(yyout, intbuffer, 0);
+    } else {
+        escribir_operando(yyout, vector.index_attributes.lexeme, 1);
+    }
+    escribir_elemento_vector(yyout, vector.lexeme, match->size,
+                             !vector.index_attributes.is_constexpr);
+}
+
 void vector_element(attributes_t *$$, attributes_t $1, attributes_t $3) {
     const Node *match = getSymbol($1.lexeme);
     if (match->variable_type == SCALAR) {
         exit_error(errors.index_of_no_vector, "");
     }
-    if ($1.data_type != INT) {
+    if ($3.data_type != INT) {
         exit_error(errors.index_no_int, "");
     }
-    escribir_elemento_vector(yyout, $1.lexeme,
-                             match->size, $3.is_address);
+    fprintf(stderr, "%d\n", $3.is_address);
+
+    if (!$3.is_constexpr && !$3.is_address) {
+        //TODO: Some sort of new error
+    } else if ($3.is_address) {
+        strcpy($$->index_attributes.lexeme, $3.lexeme);
+        $$->index_attributes.is_constexpr = false;
+    } else {
+        $$->index_attributes.is_constexpr = true;
+        $$->index_attributes.value_int = $3.value_int;
+    }
+
+    // Clear the exp value
+    removeFromStack(yyout, 1);
+
     $$->is_address = true;
     $$->data_type = match->data_type;
     strcpy($$->lexeme, $1.lexeme);
@@ -180,7 +212,7 @@ void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
     if (match->data_type != $3.data_type) {
         exit_error(errors.incompatible_assign, "");
     }
-    fprintf(yyout, ";local: %d\n",match->pos_local_variable);
+    fprintf(yyout, ";local: %d\n", match->pos_local_variable);
     if (match->pos_local_variable >= 0) {
         escribirVariableLocal(yyout, match->pos_local_variable);
         asignarDestinoEnPila(yyout, $3.is_address);
@@ -190,7 +222,10 @@ void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
 }
 
 void asign_vector(attributes_t *$$, attributes_t $1, attributes_t $3) {
-    asignarDestinoEnPila(yyout, 0);
+    const Node *match = getSymbol($1.lexeme);
+
+    push_vector_address($1);
+    asignarDestinoEnPila(yyout, $3.is_address);
 }
 
 void exp_identificador(attributes_t *$$, attributes_t $1) {
@@ -202,12 +237,18 @@ void exp_identificador(attributes_t *$$, attributes_t $1) {
 
     $$->data_type = match->data_type;
     $$->is_address = true;
-    fprintf(yyout, ";loc:%d\n",match->pos_local_variable);
+    fprintf(yyout, ";loc:%d\n", match->pos_local_variable);
     if (match->pos_local_variable >= 0) {
         escribirVariableLocal(yyout, match->pos_local_variable);
     } else {
         escribir_operando(yyout, match->name, 1);
     }
+}
+
+void exp_vector(attributes_t *$$, attributes_t $1) {
+    push_vector_address($1);
+    $$->is_address = true;
+    $$->data_type = $1.data_type;
 }
 
 void read(attributes_t $2) {
@@ -416,7 +457,7 @@ void accumulate_size() {
 
 void function_call(attributes_t *$$, attributes_t $1, attributes_t $3) {
     const Node *match = syTable_search(symbolTable, $1.lexeme);
-    
+
     // This checkings are ridiculous as we have already done them, but just in case
     // we change something in the middle I'm keeping them. The more, the merrier
     if (!match) {
@@ -429,7 +470,7 @@ void function_call(attributes_t *$$, attributes_t $1, attributes_t $3) {
     if (match->n_parameters != calling_params) {
         // TODO: Error
     }
-    
+
     llamarFuncion(yyout, $1.lexeme, calling_params);
     function_calling = false;
     calling_params = 0;
