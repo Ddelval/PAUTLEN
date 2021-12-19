@@ -81,7 +81,7 @@ struct internal_error_c internal_errors = {
 
 void exit_error(error_str error, const char *optional) {
     fprintf(stdout, errors.base, lincount, error, optional);
-
+    syTable_destroy(symbolTable);
     exit(-1);
 }
 
