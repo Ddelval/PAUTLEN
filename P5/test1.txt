@@ -1,15 +1,11 @@
 main{
-    int x;
+    int x, y;
 
-    function int abc(int a) {
-        int y;
-
-        y = 15;
-        printf a*y;
-
-        return y-a;
+    function int abc(int a; int b) {
+        return a + b;
     }
 
-    x = abc(5);
+    y = 2;
+    x = abc(5, y);
     printf x;
 }
