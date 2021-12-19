@@ -50,7 +50,7 @@ for i in $indeces; do
 
   ./alfa $t "testAsm/test${i}.asm" >testOut/error"${i}" 2>/dev/null &&
     nasm -g -o output.o -f elf32 "testAsm/test${i}.asm" &&
-    gcc -Wall -g -m32 -o a.out output.o alfalib.o
+    gcc -Wall -g -m32 -o "a${i}.out" output.o alfalib.o
 
   test_name=$(head -n 1 testSrc/test$i.txt | cut -c11-)
   error_file=$(echo $t | sed 's/entrada/error/g')
@@ -70,7 +70,7 @@ for i in $indeces; do
 
     out_t_file=$(echo $out_file | sed 's/test\//testOut\//g')
 
-    ./a.out <$tcase 1>"$out_t_file"
+    "./a${i}.out" <$tcase 1>"$out_t_file"
 
     out_dif=$(diff -Bb "$out_t_file" "$out_file")
     count_dif=$(echo $out_dif | wc -w)
