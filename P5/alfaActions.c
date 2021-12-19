@@ -82,8 +82,16 @@ void identifier(attributes_t $1) {
         int size = current_class == VECTOR ? vector_size : 1;
         int pos_local_var = function_body ? num_local_vars : -1;
 
-        Node *n = create_variable(current_type, current_class,
-                                  size, $1.lexeme, pos_local_var);
+        Node *n;
+        if (function_body) {
+            n = create_variable(current_type, current_class,
+                                      size, $1.lexeme, pos_local_var);
+            printf("\n***%d %d\n", pos_local_var, num_params);
+        } else {
+            n = create_variable(current_type, current_class,
+                                      size, $1.lexeme, pos_local_var);
+        }
+
         syTable_insert(symbolTable, *n);
         node_free(n);
 
@@ -226,7 +234,7 @@ void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
     }
     fprintf(yyout, ";local: %d\n", match->pos_local_variable);
     if (match->pos_local_variable >= 0) {
-        escribirVariableLocal(yyout, match->pos_local_variable + num_params);
+        escribirVariableLocal(yyout, match->pos_local_variable);
         asignarDestinoEnPila(yyout, $3.is_address);
     } else {
         asignar(yyout, match->name, $3.is_address);
@@ -255,7 +263,7 @@ void exp_identificador(attributes_t *$$, attributes_t $1) {
     $$->is_address = true;
     fprintf(yyout, ";loc:%d\n", match->pos_local_variable);
     if (match->pos_local_variable >= 0) {
-        escribirVariableLocal(yyout, match->pos_local_variable + num_params);
+        escribirVariableLocal(yyout, match->pos_local_variable);
     } else {
         escribir_operando(yyout, match->name, 1);
     }
@@ -463,7 +471,7 @@ void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
     }
     node_free((Node *) match);
 
-    declararFuncion(yyout, $$->lexeme, num_local_vars + num_params);
+    declararFuncion(yyout, $$->lexeme, num_local_vars);
 }
 
 void end_function() {
@@ -493,6 +501,7 @@ void add_parameter(attributes_t $1) {
         //TODO: Error
     }
 
+    printf("\npass\n");
     num_params++;
 }
 
