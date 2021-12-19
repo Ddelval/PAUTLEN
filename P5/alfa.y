@@ -388,7 +388,10 @@ exp: constante
 };
 
 exp: TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO
-{fprintf(yyout, ";R82:\t<exp> ::= ( <exp> )\n");};
+{
+	fprintf(yyout, ";R82:\t<exp> ::= ( <exp> )\n");
+	exp_paren(&$$,$2);
+};
 
 exp: TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO
 {

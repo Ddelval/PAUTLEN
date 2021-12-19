@@ -271,7 +271,7 @@ void read(attributes_t $2) {
     const Node *match = getSymbol($2.lexeme);
 
     if (match->type == FUNCION) {
-        //TODO: Error. Also check parameter
+        //TODO: Error
     } else if (match->variable_type != SCALAR) {
         //TODO: Error
     } else {
@@ -299,21 +299,37 @@ void set_result_arithmetic(attributes_t *$$, attributes_t $1, attributes_t $3) {
 void add(attributes_t *$$, attributes_t $1, attributes_t $3) {
     set_result_arithmetic($$, $1, $3);
     sumar(yyout, $1.is_address, $3.is_address);
+    if ($1.is_constexpr && $3.is_constexpr){
+        $$->is_constexpr = true;
+        $$->value_int = $1.value_int + $3.value_int;
+    }
 }
 
 void substract(attributes_t *$$, attributes_t $1, attributes_t $3) {
     set_result_arithmetic($$, $1, $3);
     restar(yyout, $1.is_address, $3.is_address);
+    if ($1.is_constexpr && $3.is_constexpr){
+        $$->is_constexpr = true;
+        $$->value_int = $1.value_int - $3.value_int;
+    }
 }
 
 void divide(attributes_t *$$, attributes_t $1, attributes_t $3) {
     set_result_arithmetic($$, $1, $3);
     dividir(yyout, $1.is_address, $3.is_address);
+    if ($1.is_constexpr && $3.is_constexpr){
+        $$->is_constexpr = true;
+        $$->value_int = $1.value_int / $3.value_int;
+    }
 }
 
 void multiply(attributes_t *$$, attributes_t $1, attributes_t $3) {
     set_result_arithmetic($$, $1, $3);
     multiplicar(yyout, $1.is_address, $3.is_address);
+    if ($1.is_constexpr && $3.is_constexpr){
+        $$->is_constexpr = true;
+        $$->value_int = $1.value_int * $3.value_int;
+    }
 }
 
 void uminus(attributes_t *$$, attributes_t $2) {
@@ -323,6 +339,14 @@ void uminus(attributes_t *$$, attributes_t $2) {
     $$->data_type = INT;
     $$->is_address = false;
     cambiar_signo(yyout, $2.is_address);
+    if ($2.is_constexpr){
+        $$->is_constexpr = true;
+        $$->value_int = -$2.value_int;
+    }
+}
+void exp_paren(attributes_t* $$, attributes_t $2){
+    // TODO: Maybe more carefully???
+    *$$=$2;
 }
 
 void set_result_logic(attributes_t *$$, attributes_t $1, attributes_t $3) {
@@ -434,6 +458,7 @@ void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
     if (!syTable_create_scope(symbolTable, *match)) {
         fprintf(stderr, "Unable to create scope\n");
         //TODO: Error
+        //TODO: Could be because the name of the function is repeated
         exit(-1);
     }
     node_free((Node *) match);

@@ -1,14 +1,12 @@
 #!/bin/bash
 
 for t in $(ls test*.txt); do
-    echo $t
-    num=$(echo $t | grep -oE -e '\d' -f -)
-    echo ${num}
-    echo "test${num}.txt"
+    num=$(echo "$t" | grep -o '[0-9]*')
 
-    ./alfa "test${num}.txt" "test${num}.asm" && \
-    nasm -g -o output.o -f elf32 "test${num}.asm" && \
-    gcc -Wall -g -m32 -o "test${num}" output.o alfalib.o
+     echo -e "\nCompiling test ${num}"
+     ./alfa "test${num}.txt" "test${num}.asm" && \
+     nasm -g -o output.o -f elf32 "test${num}.asm" && \
+     gcc -Wall -g -m32 -o "test${num}" output.o alfalib.o
 
 
     if [[ $? == 0 ]]; then

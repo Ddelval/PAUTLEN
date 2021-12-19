@@ -31,6 +31,8 @@ void multiply(attributes_t *$$, attributes_t $1, attributes_t $3);
 
 void uminus(attributes_t *$$, attributes_t $2);
 
+void exp_paren(attributes_t* $$, attributes_t $2);
+
 void and(attributes_t *$$, attributes_t $1, attributes_t $3);
 void or(attributes_t *$$, attributes_t $1, attributes_t $3);
 

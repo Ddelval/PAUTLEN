@@ -16,7 +16,11 @@ y.tab.o: alfa.y
 	$(CC) -c -g -o y.tab.o y.tab.c
 
 tests: alfa
-	@printf  "\e[32mTests compiled successfully\e[39;0m\n"
+	./check_tests.sh
+
+docker_tests:
+	docker exec -ti "pautlencontainer"   bash -c "cd data; make tests"
+
 
 test_compilation: alfa
 	./compile_tests.sh
