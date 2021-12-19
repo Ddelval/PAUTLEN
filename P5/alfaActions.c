@@ -119,7 +119,9 @@ void identifier(attributes_t $1) {
             exit_error(internal_errors.create_symbol, $1.lexeme);
         }
 
-        syTable_insert(symbolTable, *n);
+        if (!syTable_insert(symbolTable, *n)) {
+            exit_error(internal_errors.insert_symbol, $1.lexeme);
+        }
         node_free(n);
 
         if (function_body) {
@@ -179,7 +181,7 @@ const Node *getSymbol(const char *name) {
 void push_vector_address(attributes_t vector) {
     const Node *match = getSymbol(vector.lexeme);
 
-    fprintf(stderr, "%d\n", vector.index_attributes.is_constexpr);
+    // fprintf(stderr, "%d\n", vector.index_attributes.is_constexpr);
 
     if (vector.index_attributes.is_constexpr) {
         char intbuffer[MAX_INT_DIGITS];
@@ -492,7 +494,7 @@ void end_function() {
         exit_error(errors.no_return,"");
     }
     if (!syTable_close_scope(symbolTable)) {
-        //TODO: Error
+        exit_error(internal_errors.close_scope, "");
     }
 
     function_body = false;
@@ -502,16 +504,16 @@ void end_function() {
 void add_parameter(attributes_t $1) {
     const Node *match = syTable_search(symbolTable, $1.lexeme);
     if (match) {
-        //TODO: Error
+        exit_error(errors.duplicated_declaration, "");
     }
 
     match = create_parameter(current_type, $1.lexeme, ++pos_param);
     if (!match) {
-        //TODO: Error
+        exit_error(internal_errors.create_symbol, $1.lexeme);
     }
 
     if (!syTable_insert(symbolTable, *match)) {
-        //TODO: Error
+        exit_error(internal_errors.insert_symbol, $1.lexeme);
     }
 
     num_params++;
@@ -528,14 +530,14 @@ void function_call(attributes_t *$$, attributes_t $1, attributes_t $3) {
     // This checkings are ridiculous as we have already done them, but just in case
     // we change something in the middle I'm keeping them. The more, the merrier
     if (!match) {
-        // TODO: Error
+        exit_error(errors.no_declarated, $1.lexeme);
     }
     if (match->type != FUNCION) {
-        // TODO: Error
+        exit_error(errors.var_as_fun, "");
     }
 
     if (match->n_parameters != calling_params) {
-        // TODO: Error
+        exit_error(errors.wrong_num_params, "");
     }
 
     llamarFuncion(yyout, $1.lexeme, calling_params);
@@ -549,14 +551,14 @@ void function_call(attributes_t *$$, attributes_t $1, attributes_t $3) {
 void check_calling(attributes_t *$$, attributes_t $1) {
     const Node *match = syTable_search(symbolTable, $1.lexeme);
     if (!match) {
-        // TODO: Error
+        exit_error(errors.no_declarated, $1.lexeme);
     }
     if (match->type != FUNCION) {
-        // TODO: Error
+        exit_error(errors.var_as_fun, "");
     }
 
     if (function_calling) {
-        // TODO: Error
+        exit_error(errors.call_as_param, "");
     }
 
     function_calling = true;
