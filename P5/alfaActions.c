@@ -111,7 +111,7 @@ void identifier(attributes_t $1) {
         if (function_body) {
             n = create_variable(current_type, current_class,
                                 size, $1.lexeme, pos_local_var);
-            fprintf(stderr, "\n***%d %d\n", pos_local_var, num_params);
+            // fprintf(stderr, "\n***%d %d\n", pos_local_var, num_params);
         } else {
             n = create_variable(current_type, current_class,
                                 size, $1.lexeme, -1);
@@ -169,6 +169,10 @@ void constant_to_stack(attributes_t $1) {
     char digits[MAX_INT_DIGITS];
     sprintf(digits, "%d", $1.value_int);
     escribir_operando(yyout, digits, 0);
+
+    if (function_calling) {
+        operandoEnPilaAArgumento(yyout, false); // TODO: Do we need this?
+    }
 }
 
 const Node *getSymbol(const char *name) {
@@ -193,6 +197,10 @@ void push_vector_address(attributes_t vector) {
     }
     escribir_elemento_vector(yyout, vector.lexeme, match->size,
                              !vector.index_attributes.is_constexpr);
+
+    if (function_calling) {
+        operandoEnPilaAArgumento(yyout, true);  // TODO: Do we need this?
+    }
 }
 
 void vector_element(attributes_t *$$, attributes_t $1, attributes_t $3) {
@@ -203,7 +211,7 @@ void vector_element(attributes_t *$$, attributes_t $1, attributes_t $3) {
     if ($3.data_type != INT) {
         exit_error(errors.index_no_int, "");
     }
-    fprintf(stderr, "%d\n", $3.is_address);
+    // fprintf(stderr, "%d\n", $3.is_address);
 
     if (!$3.is_constexpr && !$3.is_address) {
         exit_error(errors.index_exp_not_allowed, "");
@@ -248,6 +256,10 @@ void push_address(const Node *n) {
     } else {
         escribir_operando(yyout, n->name, 1);
     }
+
+    if (function_calling) {
+        operandoEnPilaAArgumento(yyout, true);  // TODO: Ok or not?
+    }
 }
 
 void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
@@ -259,7 +271,7 @@ void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
     if (match->data_type != $3.data_type) {
         exit_error(errors.incompatible_assign, "");
     }
-    //fprintf(yyout, ";local: %d\n", match->pos_local_variable);
+    // fprintf(yyout, ";local: %d\n", match->pos_local_variable);
     if (match->pos_local_variable >= 0 || match->type == PARAMETRO) {
         push_address(match);
         asignarDestinoEnPila(yyout, $3.is_address);
@@ -284,7 +296,7 @@ void exp_identificador(attributes_t *$$, attributes_t $1) {
 
     $$->data_type = match->data_type;
     $$->is_address = true;
-    //fprintf(yyout, ";loc:%d\n", match->pos_local_variable);
+    // fprintf(yyout, ";loc:%d\n", match->pos_local_variable);
     push_address(match);
 }
 
