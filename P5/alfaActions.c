@@ -459,6 +459,7 @@ void new_function(attributes_t *$$, attributes_t $3) {
 
 void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
     const Node *match = create_function(current_function_type, $3.lexeme, num_params, num_local_vars);
+    fprintf(stderr, "params in creation %d\n", num_params);
     if (!match) {
         //TODO: Error
     }
@@ -501,8 +502,8 @@ void add_parameter(attributes_t $1) {
         //TODO: Error
     }
 
-    printf("\npass\n");
     num_params++;
+    fprintf(stderr,"\npass %d\n",num_params);
 }
 
 void accumulate_size() {
