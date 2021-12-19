@@ -9,6 +9,6 @@ main{
         return a*x;
     }
 
-    x = abc(0);
+    x = abc(5);
     printf x;
 }
