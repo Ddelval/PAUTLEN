@@ -15,14 +15,11 @@ y.tab.o: alfa.y
 	bison -dyv $^
 	$(CC) -c -g -o y.tab.o y.tab.c
 
-tests: $(TEST_EXEC)
+tests: alfa
 	@printf  "\e[32mTests compiled successfully\e[39;0m\n"
 
 test_compilation: alfa
-	./alfa test1.txt test1.asm
-	nasm -g -o output.o -f elf32 test1.asm
-	gcc -Wall -g -m32 -o test output.o alfalib.o
-	-./test
+	./compile_tests.sh
 
 docker_test_compilation:
 	docker exec -ti "pautlencontainer"   bash -c "cd data; make test_compilation"

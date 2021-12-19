@@ -2,7 +2,11 @@ main{
     int x;
 
     function int abc(int a) {
-        return a;
+        int x;
+
+        x = 1;
+
+        return a*x;
     }
 
     x = abc(0);

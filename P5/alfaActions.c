@@ -200,6 +200,18 @@ void if_propagate(attributes_t *$$, attributes_t $1) {
     $$->label = $1.label;
 }
 
+void push_address(const Node *n) {
+    if (n->type == FUNCION) {
+        // Nothing to do
+        return;
+    } else if (n->type == PARAMETRO) {
+        escribirParametro(yyout, n->param_position, num_params);
+    } else if (n->pos_local_variable >= 0) {
+        escribirVariableLocal(yyout, n->pos_local_variable);
+    } else {
+        escribir_operando(yyout, n->name, 1);
+    }
+}
 
 void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
     const Node *match = getSymbol($1.lexeme);
@@ -260,19 +272,13 @@ void exp_vector(attributes_t *$$, attributes_t $1) {
 void read(attributes_t $2) {
     const Node *match = getSymbol($2.lexeme);
 
-    if (match->type == PARAMETRO || match->type == FUNCION) {
+    if (match->type == FUNCION) {
         //TODO: Error. Also check parameter
     } else if (match->variable_type != SCALAR) {
         //TODO: Error
     } else {
-        if (match->pos_local_variable >= 0) {
-            escribirVariableLocal(yyout, match->pos_local_variable);
-            leer(yyout, $2.lexeme, match->data_type);
-        }
-        else{
-            escribir_operando(yyout,$2.lexeme,1);
-            leer(yyout, $2.lexeme, match->data_type);
-        }
+        push_address(match);
+        leer(yyout, $2.lexeme, match->data_type);
     }
 }
 
@@ -432,7 +438,7 @@ void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
         //TODO: Error
         exit(-1);
     }
-    node_free((Node*)match);
+    node_free((Node *) match);
 
     declararFuncion(yyout, $$->lexeme, num_local_vars + num_params);
 }
