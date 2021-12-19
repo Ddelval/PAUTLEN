@@ -609,6 +609,14 @@ void operandoEnPilaAArgumento(FILE *fd_asm, int es_variable) {
     }
 }
 
+void operandoEnPilaAArgumentoIndex(FILE *fd_asm, int es_variable, int stackPos) {
+    if (es_variable) {
+        fprintf(fd_asm, "mov dword eax, [esp+4*%d]\n", stackPos);
+        fprintf(fd_asm, "%s\n", "mov dword eax, [eax]");
+        fprintf(fd_asm, "mov dword [esp+4*%d], eax\n", stackPos);
+    }
+}
+
 /*
 Como habrás visto en el material, nuestro convenio de llamadas a las funciones
 asume que los argumentos se pasan por valor, esto significa que siempre se dejan
