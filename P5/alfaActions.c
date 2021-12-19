@@ -81,6 +81,7 @@ struct internal_error_c internal_errors = {
 
 void exit_error(error_str error, const char *optional) {
     fprintf(stdout, errors.base, lincount, error, optional);
+
     exit(-1);
 }
 
@@ -473,7 +474,7 @@ void new_function(attributes_t *$$, attributes_t $3) {
 
 void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
     const Node *match = create_function(current_function_type, $3.lexeme, num_params, num_local_vars);
-    fprintf(stderr, "params in creation %d\n", num_params);
+    // fprintf(stderr, "params in creation %d\n", num_params);
     if (!match) {
         exit_error(internal_errors.create_symbol, $3.lexeme);
     }
@@ -516,6 +517,7 @@ void add_parameter(attributes_t $1) {
         exit_error(internal_errors.insert_symbol, $1.lexeme);
     }
 
+    node_free((Node *) match);
     num_params++;
     // fprintf(stderr, "\npass %d\n", num_params);
 }
