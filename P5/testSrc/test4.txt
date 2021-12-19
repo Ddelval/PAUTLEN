@@ -1,0 +1,23 @@
+########## Parameter operations
+##########
+main{
+    int x;
+
+    function int abc(int a) {
+        int y;
+
+        y = 15;
+        a = a*y;
+        printf a;
+
+        return y-a;
+    }
+
+    x = abc(5);
+    printf x;
+}
+----------
+----------
+75
+-60
+----------

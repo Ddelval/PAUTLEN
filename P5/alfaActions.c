@@ -38,6 +38,11 @@ struct error_c {
     error_str vector_size, index_of_no_vector, index_no_int;
     error_str no_return, return_out_function;
     error_str call_as_param, local_no_scalar;
+    error_str index_exp_not_allowed;
+    error_str function_non_eval;
+    error_str read_only_scalar;
+    error_str cexp_div_zero;
+    error_str var_as_fun;
 };
 struct error_c errors = {"Error semantico en lin %d: %s\n",
                          "Declaracion duplicada.",
@@ -55,7 +60,24 @@ struct error_c errors = {"Error semantico en lin %d: %s\n",
                          "Funcion %s sin sentencia de retorno.",
                          "Sentencia de retorno fuera del cuerpo de una función.",
                          "No esta permitido el uso de llamadas a funciones como parametros de otras funciones.",
-                         "Variable local de tipo no escalar."};
+                         "Variable local de tipo no escalar.",
+                         "Expresion no valida para indexar un vector",
+                         "Una funcion no puede ser evaluada",
+                         "Solo esta permitido leer tipos escalares",
+                         "Division entre cero en expresion constante",
+                         "Una variable no puede ser llamada"};
+
+struct internal_error_c {
+    error_str create_symbol, create_table, create_scope, close_scope, insert_symbol;
+};
+
+struct internal_error_c internal_errors = {
+        "Error interno al crear el simbolo: %s",
+        "Error interno al crear la tabla de simbolos",
+        "Error interno al crear un nuevo scope en la tabla de simbolos",
+        "Error interno al cerrar el scope en la tabla de simbolos",
+        "Error interno al insertar en la tabla de simbolos: %s"};
+
 
 void exit_error(error_str error, const char *optional) {
     fprintf(stdout, errors.base, lincount, error, optional);
@@ -77,7 +99,9 @@ void identifier(attributes_t $1) {
     if (syTable_duplicated(symbolTable, $1.lexeme)) {
         exit_error(errors.duplicated_declaration, "");
     } else {
-        //TODO: Handle vectors
+        if (function_body && current_class == VECTOR) {
+            exit_error(errors.local_no_scalar, $1.lexeme);
+        }
 
         int size = current_class == VECTOR ? vector_size : 1;
         int pos_local_var = function_body ? num_local_vars : -1;
@@ -85,11 +109,14 @@ void identifier(attributes_t $1) {
         Node *n;
         if (function_body) {
             n = create_variable(current_type, current_class,
-                                      size, $1.lexeme, pos_local_var);
-            fprintf(stderr,"\n***%d %d\n", pos_local_var, num_params);
+                                size, $1.lexeme, pos_local_var);
+            fprintf(stderr, "\n***%d %d\n", pos_local_var, num_params);
         } else {
             n = create_variable(current_type, current_class,
-                                      size, $1.lexeme, pos_local_var);
+                                size, $1.lexeme, -1);
+        }
+        if (!n) {
+            exit_error(internal_errors.create_symbol, $1.lexeme);
         }
 
         syTable_insert(symbolTable, *n);
@@ -107,8 +134,7 @@ void identifier(attributes_t $1) {
 void initialize() {
     symbolTable = syTable_create();
     if (!symbolTable) {
-        fprintf(stderr, "Error allocating symbol table");
-        exit(-1);
+        exit_error(internal_errors.create_table, "");
     }
     escribir_subseccion_data(yyout);
     escribir_cabecera_bss(yyout);
@@ -177,7 +203,7 @@ void vector_element(attributes_t *$$, attributes_t $1, attributes_t $3) {
     fprintf(stderr, "%d\n", $3.is_address);
 
     if (!$3.is_constexpr && !$3.is_address) {
-        //TODO: Some sort of new error
+        exit_error(errors.index_exp_not_allowed, "");
     } else if ($3.is_address) {
         strcpy($$->index_attributes.lexeme, $3.lexeme);
         $$->index_attributes.is_constexpr = false;
@@ -224,17 +250,15 @@ void push_address(const Node *n) {
 void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
     const Node *match = getSymbol($1.lexeme);
 
-    // TODO: Vector sizes
-
-    if (match->type == FUNCION || match->type == PARAMETRO) {   //TODO: Not ok with params?
+    if (match->type == FUNCION || match->variable_type == VECTOR) {
         exit_error(errors.incompatible_assign, "");
     }
     if (match->data_type != $3.data_type) {
         exit_error(errors.incompatible_assign, "");
     }
-    fprintf(yyout, ";local: %d\n", match->pos_local_variable);
-    if (match->pos_local_variable >= 0) {
-        escribirVariableLocal(yyout, match->pos_local_variable);
+    //fprintf(yyout, ";local: %d\n", match->pos_local_variable);
+    if (match->pos_local_variable >= 0 || match->type == PARAMETRO) {
+        push_address(match);
         asignarDestinoEnPila(yyout, $3.is_address);
     } else {
         asignar(yyout, match->name, $3.is_address);
@@ -250,23 +274,15 @@ void exp_identificador(attributes_t *$$, attributes_t $1) {
     const Node *match = getSymbol($1.lexeme);
 
     if (match->type == FUNCION) {
-        //TODO: Print some sort of error. Which one ???
+        exit_error(errors.function_non_eval, "");
     } else if (match->type == PARAMETRO) {
-        $$->data_type = match->data_type;
-        $$->is_address = true;
         strcpy($$->lexeme, $1.lexeme);
-        escribirParametro(yyout, match->param_position, num_params);
-        return;
     }
 
     $$->data_type = match->data_type;
     $$->is_address = true;
-    fprintf(yyout, ";loc:%d\n", match->pos_local_variable);
-    if (match->pos_local_variable >= 0) {
-        escribirVariableLocal(yyout, match->pos_local_variable);
-    } else {
-        escribir_operando(yyout, match->name, 1);
-    }
+    //fprintf(yyout, ";loc:%d\n", match->pos_local_variable);
+    push_address(match);
 }
 
 void exp_vector(attributes_t *$$, attributes_t $1) {
@@ -278,10 +294,8 @@ void exp_vector(attributes_t *$$, attributes_t $1) {
 void read(attributes_t $2) {
     const Node *match = getSymbol($2.lexeme);
 
-    if (match->type == FUNCION) {
-        //TODO: Error
-    } else if (match->variable_type != SCALAR) {
-        //TODO: Error
+    if (match->type == FUNCION || match->variable_type != SCALAR) {
+        exit_error(errors.read_only_scalar, "");
     } else {
         push_address(match);
         leer(yyout, $2.lexeme, match->data_type);
@@ -290,15 +304,21 @@ void read(attributes_t $2) {
 
 void returns(attributes_t $2) {
     if (!function_body) {
-        //TODO: Error
+        exit_error(errors.return_out_function, "");
     }
     returning = true;
     retornarFuncion(yyout, $2.is_address);
 }
 
+#define constexpr(x) \
+if ($1.is_constexpr && $3.is_constexpr){ \
+    $$->is_constexpr = true;           \
+    $$->value_int = $1.value_int x $3.value_int; \
+    }
+
 void set_result_arithmetic(attributes_t *$$, attributes_t $1, attributes_t $3) {
     if ($1.data_type != INT || $3.data_type != INT) {
-        //TODO: Error
+        exit_error(errors.arithmetic_with_boolean, "");
     }
     $$->is_address = false;
     $$->data_type = INT;
@@ -307,59 +327,51 @@ void set_result_arithmetic(attributes_t *$$, attributes_t $1, attributes_t $3) {
 void add(attributes_t *$$, attributes_t $1, attributes_t $3) {
     set_result_arithmetic($$, $1, $3);
     sumar(yyout, $1.is_address, $3.is_address);
-    if ($1.is_constexpr && $3.is_constexpr){
-        $$->is_constexpr = true;
-        $$->value_int = $1.value_int + $3.value_int;
-    }
+    constexpr(+);
 }
 
 void substract(attributes_t *$$, attributes_t $1, attributes_t $3) {
     set_result_arithmetic($$, $1, $3);
     restar(yyout, $1.is_address, $3.is_address);
-    if ($1.is_constexpr && $3.is_constexpr){
-        $$->is_constexpr = true;
-        $$->value_int = $1.value_int - $3.value_int;
-    }
+    constexpr(-);
 }
 
 void divide(attributes_t *$$, attributes_t $1, attributes_t $3) {
     set_result_arithmetic($$, $1, $3);
     dividir(yyout, $1.is_address, $3.is_address);
-    if ($1.is_constexpr && $3.is_constexpr){
-        $$->is_constexpr = true;
-        $$->value_int = $1.value_int / $3.value_int;
+    if ($3.is_constexpr && $3.value_int == 0) {
+        exit_error(errors.cexp_div_zero, "");
     }
+    constexpr(/);
 }
 
 void multiply(attributes_t *$$, attributes_t $1, attributes_t $3) {
     set_result_arithmetic($$, $1, $3);
     multiplicar(yyout, $1.is_address, $3.is_address);
-    if ($1.is_constexpr && $3.is_constexpr){
-        $$->is_constexpr = true;
-        $$->value_int = $1.value_int * $3.value_int;
-    }
+    constexpr(*);
 }
 
 void uminus(attributes_t *$$, attributes_t $2) {
     if ($2.data_type != INT) {
-        //TODO: Error
+        exit_error(errors.arithmetic_with_boolean, "");
     }
     $$->data_type = INT;
     $$->is_address = false;
     cambiar_signo(yyout, $2.is_address);
-    if ($2.is_constexpr){
+    if ($2.is_constexpr) {
         $$->is_constexpr = true;
         $$->value_int = -$2.value_int;
     }
 }
-void exp_paren(attributes_t* $$, attributes_t $2){
-    // TODO: Maybe more carefully???
-    *$$=$2;
+
+void exp_paren(attributes_t *$$, attributes_t $2) {
+    // TODO: Does this have any side effects ???
+    *$$ = $2;
 }
 
 void set_result_logic(attributes_t *$$, attributes_t $1, attributes_t $3) {
     if ($1.data_type != BOOLEAN || $3.data_type != BOOLEAN) {
-        //TODO: Error
+        exit_error(errors.logic_with_int, "");
     }
     $$->is_address = false;
     $$->data_type = BOOLEAN;
@@ -377,7 +389,7 @@ void or(attributes_t *$$, attributes_t $1, attributes_t $3) {
 
 void not(attributes_t *$$, attributes_t $2) {
     if ($2.data_type != BOOLEAN) {
-        //TODO: Error
+        exit_error(errors.logic_with_int, 0);
     }
     $$->data_type = BOOLEAN;
     $$->is_address = false;
@@ -386,7 +398,7 @@ void not(attributes_t *$$, attributes_t $2) {
 
 void check_comparison(attributes_t *$$, attributes_t $1, attributes_t $3) {
     if ($1.data_type != INT || $3.data_type != INT) {
-        //TODO: Error
+        exit_error(errors.comparison_with_bool, "");
     }
     $$->data_type = BOOLEAN;
 }
@@ -443,7 +455,7 @@ void push_type_up(attributes_t *$$, attributes_t $1) {
 void new_function(attributes_t *$$, attributes_t $3) {
     const Node *match = syTable_search(symbolTable, $3.lexeme);
     if (match) {
-        //TODO: Error
+        exit_error(errors.duplicated_declaration, "");
     }
 
     current_function_type = current_type;
@@ -461,14 +473,14 @@ void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
     const Node *match = create_function(current_function_type, $3.lexeme, num_params, num_local_vars);
     fprintf(stderr, "params in creation %d\n", num_params);
     if (!match) {
-        //TODO: Error
+        exit_error(internal_errors.create_symbol, $3.lexeme);
+    }
+    if (syTable_search(symbolTable, $3.lexeme)) {
+        exit_error(errors.duplicated_declaration, "");
     }
 
     if (!syTable_create_scope(symbolTable, *match)) {
-        fprintf(stderr, "Unable to create scope\n");
-        //TODO: Error
-        //TODO: Could be because the name of the function is repeated
-        exit(-1);
+        exit_error(internal_errors.create_scope, "");
     }
     node_free((Node *) match);
 
@@ -477,7 +489,7 @@ void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
 
 void end_function() {
     if (!returning) {
-        //TODO: Error
+        exit_error(errors.no_return,"");
     }
     if (!syTable_close_scope(symbolTable)) {
         //TODO: Error
@@ -503,7 +515,7 @@ void add_parameter(attributes_t $1) {
     }
 
     num_params++;
-    fprintf(stderr,"\npass %d\n",num_params);
+    // fprintf(stderr, "\npass %d\n", num_params);
 }
 
 void accumulate_size() {
