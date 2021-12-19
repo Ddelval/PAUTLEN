@@ -421,9 +421,10 @@ void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
         //TODO: Error
     }
 
-    if (syTable_create_scope(symbolTable, *match)) {
+    if (!syTable_create_scope(symbolTable, *match)) {
         fprintf(stderr, "Unable to create scope\n");
         //TODO: Error
+        exit(-1);
     }
     node_free((Node*)match);
 
