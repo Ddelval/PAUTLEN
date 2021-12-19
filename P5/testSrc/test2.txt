@@ -1,0 +1,20 @@
+########## Parameters test
+##########
+main{
+    int x;
+
+    function int abc(int a) {
+        printf a;
+
+
+        return 0;
+    }
+
+    x = abc(5);
+    printf x;
+}
+----------
+----------
+5
+0
+----------
