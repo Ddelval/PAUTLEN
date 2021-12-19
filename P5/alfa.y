@@ -430,6 +430,7 @@ resto_lista_expresiones: TOK_COMA exp resto_lista_expresiones
 {
 	fprintf(yyout, ";R91:\t<resto_lista_expresiones> ::= , <exp> <resto_lista_expresiones>\n");
 	accumulate_size();
+	operandoEnPilaAArgumento(yyout, $2.is_address);
 };
 
 resto_lista_expresiones: 

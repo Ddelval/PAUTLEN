@@ -169,10 +169,6 @@ void constant_to_stack(attributes_t $1) {
     char digits[MAX_INT_DIGITS];
     sprintf(digits, "%d", $1.value_int);
     escribir_operando(yyout, digits, 0);
-
-    if (function_calling) {
-        operandoEnPilaAArgumento(yyout, false); // TODO: Do we need this?
-    }
 }
 
 const Node *getSymbol(const char *name) {
