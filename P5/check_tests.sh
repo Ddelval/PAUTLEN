@@ -7,10 +7,12 @@ fi
 
 rm -f testOut/*
 rm -f testAsm/*
+rm -f testBin/*
 rm -f test/*
 mkdir -p testOut
 mkdir -p test
 mkdir -p testAsm
+mkdir -p testBin
 
 test_count=$(($(ls testSrc/test*.txt | wc -w)))
 
@@ -45,12 +47,16 @@ for t in $(ls test/test*-entrada-0 ); do
 done
 indeces=$(echo $t_n | grep -o '[0-9]*' | sort -g)
 
+c_ok=0
+r_ok=0
+c_fail=0
+r_fail=0
 for i in $indeces; do
   t="test/test$i-entrada-0"
 
   ./alfa $t "testAsm/test${i}.asm" >testOut/error"${i}" 2>/dev/null &&
     nasm -g -o output.o -f elf32 "testAsm/test${i}.asm" &&
-    gcc -Wall -g -m32 -o "a${i}.out" output.o alfalib.o
+    gcc -Wall -g -m32 -o "testBin/a${i}.out" output.o alfalib.o
 
   test_name=$(head -n 1 testSrc/test$i.txt | cut -c11-)
   error_file=$(echo $t | sed 's/entrada/error/g')
@@ -59,8 +65,10 @@ for i in $indeces; do
   if [[ $((count_dif)) -ne 0 ]]; then
       printf "\e[31;1mTest $i$test_name COMPILATION DIFF  \e[39;0m\n"
       echo $err_dif
+      c_fail=$(( c_fail + 1 ))
   else
       printf "\e[32;1mTest $i$test_name COMPILATION OK \e[39;0m\n"
+      c_ok=$(( c_ok + 1 ))
   fi
 
 
@@ -70,15 +78,17 @@ for i in $indeces; do
 
     out_t_file=$(echo $out_file | sed 's/test\//testOut\//g')
 
-    "./a${i}.out" <$tcase 1>"$out_t_file"
+    "testBin/./a${i}.out" <$tcase 1>"$out_t_file"
 
     out_dif=$(diff -Bb "$out_t_file" "$out_file")
     count_dif=$(echo $out_dif | wc -w)
 
     if [[ $(($count_dif)) -eq 0 ]]; then
       printf "\e[32;1mTest $i$test_name Case $n OK \e[39;0m\n"
+      r_ok=$(( r_ok + 1 ))
     else
       printf "\e[31;1mTest $i$test_name Case $n ERROR \e[39;0m\n"
+      r_fail=$(( r_fail + 1 ))
       printf "\e[34;4mDifferences in the output\e[39;0m\n"
       echo $out_dif
     fi
@@ -86,3 +96,6 @@ for i in $indeces; do
   echo ""
 
 done
+echo "SUMMARY:"
+echo -e "\tRuntime:     \e[32;1mok: $r_ok \t  \e[31;1merrors: $r_fail\e[39;0m"
+echo -e "\tCompilation: \e[32;1mok: $c_ok \t  \e[31;1merrors: $c_fail\e[39;0m"
