@@ -1,8 +1,0 @@
-main{
-    array int[3] v;
-    v[0]=1;
-    v[1]=2;
-    v[2]=3;
-    printf 4+(-2);
-    printf v[4+(-2)];
-}

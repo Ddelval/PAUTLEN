@@ -1,3 +1,5 @@
+########## Parameters + Local variables
+##########
 main{
     int x;
 
@@ -13,3 +15,8 @@ main{
     x = abc(5);
     printf x;
 }
+----------
+----------
+75
+10
+----------

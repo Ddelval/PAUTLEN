@@ -86,7 +86,7 @@ void identifier(attributes_t $1) {
         if (function_body) {
             n = create_variable(current_type, current_class,
                                       size, $1.lexeme, pos_local_var);
-            printf("\n***%d %d\n", pos_local_var, num_params);
+            fprintf(stderr,"\n***%d %d\n", pos_local_var, num_params);
         } else {
             n = create_variable(current_type, current_class,
                                       size, $1.lexeme, pos_local_var);
@@ -255,7 +255,7 @@ void exp_identificador(attributes_t *$$, attributes_t $1) {
         $$->data_type = match->data_type;
         $$->is_address = true;
         strcpy($$->lexeme, $1.lexeme);
-        escribirVariableLocal(yyout, match->param_position);
+        escribirParametro(yyout, match->param_position, num_params);
         return;
     }
 
