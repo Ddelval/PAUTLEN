@@ -254,7 +254,7 @@ void push_address(const Node *n) {
     }
 
     if (function_calling) {
-        operandoEnPilaAArgumento(yyout, true);  // TODO: Ok or not?
+        // operandoEnPilaAArgumento(yyout, true);  // TODO: Ok or not?
     }
 }
 

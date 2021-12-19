@@ -421,6 +421,7 @@ lista_expresiones: exp resto_lista_expresiones
 {
 	fprintf(yyout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");
 	accumulate_size();
+	operandoEnPilaAArgumento(yyout, $1.is_address);
 };
 
 lista_expresiones: 
