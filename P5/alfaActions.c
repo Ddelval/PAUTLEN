@@ -255,7 +255,7 @@ void exp_identificador(attributes_t *$$, attributes_t $1) {
         $$->data_type = match->data_type;
         $$->is_address = true;
         strcpy($$->lexeme, $1.lexeme);
-        escribirVariableLocal(yyout, match->param_position);
+        escribirParametro(yyout, match->param_position, num_params);
         return;
     }
 
