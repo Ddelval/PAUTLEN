@@ -36,5 +36,8 @@ docker_test_compilation:
 clean:
 	cp alfalib.o alfalib.v
 	rm -fr alfa *.o lex.yy.c  y.tab.c y.tab.h y.output
+	rm -f test[0-9]
+	rm -f test[0-9].asm
+	rm -f a.out
 	mv alfalib.v alfalib.o
 #	rm -r test testOut
