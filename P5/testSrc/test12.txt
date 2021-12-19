@@ -1,0 +1,41 @@
+########## Operation on parameters #2
+##########
+main
+{
+// Declaraciones
+
+    int x, resultado, y;
+
+// Funciones
+    function int sample (int num1; int num2)
+    {
+        int x;
+		
+		x = num1 - num2;
+
+		return x;
+    }
+
+// Sentencias
+
+	scanf x;
+	scanf y;
+
+	resultado = sample (x, y);
+
+	printf resultado;
+}
+
+----------
+########## Test cases
+----------
+13
+10
+----------
+3
+----------
+20
+10
+----------
+10
+
