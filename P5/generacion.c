@@ -565,6 +565,7 @@ origen 0) de un total de num_total_parametros
 */
 
 void escribirVariableLocal(FILE *fpasm, int posicion_variable_local) {
+    posicion_variable_local++;
     int d_ebp = 4 * posicion_variable_local;
 
     fprintf(fpasm, "lea eax, [ebp - %d]\n", d_ebp);
@@ -574,7 +575,7 @@ void escribirVariableLocal(FILE *fpasm, int posicion_variable_local) {
 /*
 Función para dejar en la cima de la pila la dirección efectiva de la variable
 local que ocupa la posición posicion_variable_local (recuerda que ordenadas con
-origen 1)
+origen 0)
 */
 
 void asignarDestinoEnPila(FILE *fpasm, int es_variable) {
