@@ -206,7 +206,7 @@ void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
 
     // TODO: Vector sizes
 
-    if (match->type == FUNCION || match->type == PARAMETRO) {
+    if (match->type == FUNCION || match->type == PARAMETRO) {   //TODO: Not ok with params=
         exit_error(errors.incompatible_assign, "");
     }
     if (match->data_type != $3.data_type) {
@@ -231,15 +231,21 @@ void asign_vector(attributes_t *$$, attributes_t $1, attributes_t $3) {
 void exp_identificador(attributes_t *$$, attributes_t $1) {
     const Node *match = getSymbol($1.lexeme);
 
-    if (match->type == FUNCION || match->type == PARAMETRO) {
+    if (match->type == FUNCION) {
         //TODO: Print some sort of error. Which one ???
+    } else if (match->type == PARAMETRO) {
+        $$->data_type = match->data_type;
+        $$->is_address = false;
+        strcpy($$->lexeme, $1.lexeme);
+        escribirVariableLocal(yyout, match->param_position);
+        return;
     }
 
     $$->data_type = match->data_type;
     $$->is_address = true;
     fprintf(yyout, ";loc:%d\n", match->pos_local_variable);
     if (match->pos_local_variable >= 0) {
-        escribirVariableLocal(yyout, match->pos_local_variable);
+        escribirVariableLocal(yyout, match->pos_local_variable + num_params);
     } else {
         escribir_operando(yyout, match->name, 1);
     }
@@ -428,7 +434,7 @@ void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
     }
     node_free((Node*)match);
 
-    declararFuncion(yyout, $$->lexeme, num_local_vars);
+    declararFuncion(yyout, $$->lexeme, num_local_vars + num_params);
 }
 
 void end_function() {

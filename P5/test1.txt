@@ -1,10 +1,10 @@
 main{
     int x;
 
-    function int abc() {
-        return 0;
+    function int abc(int a) {
+        return a;
     }
 
-    x = abc();
+    x = abc(0);
     printf x;
 }
