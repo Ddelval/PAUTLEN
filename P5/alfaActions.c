@@ -81,6 +81,7 @@ struct internal_error_c internal_errors = {
 
 void exit_error(error_str error, const char *optional) {
     fprintf(stdout, errors.base, lincount, error, optional);
+    syTable_destroy(symbolTable);
     exit(-1);
 }
 
@@ -516,6 +517,7 @@ void add_parameter(attributes_t $1) {
         exit_error(internal_errors.insert_symbol, $1.lexeme);
     }
 
+    node_free((Node *) match);
     num_params++;
     // fprintf(stderr, "\npass %d\n", num_params);
 }

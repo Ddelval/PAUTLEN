@@ -8,6 +8,7 @@ syTable *symbolTable;
 extern FILE *yyin, *yyout;
 
 extern int yyparse();
+extern int yylex_destroy();
 
 int main(int argc, char **argv) {
     int ret = 0;
@@ -17,6 +18,13 @@ int main(int argc, char **argv) {
     ret = yyparse();
     //fflush(yyout);
     //fflush(stdout);
+
+    syTable_destroy(symbolTable);
+
+    fclose(yyin);
+    fclose(yyout);
+
+    yylex_destroy();
 
     return ret;
 }
