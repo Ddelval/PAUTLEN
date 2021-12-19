@@ -420,8 +420,9 @@ idf_llamada_funcion: TOK_IDENTIFICADOR
 lista_expresiones: exp resto_lista_expresiones
 {
 	fprintf(yyout, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");
-	accumulate_size();
-	operandoEnPilaAArgumento(yyout, $1.is_address);
+	//operandoEnPilaAArgumento(yyout, $1.is_address);
+	//accumulate_size();
+	exp_to_argument($1);
 };
 
 lista_expresiones: 
@@ -430,8 +431,9 @@ lista_expresiones:
 resto_lista_expresiones: TOK_COMA exp resto_lista_expresiones
 {
 	fprintf(yyout, ";R91:\t<resto_lista_expresiones> ::= , <exp> <resto_lista_expresiones>\n");
-	accumulate_size();
-	operandoEnPilaAArgumento(yyout, $2.is_address);
+	exp_to_argument($2);
+	//operandoEnPilaAArgumentoIndex(yyout, $2.is_address);
+	//accumulate_size();
 };
 
 resto_lista_expresiones: 

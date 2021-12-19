@@ -12,7 +12,7 @@ main
 		return a;
 	}
 
-	vector[0] =  false;
+	vector[0] = false;
 	vector[1] = true;
 	vector[2] = false;
 	

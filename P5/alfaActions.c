@@ -194,9 +194,6 @@ void push_vector_address(attributes_t vector) {
     escribir_elemento_vector(yyout, vector.lexeme, match->size,
                              !vector.index_attributes.is_constexpr);
 
-    if (function_calling) {
-        operandoEnPilaAArgumento(yyout, true);  // TODO: Do we need this?
-    }
 }
 
 void vector_element(attributes_t *$$, attributes_t $1, attributes_t $3) {
@@ -253,9 +250,6 @@ void push_address(const Node *n) {
         escribir_operando(yyout, n->name, 1);
     }
 
-    if (function_calling) {
-        // operandoEnPilaAArgumento(yyout, true);  // TODO: Ok or not?
-    }
 }
 
 void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
@@ -532,6 +526,11 @@ void add_parameter(attributes_t $1) {
 
 void accumulate_size() {
     calling_params++;
+}
+
+void exp_to_argument(attributes_t $1){
+    operandoEnPilaAArgumentoIndex(yyout, $1.is_address,calling_params);
+    accumulate_size();
 }
 
 void function_call(attributes_t *$$, attributes_t $1, attributes_t $3) {

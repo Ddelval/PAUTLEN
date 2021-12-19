@@ -335,6 +335,8 @@ Esta función realiza la tarea de dado un operando escrito en la pila y sabiendo
 o no (es_variable) se deja en la pila el valor correspondiente
 */
 
+void operandoEnPilaAArgumentoIndex(FILE *fd_asm, int es_variable, int stackPos);
+
 void llamarFuncion(FILE *fd_asm, char *nombre_funcion, int num_argumentos);
 
 /*
