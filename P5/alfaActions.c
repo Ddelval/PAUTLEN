@@ -43,6 +43,7 @@ struct error_c {
     error_str read_only_scalar;
     error_str cexp_div_zero;
     error_str var_as_fun;
+    error_str vec_index_out_range;
 };
 struct error_c errors = {"Error semantico en lin %d: %s\n",
                          "Declaracion duplicada.",
@@ -80,7 +81,9 @@ struct internal_error_c internal_errors = {
 
 
 void exit_error(error_str error, const char *optional) {
-    fprintf(stdout, errors.base, lincount, error, optional);
+    char buffer[256];
+    sprintf(buffer, error,optional);
+    fprintf(stdout, errors.base, lincount+1, buffer); //TODO: Check lincount
     syTable_destroy(symbolTable);
     exit(-1);
 }
@@ -106,6 +109,10 @@ void identifier(attributes_t $1) {
 
         int size = current_class == VECTOR ? vector_size : 1;
         int pos_local_var = function_body ? num_local_vars : -1;
+
+        if (current_class == VECTOR && vector_size >MAX_VECTOR_SIZE){
+            exit_error(errors.vector_size,$1.lexeme);
+        }
 
         Node *n;
         if (function_body) {

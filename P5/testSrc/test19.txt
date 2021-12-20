@@ -1,0 +1,24 @@
+########## Conditionals 1
+##########
+main
+{
+    boolean a;
+
+	a = true;
+	if (a)
+	{
+	  printf 1;
+	}
+	if (a)
+	{
+	  printf 1;
+	}
+
+}
+
+----------
+########## Test cases
+----------
+----------
+1
+1

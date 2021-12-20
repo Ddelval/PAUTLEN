@@ -1,0 +1,16 @@
+########## Basic example
+##########
+main
+{
+int x, y;
+scanf x;
+y = x + 1;
+printf y;
+}
+
+----------
+########## Test cases
+----------
+1
+----------
+2
