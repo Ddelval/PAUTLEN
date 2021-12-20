@@ -306,7 +306,7 @@ void escribirVariableLocal(FILE *fpasm, int posicion_variable_local);
 
 /*
 Función para dejar en la cima de la pila la dirección efectiva de la variable local que ocupa
-la posición posicion_variable_local (recuerda que ordenadas con origen 1)
+la posición posicion_variable_local (recuerda que ordenadas con origen 0)
 */
 
 void asignarDestinoEnPila(FILE *fpasm, int es_variable);

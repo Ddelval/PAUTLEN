@@ -115,3 +115,18 @@ const Node *syTable_duplicated(syTable *st, const char *name) {
     }
     return ht_get(st->global, name);
 }
+
+void syTable_setFunctionValues(syTable *st, const char *name, int n_params, int n_local_vars) {
+    if (st->local) {
+        Node *n1 = ht_get(st->local, name);
+        if (n1) {
+            n1->n_parameters = n_params;
+            n1->n_local_variables = n_local_vars;
+        }
+    }
+    Node *n2 = ht_get(st->global, name);
+    if (n2) {
+        n2->n_parameters = n_params;
+        n2->n_local_variables = n_local_vars;
+    }
+}

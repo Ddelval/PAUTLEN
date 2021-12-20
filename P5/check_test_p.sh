@@ -15,8 +15,9 @@ mkdir -p testAsm
 mkdir -p testBin
 
 test_count=$(($(ls testSrc/test*.txt | wc -w)))
-
-for t in $(ls testSrc/test*.txt); do
+Nparallel=8
+generate_files(){
+  t=$1
   i=$(echo "$t" | grep -o '[0-9]*')
   sections=$(cat testSrc/test"$i".txt | grep -e '----------' | wc -l)
   test_cases=$((($sections - 1) / 2))
@@ -32,7 +33,14 @@ for t in $(ls testSrc/test*.txt); do
   done
   code="BEGIN{$out_indeces $out_files n=0}"'/----------?/{n++}{print >"test/test" number "-" name[n]  "-" inde[n] }'
   awk -v number="$i" "$code" testSrc/test"$i".txt
+
+}
+proc=0
+for t in $(ls testSrc/test*.txt); do
+  ((proc=proc%Nparallel)); ((proc++==0)) && wait
+  generate_files $t &
 done
+wait
 
 for file in $(ls test/*); do
   $sed '/^----------/d' "$file"
@@ -51,12 +59,29 @@ c_ok=0
 r_ok=0
 c_fail=0
 r_fail=0
-for i in $indeces; do
+
+compile_program(){
+  echo $1
+  i=$1
   t="test/test$i-entrada-0"
 
   ./alfa $t "testAsm/test${i}.asm" >testOut/error"${i}" 2>/dev/null &&
-    nasm -g -o output.o -f elf32 "testAsm/test${i}.asm" &&
-    gcc -Wall -g -m32 -o "testBin/a${i}.out" output.o alfalib.o
+    nasm -g -o testBin/output${i}.o -f elf32 "testAsm/test${i}.asm" &&
+    gcc -Wall -g -m32 -o "testBin/a${i}.out" testBin/output${i}.o alfalib.o
+
+  rm testBin/output${i}.o
+  ((proc--))
+}
+proc=0
+for i in $indeces; do
+  ((proc=proc%Nparallel)); ((proc++==0)) && wait
+  compile_program $i &
+done
+wait
+
+for i in $indeces; do
+  t="test/test$i-entrada-0"
+
 
   test_name=$(head -n 1 testSrc/test$i.txt | cut -c11-)
   error_file=$(echo $t | sed 's/entrada/error/g')

@@ -172,14 +172,14 @@ funciones: funcion funciones
 funciones: 
 {fprintf(yyout, ";R21:\t<funciones> ::=\n");};
 
-funcion: funcion_decl  TOK_LLAVEIZQUIERDA declaraciones_funcion sentencias TOK_LLAVEDERECHA
+funcion: funcion_decl   sentencias TOK_LLAVEDERECHA
 {
 	fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");
 	end_function();
 };
 
 funcion_decl: funcion_tipo TOK_PARENTESISIZQUIERDO
-              parametros_funcion TOK_PARENTESISDERECHO
+              parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion
 {
 	declare_function(&$$, $1, $3);
 };

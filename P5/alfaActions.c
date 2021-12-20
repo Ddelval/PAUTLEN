@@ -127,6 +127,7 @@ void identifier(attributes_t $1) {
 
         if (function_body) {
             num_local_vars++;
+            fprintf(yyout, ";Found a local variable\n");
         } else {
             declarar_variable(yyout, $1.lexeme, current_type, size);
         }
@@ -473,29 +474,33 @@ void new_function(attributes_t *$$, attributes_t $3) {
     returning = false;
 
     strcpy($$->lexeme, $3.lexeme);
-}
 
-void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
-    const Node *match = create_function(current_function_type, $3.lexeme, num_params, num_local_vars);
-    // fprintf(stderr, "params in creation %d\n", num_params);
-    if (!match) {
+    const Node *match2 = create_function(current_function_type, $3.lexeme, num_params, num_local_vars);
+
+    if (!match2) {
         exit_error(internal_errors.create_symbol, $3.lexeme);
     }
     if (syTable_search(symbolTable, $3.lexeme)) {
         exit_error(errors.duplicated_declaration, "");
     }
 
-    if (!syTable_create_scope(symbolTable, *match)) {
+    if (!syTable_create_scope(symbolTable, *match2)) {
         exit_error(internal_errors.create_scope, "");
     }
-    node_free((Node *) match);
+    node_free((Node *) match2);
+}
 
+void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    syTable_setFunctionValues(symbolTable,$1.lexeme, num_params,num_local_vars);
+
+    strcpy($$->lexeme, $1.lexeme);
+    fprintf(yyout, "; %d local variables\n", num_local_vars);
     declararFuncion(yyout, $$->lexeme, num_local_vars);
 }
 
 void end_function() {
     if (!returning) {
-        exit_error(errors.no_return,"");
+        exit_error(errors.no_return, "");
     }
     if (!syTable_close_scope(symbolTable)) {
         exit_error(internal_errors.close_scope, "");
@@ -529,8 +534,8 @@ void accumulate_size() {
     calling_params++;
 }
 
-void exp_to_argument(attributes_t $1){
-    operandoEnPilaAArgumentoIndex(yyout, $1.is_address,calling_params);
+void exp_to_argument(attributes_t $1) {
+    operandoEnPilaAArgumentoIndex(yyout, $1.is_address, calling_params);
     accumulate_size();
 }
 
