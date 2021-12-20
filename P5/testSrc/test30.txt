@@ -1,0 +1,47 @@
+########## While 2
+##########
+main
+{
+    int x, y, i;
+    boolean resultado;
+
+    scanf x;
+    scanf y;
+
+    resultado=false;
+    i = 0;
+
+    while ((i<y))
+    {
+        resultado = true;
+        x=x+1;
+
+        printf x;
+
+	i = i + 1;
+    }
+    printf resultado;
+}
+
+----------
+########## Test cases
+----------
+10
+4
+----------
+11
+12
+13
+14
+true
+----------
+7
+0
+----------
+0
+false
+----------
+0
+9
+----------
+0

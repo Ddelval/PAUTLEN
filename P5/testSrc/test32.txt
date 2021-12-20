@@ -1,0 +1,15 @@
+########## Division by 0
+##########
+main{
+    array int[3] x;
+    int z;
+    z=1;
+    x[1] = 5;
+    x[1]/0;
+}
+
+----------
+****Error sintactico en [lin 6, col 9]
+########## Test cases
+----------
+----------
