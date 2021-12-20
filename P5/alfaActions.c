@@ -285,6 +285,7 @@ void asign_vector(attributes_t *$$, attributes_t $1, attributes_t $3) {
 
 void exp_identificador(attributes_t *$$, attributes_t $1) {
     const Node *match = getSymbol($1.lexeme);
+    //printf("\n**************** %s\n", $1.lexeme);
 
     if (match->type == FUNCION) {
         exit_error(errors.function_non_eval, "");
