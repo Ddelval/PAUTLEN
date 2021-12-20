@@ -1,0 +1,42 @@
+########## Logic 2
+##########
+main
+{
+    boolean a, b, c;
+
+	scanf a;
+	scanf b;
+      scanf c;
+
+	printf a || b && c;
+	printf ( a || b) && c;
+	printf !a && b && !c;
+
+}
+
+----------
+########## Test cases
+----------
+1
+0
+1
+----------
+true
+true
+false
+----------
+1
+0
+0
+----------
+true
+false
+false
+----------
+0
+1
+1
+----------
+true
+true
+false

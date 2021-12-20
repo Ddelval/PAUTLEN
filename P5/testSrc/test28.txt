@@ -1,0 +1,19 @@
+########## Vector too big
+##########
+
+main
+{
+    int x, y;
+    boolean a, b;
+
+    array int[80] whole;
+
+    v[12] = 3;
+
+}
+
+----------
+Error semantico en lin 7: El tamanyo del vector whole excede los limites permitidos (1,64).
+########## Test cases
+----------
+----------
