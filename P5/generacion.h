@@ -360,4 +360,6 @@ void removeFromStack(FILE *fd_asm, int num_elems);
 /*
 Remove values from the stack
  */
+
+void swapOrderStack(FILE *fd_asm);
 #endif

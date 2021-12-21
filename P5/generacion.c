@@ -654,6 +654,13 @@ argumentos que hay en la pila
 void removeFromStack(FILE *fd_asm, int num_elems) {
     fprintf(fd_asm, "add esp, 4*%d\n", num_elems);
 }
+void swapOrderStack(FILE *fd_asm){
+    fprintf(fd_asm, "%s\n","pop dword eax");
+    fprintf(fd_asm, "%s\n","pop dword ebx");
+    fprintf(fd_asm, "%s\n","push dword eax");
+    fprintf(fd_asm, "%s\n","push dword ebx");
+
+}
 /*
 Remove values from the stack
  */

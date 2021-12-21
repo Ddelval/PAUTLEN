@@ -187,6 +187,7 @@ const Node *getSymbol(const char *name) {
     return match;
 }
 
+/*
 void push_vector_address(attributes_t vector) {
     const Node *match = getSymbol(vector.lexeme);
 
@@ -203,6 +204,7 @@ void push_vector_address(attributes_t vector) {
                              !vector.index_attributes.is_constexpr);
 
 }
+*/
 
 void vector_element(attributes_t *$$, attributes_t $1, attributes_t $3) {
     const Node *match = getSymbol($1.lexeme);
@@ -214,6 +216,7 @@ void vector_element(attributes_t *$$, attributes_t $1, attributes_t $3) {
     }
     // fprintf(stderr, "%d\n", $3.is_address);
 
+    /*
     if (!$3.is_constexpr && !$3.is_address) {
         exit_error(errors.index_exp_not_allowed, "");
     } else if ($3.is_address) {
@@ -226,6 +229,9 @@ void vector_element(attributes_t *$$, attributes_t $1, attributes_t $3) {
 
     // Clear the exp value
     removeFromStack(yyout, 1);
+    */
+    escribir_elemento_vector(yyout,$1.lexeme,match->size,$3.is_address);
+
 
     $$->is_address = true;
     $$->data_type = match->data_type;
@@ -279,7 +285,8 @@ void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
 }
 
 void asign_vector(attributes_t *$$, attributes_t $1, attributes_t $3) {
-    push_vector_address($1);
+    //push_vector_address($1);
+    swapOrderStack(yyout);
     asignarDestinoEnPila(yyout, $3.is_address);
 }
 
@@ -300,7 +307,7 @@ void exp_identificador(attributes_t *$$, attributes_t $1) {
 }
 
 void exp_vector(attributes_t *$$, attributes_t $1) {
-    push_vector_address($1);
+    //push_vector_address($1);
     $$->is_address = true;
     $$->data_type = $1.data_type;
 }

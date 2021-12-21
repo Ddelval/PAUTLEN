@@ -20,11 +20,13 @@ typedef enum {
     SCALAR, VECTOR
 } variableType;
 
+/*
 typedef struct {
     char lexeme[MAX_IDENTIFIER_LENGTH + 1];
     int value_int;
     bool is_constexpr;
 } index_attributes_t;
+*/
 
 typedef struct {
     char lexeme[MAX_IDENTIFIER_LENGTH + 1];
@@ -34,7 +36,7 @@ typedef struct {
     bool is_constexpr;
     int label;
     int length;
-    index_attributes_t index_attributes;
+    //index_attributes_t index_attributes;
 
 } attributes_t;
 

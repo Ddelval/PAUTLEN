@@ -19,7 +19,7 @@
 DIGIT   [0-9]
 LETTER  [A-Za-z]
 SYMBOL  [;,"()*"]
-NO_SYMBOL_OR_WHITE  [^;,\(\)\[\]\{\}=+\-/*&|! \n\t]
+NO_SYMBOL_OR_WHITE  [^;,\(\)\[\]\{\}=+\-/*&|! < > \n\t]
 WHITESPACE [ \t\n]
 
 %%
