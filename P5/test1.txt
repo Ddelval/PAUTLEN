@@ -1,12 +1,10 @@
-main{
+main
+{
     int x, y;
+    boolean a, b;
 
-    function int abc(int a; int b; boolean c) {
-        printf c;
-        return a + b;
-    }
+    array int[80] whole;
 
-    y = 2;
-    x = abc(5, y, (y>2));
-    printf x;
+    v[12] = 3;
+
 }

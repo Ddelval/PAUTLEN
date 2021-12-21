@@ -9,8 +9,7 @@ main{
 }
 
 ----------
+****Error sintactico en [lin 6, col 9]
 ########## Test cases
 ----------
 ----------
-
-****Error sintactico en [lin 6, col 9]

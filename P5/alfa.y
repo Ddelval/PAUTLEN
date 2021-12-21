@@ -506,7 +506,10 @@ constante_entera: TOK_CONSTANTE_ENTERA
 };
 
 identificador: TOK_IDENTIFICADOR
-{fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n"); identifier($1);};
+{
+	fprintf(yyout, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
+	identifier($1);
+};
 %%
 
 
