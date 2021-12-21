@@ -1,4 +1,4 @@
-########## Division by 0
+########## Comparison as parameter
 ##########
 main{
     int x, y;
