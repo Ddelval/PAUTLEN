@@ -1,0 +1,23 @@
+########## Division by 0
+##########
+main{
+    int x, y;
+
+    function int abc(int a; int b; boolean c) {
+        printf c;
+        return a + b;
+    }
+
+    y = 2;
+    // x = abc(5, y, (y>2)); This is OK
+    x = abc(5, y, (2>y));   // This is not OK?
+    printf x;
+}
+
+----------
+
+########## Test cases
+----------
+----------
+false
+7

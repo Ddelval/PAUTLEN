@@ -1,11 +1,12 @@
 main{
     int x, y;
 
-    function int abc(int a; int b) {
+    function int abc(int a; int b; boolean c) {
+        printf c;
         return a + b;
     }
 
     y = 2;
-    x = abc(5, y);
+    x = abc(5, y, (y>2));
     printf x;
 }
