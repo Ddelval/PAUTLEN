@@ -1,6 +1,6 @@
-########## Vector as parameter
+########## Vector as parameter (for now should explode)
 ##########
-main{
+main {
     int x, y;
     array int[3] v;
     x=0;
@@ -12,15 +12,12 @@ main{
     }
 
     y = 2;
-    // x = abc(v[x], y, (x<2)); This is OK
-    x = abc(5, y, (2>y));   // This is not OK?
+    x = abc(5, y, (2>y));
     printf x;
 }
 
 ----------
-
+****Error sintactico en [lin 7, col 5]
 ########## Test cases
 ----------
 ----------
-true
-7
