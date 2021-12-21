@@ -1,0 +1,35 @@
+########## Array of expression
+##########
+main{
+    int x, y;
+    array int[3] v;
+
+    v[1]=22;
+
+    x=0;
+    y=0;
+    v[x+y]=2;
+
+    x=4;
+    y=2;
+    v[x/y]=5;
+
+    printf v[0];
+    printf v[y/2];
+    printf v[x/2];
+
+    y=v[y];
+    printf y;
+    y=v[x];
+}
+
+----------
+
+########## Test cases
+----------
+----------
+2
+22
+5
+5
+Error out of range
