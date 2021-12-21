@@ -1,4 +1,4 @@
-########## Vector as parameter (for now should explode)
+########## Assignment before function definition
 ##########
 main {
     int x, y;

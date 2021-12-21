@@ -1,6 +1,7 @@
 ########## Arrays
 ########## 
 main{
+    int index;
     array int[3] v;
     v[0]=1;
     v[1]=2;
@@ -11,7 +12,8 @@ main{
     printf v[2*1];
     printf v[(2*2)/4];
     printf v[4/2];
-    printf v[3];
+    index = 3;
+    printf v[index];
 }
 ----------
 ########## Test cases

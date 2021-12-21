@@ -1,0 +1,12 @@
+########## Negative constant index in vector
+##########
+main{
+    array int[3] v;
+    printf v[-1];
+}
+
+----------
+Error semantico en lin 3: Indice de vector v fuera de rango
+########## Test cases
+----------
+----------

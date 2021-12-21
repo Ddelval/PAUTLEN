@@ -1,0 +1,14 @@
+########## Division by 0 (runtime)
+##########
+main{
+    int v;
+    v=0;
+    v = 1/v;
+
+}
+
+----------
+########## Test cases
+----------
+----------
+Error division by 0

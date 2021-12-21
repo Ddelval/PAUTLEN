@@ -1,0 +1,14 @@
+########## Negative  index in vector
+##########
+main{
+    array int[3] v;
+    int  x;
+    x=-1;
+    printf v[x];
+}
+
+----------
+########## Test cases
+----------
+----------
+Error out of range

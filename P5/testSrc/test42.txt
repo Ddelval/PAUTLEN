@@ -1,0 +1,12 @@
+########## Small vector
+##########
+main{
+    array int[0] v;
+
+}
+
+----------
+Error semantico en lin 2: El tamanyo del vector v excede los limites permitidos (1,64).
+########## Test cases
+----------
+----------

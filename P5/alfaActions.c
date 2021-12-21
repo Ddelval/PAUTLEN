@@ -38,7 +38,7 @@ struct error_c {
     error_str vector_size, index_of_no_vector, index_no_int;
     error_str no_return, return_out_function;
     error_str call_as_param, local_no_scalar;
-    error_str index_exp_not_allowed;
+    //error_str index_exp_not_allowed;
     error_str function_non_eval;
     error_str read_only_scalar;
     error_str cexp_div_zero;
@@ -62,11 +62,13 @@ struct error_c errors = {"Error semantico en lin %d: %s\n",
                          "Sentencia de retorno fuera del cuerpo de una función.",
                          "No esta permitido el uso de llamadas a funciones como parametros de otras funciones.",
                          "Variable local de tipo no escalar.",
-                         "Expresion no valida para indexar un vector",
+                         //"Expresion no valida para indexar un vector",
                          "Una funcion no puede ser evaluada",
                          "Solo esta permitido leer tipos escalares",
                          "Division entre cero en expresion constante",
-                         "Una variable no puede ser llamada"};
+                         "Una variable no puede ser llamada",
+                         "Indice de vector %s fuera de rango",
+                         };
 
 struct internal_error_c {
     error_str create_symbol, create_table, create_scope, close_scope, insert_symbol;
@@ -82,8 +84,8 @@ struct internal_error_c internal_errors = {
 
 void exit_error(error_str error, const char *optional) {
     char buffer[256];
-    sprintf(buffer, error,optional);
-    fprintf(stdout, errors.base, lincount+1, buffer); //TODO: Check lincount
+    sprintf(buffer, error, optional);
+    fprintf(stdout, errors.base, lincount + 1, buffer); //TODO: Check lincount
     syTable_destroy(symbolTable);
     exit(-1);
 }
@@ -110,8 +112,8 @@ void identifier(attributes_t $1) {
         int size = current_class == VECTOR ? vector_size : 1;
         int pos_local_var = function_body ? num_local_vars : -1;
 
-        if (current_class == VECTOR && vector_size >MAX_VECTOR_SIZE){
-            exit_error(errors.vector_size,$1.lexeme);
+        if (current_class == VECTOR && (vector_size > MAX_VECTOR_SIZE || vector_size < 1)) {
+            exit_error(errors.vector_size, $1.lexeme);
         }
 
         Node *n;
@@ -230,7 +232,12 @@ void vector_element(attributes_t *$$, attributes_t $1, attributes_t $3) {
     // Clear the exp value
     removeFromStack(yyout, 1);
     */
-    escribir_elemento_vector(yyout,$1.lexeme,match->size,$3.is_address);
+    if($3.is_constexpr){
+        if($3.value_int < 0 || $3.value_int>=match->size){
+            exit_error(errors.vec_index_out_range,match->name);
+        }
+    }
+    escribir_elemento_vector(yyout, $1.lexeme, match->size, $3.is_address);
 
 
     $$->is_address = true;
@@ -461,6 +468,9 @@ void wh_start(attributes_t *$$) {
 }
 
 void wh_condition(attributes_t *$$, attributes_t $1, attributes_t $3) {
+    if ($3.data_type ==INT){
+        exit_error(errors.loop_condition_int,"");
+    }
     $$->label = $1.label;
     while_exp_pila(yyout, $1.is_address, $$->label);
 }
@@ -505,7 +515,7 @@ void new_function(attributes_t *$$, attributes_t $3) {
 }
 
 void declare_function(attributes_t *$$, attributes_t $1, attributes_t $3) {
-    syTable_setFunctionValues(symbolTable,$1.lexeme, num_params,num_local_vars);
+    syTable_setFunctionValues(symbolTable, $1.lexeme, num_params, num_local_vars);
 
     strcpy($$->lexeme, $1.lexeme);
     fprintf(yyout, "; %d local variables\n", num_local_vars);

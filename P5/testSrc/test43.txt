@@ -1,0 +1,13 @@
+########## Division by 0 (compile)
+##########
+main{
+    int v;
+    v = 1/0;
+
+}
+
+----------
+Error semantico en lin 3: Division entre cero en expresion constante
+########## Test cases
+----------
+----------
