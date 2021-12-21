@@ -1,0 +1,12 @@
+########## Error variable no declarada
+##########
+main{
+    int x;
+    printf y;
+    
+}
+
+----------
+########## Test cases
+----------
+----------

@@ -1,0 +1,26 @@
+########## Vector as parameter
+##########
+main{
+    int x, y;
+    array int[3] v;
+    x=0;
+    v[x]=5;
+
+    function int abc(int a; int b; boolean c) {
+        printf c;
+        return a + b;
+    }
+
+    y = 2;
+    // x = abc(v[x], y, (x<2)); This is OK
+    x = abc(5, y, (2>y));   // This is not OK?
+    printf x;
+}
+
+----------
+
+########## Test cases
+----------
+----------
+true
+7

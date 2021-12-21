@@ -9,7 +9,8 @@ main{
 }
 
 ----------
-****Error en [lin 6, col 9]: simbolo no permitido (%)
 ########## Test cases
 ----------
 ----------
+
+****Error en [lin 6, col 9]: simbolo no permitido (%)

@@ -1,0 +1,11 @@
+########## Error variable duplicada 2
+##########
+main{
+    int x,x;
+    
+}
+
+----------
+########## Test cases
+----------
+----------

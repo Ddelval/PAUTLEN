@@ -13,7 +13,8 @@ main
 }
 
 ----------
-Error semantico en lin 7: El tamanyo del vector whole excede los limites permitidos (1,64).
 ########## Test cases
 ----------
 ----------
+
+Error semantico en lin 7: El tamanyo del vector whole excede los limites permitidos (1,64).
