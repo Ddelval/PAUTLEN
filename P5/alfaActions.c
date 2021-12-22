@@ -21,7 +21,7 @@ int pos_local_vars = 0;
 bool function_body = false;
 bool function_calling = false;
 int calling_params = 0;
-
+Node* stored_params[256];
 extern syTable *symbolTable;
 extern FILE *yyout;
 extern int lincount;
@@ -78,6 +78,7 @@ struct error_c errors = {"****Error semantico en lin %d: %s\n",
 
 struct internal_error_c {
     error_str create_symbol, create_table, create_scope, close_scope, insert_symbol;
+    error_str too_may_params;
 };
 
 struct internal_error_c internal_errors = {
@@ -85,7 +86,9 @@ struct internal_error_c internal_errors = {
         "Error interno al crear la tabla de simbolos",
         "Error interno al crear un nuevo scope en la tabla de simbolos",
         "Error interno al cerrar el scope en la tabla de simbolos",
-        "Error interno al insertar en la tabla de simbolos: %s"};
+        "Error interno al insertar en la tabla de simbolos: %s",
+        "Se ha excedido el numero de parametros que el compilador puede manejar",
+        };
 
 
 void exit_error(error_str error, const char *optional) {
@@ -93,6 +96,7 @@ void exit_error(error_str error, const char *optional) {
     sprintf(buffer, error, optional);
     fprintf(stdout, errors.base, lincount + 1, buffer); //TODO: Check lincount
     syTable_destroy(symbolTable);
+    fflush(yyout);
     exit(-1);
 }
 
@@ -556,16 +560,18 @@ void add_parameter(attributes_t $1) {
         exit_error(errors.duplicated_declaration, "");
     }
 
-    match = create_parameter(current_type, $1.lexeme, ++pos_param);
+    match = create_parameter(current_type, $1.lexeme, pos_param);
     if (!match) {
         exit_error(internal_errors.create_symbol, $1.lexeme);
     }
+
 
     if (!syTable_insert(symbolTable, *match)) {
         exit_error(internal_errors.insert_symbol, $1.lexeme);
     }
 
     node_free((Node *) match);
+    pos_param++;
     num_params++;
     // fprintf(stderr, "\npass %d\n", num_params);
 }

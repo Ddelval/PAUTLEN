@@ -553,7 +553,7 @@ Puede ser un valor concreto (en ese caso exp_es_direccion vale 0)
 
 void escribirParametro(FILE *fpasm, int pos_parametro,
                        int num_total_parametros) {
-    int d_ebp = 4 * (2 + num_total_parametros - pos_parametro);
+    int d_ebp = 4 * (1 + num_total_parametros - pos_parametro);
     fprintf(fpasm, "lea eax, [ebp + %d]\n", d_ebp);
     fprintf(fpasm, "%s\n", "push dword eax");
 }
