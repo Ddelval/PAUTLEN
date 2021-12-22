@@ -1,0 +1,18 @@
+########## Accessing global scope from functions
+##########
+main {
+    int x;
+
+    function int c(int a) {
+        return x;
+    }
+
+    x = -1;
+    printf c(10);
+}
+
+----------
+########## Test cases
+----------
+----------
+-1

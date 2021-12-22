@@ -1,0 +1,18 @@
+########## Functions with different types
+##########
+main {
+    int x;
+
+    function int c(){
+        return 1;
+    }
+    function boolean c(boolean a) {
+        return a;
+    }
+
+    printf c();
+    printf c(0);
+}
+
+----------
+****Error semantico en lin 7: Declaracion duplicada.

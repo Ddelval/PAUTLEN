@@ -1,0 +1,14 @@
+########## Type checking
+##########
+main {
+    int x;
+
+    function boolean c(int a) {
+        return a;
+    }
+
+    printf c(10);
+}
+
+----------
+****Error semantico en lin 5: Tipo de retorno incompatible

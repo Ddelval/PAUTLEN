@@ -7,7 +7,7 @@ main{
 }
 
 ----------
-****Error semantico en lin 3: Acceso a variable no declarada(y).
+****Error semantico en lin 3: Acceso a variable no declarada (y).
 ########## Test cases
 ----------
 ----------

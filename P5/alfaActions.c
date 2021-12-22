@@ -50,7 +50,7 @@ struct error_c {
 };
 struct error_c errors = {"****Error semantico en lin %d: %s\n",
                          "Declaracion duplicada.",
-                         "Acceso a variable no declarada(%s).",
+                         "Acceso a variable no declarada (%s).",
                          "Operacion aritmetica con operandos boolean.",
                          "Operacion logica con operandos int.",
                          "Comparacion con operandos boolean.",
@@ -72,7 +72,7 @@ struct error_c errors = {"****Error semantico en lin %d: %s\n",
                          "Una variable no puede ser llamada",
                          "Indice de vector %s fuera de rango",
                          "Vector %s no indexado",
-                         "Llamada a funcion no declarada(%s).",
+                         "Llamada a funcion no declarada (%s).",
                          "Tipo de retorno incompatible",
                          };
 

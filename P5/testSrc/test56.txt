@@ -8,4 +8,4 @@ main{
 }
 
 ----------
-****Error semantico en lin 4: Llamada a funcion no declarada(x).
+****Error semantico en lin 4: Llamada a funcion no declarada (x).

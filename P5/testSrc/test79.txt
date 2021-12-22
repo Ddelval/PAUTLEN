@@ -1,0 +1,17 @@
+########## Parameters with same name as global variables
+##########
+main {
+    int x;
+
+    function int c(int x) {
+        return x;
+    }
+
+    printf c(10);
+}
+
+----------
+########## Test cases
+----------
+----------
+10
