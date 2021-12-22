@@ -1,0 +1,8 @@
+########## Vector of vector
+##########
+main{
+    array array int[4] [2] v;
+}
+
+----------
+****Error sintactico en [lin 2, col 11]

@@ -1,0 +1,18 @@
+########## return outside function
+##########
+main{
+    int x;
+    function int c(){
+        int v;
+        return 1;
+
+    }
+
+    printf c();
+    return 0;
+
+
+}
+
+----------
+****Error semantico en lin 10: Sentencia de retorno fuera del cuerpo de una funcion.

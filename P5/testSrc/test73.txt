@@ -1,0 +1,15 @@
+########## Indexing function
+##########
+main{
+    int y;
+    function int v (){
+        return 0;
+    }
+
+    v[0]=2;
+
+
+}
+
+----------
+****Error semantico en lin 7: Intento de indexacion de una variable que no es de tipo vector.

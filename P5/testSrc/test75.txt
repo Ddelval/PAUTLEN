@@ -1,0 +1,15 @@
+########## Function with no return
+##########
+main{
+    int x;
+    function int c(){
+        int v;
+        printf 1;
+    }
+    printf c();
+
+
+}
+
+----------
+****Error semantico en lin 6: Funcion sin sentencia de retorno.

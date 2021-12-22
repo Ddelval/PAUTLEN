@@ -1,0 +1,14 @@
+########## Duplicated declaration function
+##########
+main{
+    int x;
+
+    function boolean x (){
+        return true;
+    }
+    printf x();
+
+}
+
+----------
+****Error semantico en lin 4: Declaracion duplicada.

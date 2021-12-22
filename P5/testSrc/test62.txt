@@ -1,0 +1,16 @@
+########## While with int
+##########
+main{
+    int y;
+    boolean b;
+    y=1;
+
+    while (y) {
+        printf 0;
+    }
+    printf 1;
+
+}
+
+----------
+****Error semantico en lin 6: Bucle con condicion de tipo int.

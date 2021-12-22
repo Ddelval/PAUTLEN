@@ -1,0 +1,11 @@
+########## Vector not indexed
+##########
+main{
+    array int[4] v;
+    int a;
+    a = v;
+    printf a;
+}
+
+----------
+****Error semantico en lin 4: Vector v no indexado

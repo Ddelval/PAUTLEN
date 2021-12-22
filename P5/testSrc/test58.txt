@@ -1,0 +1,15 @@
+########## Arithmetic with bool
+##########
+main{
+    int y;
+    boolean b;
+
+    b=false;
+    y=0;
+    y=y+b;
+    printf y;
+
+}
+
+----------
+****Error semantico en lin 7: Operacion aritmetica con operandos boolean.

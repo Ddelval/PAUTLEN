@@ -1,0 +1,15 @@
+########## Local vector
+##########
+main{
+    int y;
+    function boolean x (){
+        array int[3] v;
+        return false;
+    }
+
+    printf x();
+
+}
+
+----------
+****Error semantico en lin 4: Variable local de tipo no escalar.

@@ -1,0 +1,11 @@
+########## Read array
+##########
+main{
+    array int [3] v;
+
+    scanf v;
+
+}
+
+----------
+****Error semantico en lin 4: Solo esta permitido leer tipos escalares

@@ -1,0 +1,14 @@
+########## Bool comparision
+##########
+main{
+    int y;
+    boolean b;
+
+    b=false;
+    b = ((b == true));
+    printf b;
+
+}
+
+----------
+****Error semantico en lin 6: Comparacion con operandos boolean.

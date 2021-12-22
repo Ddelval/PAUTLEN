@@ -1,0 +1,15 @@
+########## Logic with int
+##########
+main{
+    int y;
+    boolean b;
+
+    b=false;
+    y=0;
+    b=y&&b;
+    printf b;
+
+}
+
+----------
+****Error semantico en lin 7: Operacion logica con operandos int.

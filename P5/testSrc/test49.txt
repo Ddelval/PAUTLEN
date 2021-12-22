@@ -1,0 +1,19 @@
+########## Function returning array
+##########
+main{
+    array int [3] v;
+    int a;
+    function array int [3] blah(int a){
+        array int [3] v;
+        return v;
+    }
+
+    v=blah(3);
+    a=v[0];
+
+    printf v;
+
+}
+
+----------
+****Error sintactico en [lin 4, col 14]

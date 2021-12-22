@@ -1,0 +1,18 @@
+########## Function call as params
+##########
+main{
+    int y;
+
+    function int zero(){
+        return 0;
+    }
+    function int print(int a){
+        printf a;
+        return 0;
+    }
+
+    y=print(zero(a));
+}
+
+----------
+****Error semantico en lin 12: No esta permitido el uso de llamadas a funciones como parametros de otras funciones.

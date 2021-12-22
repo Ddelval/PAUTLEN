@@ -1,0 +1,13 @@
+########## Mismatch in return type
+##########
+main{
+    int y;
+    function boolean x (){
+        return 1;
+    }
+
+    printf y;
+}
+
+----------
+****Error semantico en lin 4: Tipo de retorno incompatible

@@ -1,0 +1,13 @@
+########## Incompatible assignment III
+##########
+main{
+    int y;
+    boolean b;
+
+    b=1;
+
+
+}
+
+----------
+****Error semantico en lin 5: Asignacion incompatible.

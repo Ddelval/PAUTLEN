@@ -1,0 +1,15 @@
+########## Incompatible assignment IV
+##########
+main{
+    int y;
+    array int[2] v1;
+    array boolean[2] v2;
+    boolean b;
+
+    v1[0]=true;
+
+
+}
+
+----------
+****Error semantico en lin 7: Asignacion incompatible.

@@ -1,0 +1,15 @@
+########## Too few params in function call
+##########
+main{
+    int y;
+    boolean b;
+
+    function int a(int v; int w; int c){
+        return 0;
+    }
+    printf a(1,2);
+
+}
+
+----------
+****Error semantico en lin 8: Numero incorrecto de parametros en llamada a funcion.

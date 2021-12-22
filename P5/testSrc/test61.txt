@@ -1,0 +1,16 @@
+########## Conditional with int
+##########
+main{
+    int y;
+    boolean b;
+    y=1;
+
+    if (y) {
+        printf 0;
+    }
+    printf 1;
+
+}
+
+----------
+****Error semantico en lin 6: Condicional con condicion de tipo int.

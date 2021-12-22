@@ -1,0 +1,11 @@
+########## Print array
+##########
+main{
+    array int [3] v;
+
+    printf v;
+
+}
+
+----------
+****Error semantico en lin 4: Vector v no indexado

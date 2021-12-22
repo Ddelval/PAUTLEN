@@ -1,0 +1,12 @@
+########## Indexing scalar
+##########
+main{
+    int y;
+
+    y[0]=2;
+
+
+}
+
+----------
+****Error semantico en lin 4: Intento de indexacion de una variable que no es de tipo vector.

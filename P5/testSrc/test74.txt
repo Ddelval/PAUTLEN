@@ -1,0 +1,12 @@
+########## Indexing by bool
+##########
+main{
+    array int[3] y;
+
+    y[false]=2;
+
+
+}
+
+----------
+****Error semantico en lin 4: El indice en una operacion de indexacion tiene que ser de tipo entero.
