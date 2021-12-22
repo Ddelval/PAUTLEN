@@ -7,7 +7,7 @@ main{
 }
 
 ----------
-Error semantico en lin 3: Division entre cero en expresion constante
+****Error semantico en lin 3: Division entre cero en expresion constante
 ########## Test cases
 ----------
 ----------

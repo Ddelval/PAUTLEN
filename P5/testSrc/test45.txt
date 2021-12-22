@@ -6,7 +6,7 @@ main{
 }
 
 ----------
-Error semantico en lin 3: Indice de vector v fuera de rango
+****Error semantico en lin 3: Indice de vector v fuera de rango
 ########## Test cases
 ----------
 ----------

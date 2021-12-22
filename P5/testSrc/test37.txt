@@ -7,7 +7,7 @@ main{
 }
 
 ----------
-Error semantico en lin 3: Declaracion duplicada.
+****Error semantico en lin 3: Declaracion duplicada.
 ########## Test cases
 ----------
 ----------
