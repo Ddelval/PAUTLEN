@@ -103,16 +103,19 @@ extern int error_type;
 
 %%
 programa: TOK_MAIN inicio TOK_LLAVEIZQUIERDA declaraciones escribir_TS funciones escribir_MAIN sentencias TOK_LLAVEDERECHA
-{fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n"); escribir_fin(yyout);};
+{
+	fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");
+	escribir_fin(yyout);
+};
 
 inicio:
-{initialize(); }
+{initialize();};
 
 escribir_TS:
-{escribir_segmento_codigo(yyout);}
+{escribir_segmento_codigo(yyout);};
 
 escribir_MAIN:
-{escribir_inicio_main(yyout);}
+{escribir_inicio_main(yyout);};
 
 declaraciones: declaracion
 {
