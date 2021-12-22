@@ -21,7 +21,6 @@ int pos_local_vars = 0;
 bool function_body = false;
 bool function_calling = false;
 int calling_params = 0;
-Node* stored_params[256];
 extern syTable *symbolTable;
 extern FILE *yyout;
 extern int lincount;
@@ -78,7 +77,6 @@ struct error_c errors = {"****Error semantico en lin %d: %s\n",
 
 struct internal_error_c {
     error_str create_symbol, create_table, create_scope, close_scope, insert_symbol;
-    error_str too_may_params;
 };
 
 struct internal_error_c internal_errors = {
@@ -87,7 +85,6 @@ struct internal_error_c internal_errors = {
         "Error interno al crear un nuevo scope en la tabla de simbolos",
         "Error interno al cerrar el scope en la tabla de simbolos",
         "Error interno al insertar en la tabla de simbolos: %s",
-        "Se ha excedido el numero de parametros que el compilador puede manejar",
         };
 
 
@@ -555,7 +552,7 @@ void end_function() {
 }
 
 void add_parameter(attributes_t $1) {
-    const Node *match = syTable_search(symbolTable, $1.lexeme);
+    const Node *match = syTable_duplicated(symbolTable, $1.lexeme);
     if (match) {
         exit_error(errors.duplicated_declaration, "");
     }
