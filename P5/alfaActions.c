@@ -44,8 +44,11 @@ struct error_c {
     error_str cexp_div_zero;
     error_str var_as_fun;
     error_str vec_index_out_range;
+    error_str vec_not_indexed;
+    error_str fun_not_declared;
+    error_str incompatible_return;
 };
-struct error_c errors = {"Error semantico en lin %d: %s\n",
+struct error_c errors = {"****Error semantico en lin %d: %s\n",
                          "Declaracion duplicada.",
                          "Acceso a variable no declarada(%s).",
                          "Operacion aritmetica con operandos boolean.",
@@ -59,7 +62,7 @@ struct error_c errors = {"Error semantico en lin %d: %s\n",
                          "Intento de indexacion de una variable que no es de tipo vector.",
                          "El indice en una operacion de indexacion tiene que ser de tipo entero.",
                          "Funcion %s sin sentencia de retorno.",
-                         "Sentencia de retorno fuera del cuerpo de una función.",
+                         "Sentencia de retorno fuera del cuerpo de una funcion.",
                          "No esta permitido el uso de llamadas a funciones como parametros de otras funciones.",
                          "Variable local de tipo no escalar.",
                          //"Expresion no valida para indexar un vector",
@@ -68,6 +71,9 @@ struct error_c errors = {"Error semantico en lin %d: %s\n",
                          "Division entre cero en expresion constante",
                          "Una variable no puede ser llamada",
                          "Indice de vector %s fuera de rango",
+                         "Vector %s no indexado",
+                         "Llamada a funcion no declarada(%s).",
+                         "Tipo de retorno incompatible",
                          };
 
 struct internal_error_c {
@@ -293,6 +299,9 @@ void asign_scalar(attributes_t *$$, attributes_t $1, attributes_t $3) {
 
 void asign_vector(attributes_t *$$, attributes_t $1, attributes_t $3) {
     //push_vector_address($1);
+    if($1.data_type != $3.data_type){
+        exit_error(errors.incompatible_assign, "");
+    }
     swapOrderStack(yyout);
     asignarDestinoEnPila(yyout, $3.is_address);
 }
@@ -303,7 +312,11 @@ void exp_identificador(attributes_t *$$, attributes_t $1) {
 
     if (match->type == FUNCION) {
         exit_error(errors.function_non_eval, "");
-    } else if (match->type == PARAMETRO) {
+    }
+    else if (match->variable_type == VECTOR){
+        exit_error(errors.vec_not_indexed,$1.lexeme);
+    }
+    else if (match->type == PARAMETRO) {
         strcpy($$->lexeme, $1.lexeme);
     }
 
@@ -333,6 +346,9 @@ void read(attributes_t $2) {
 void returns(attributes_t $2) {
     if (!function_body) {
         exit_error(errors.return_out_function, "");
+    }
+    if($2.data_type != current_function_type){
+        exit_error(errors.incompatible_return,"");
     }
     returning = true;
     retornarFuncion(yyout, $2.is_address);
@@ -568,12 +584,17 @@ void function_call(attributes_t *$$, attributes_t $1, attributes_t $3) {
 
     // This checkings are ridiculous as we have already done them, but just in case
     // we change something in the middle I'm keeping them. The more, the merrier
+    // TODO: Remove them before we finish
+    // Note that the actual checks are in check_calling()
+
     if (!match) {
-        exit_error(errors.no_declarated, $1.lexeme);
+        exit_error(errors.fun_not_declared, $1.lexeme);
     }
     if (match->type != FUNCION) {
         exit_error(errors.var_as_fun, "");
     }
+
+    // This check is relevant though
 
     if (match->n_parameters != calling_params) {
         exit_error(errors.wrong_num_params, "");
@@ -590,7 +611,7 @@ void function_call(attributes_t *$$, attributes_t $1, attributes_t $3) {
 void check_calling(attributes_t *$$, attributes_t $1) {
     const Node *match = syTable_search(symbolTable, $1.lexeme);
     if (!match) {
-        exit_error(errors.no_declarated, $1.lexeme);
+        exit_error(errors.fun_not_declared, $1.lexeme);
     }
     if (match->type != FUNCION) {
         exit_error(errors.var_as_fun, "");
