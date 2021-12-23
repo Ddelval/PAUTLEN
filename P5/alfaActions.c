@@ -91,7 +91,7 @@ struct internal_error_c internal_errors = {
 void exit_error(error_str error, const char *optional) {
     char buffer[256];
     sprintf(buffer, error, optional);
-    fprintf(stdout, errors.base, lincount + 1, buffer); // TODO: Check lincount
+    fprintf(stdout, errors.base, lincount + 1, buffer);
     syTable_destroy(symbolTable);
     fflush(yyout);
     exit(-1);
@@ -424,7 +424,6 @@ void uminus(attributes_t *$$, attributes_t $2) {
 }
 
 void exp_paren(attributes_t *$$, attributes_t $2) {
-    // TODO: Does this have any side effects ???
     *$$ = $2;
 }
 
@@ -605,7 +604,7 @@ void function_call(attributes_t *$$, attributes_t $1, attributes_t $3) {
 
     // This checkings are ridiculous as we have already done them, but just in case
     // we change something in the middle I'm keeping them. The more, the merrier
-    // TODO: Remove them before we finish
+
     // Note that the actual checks are in check_calling()
 
     if (!match) {

@@ -209,7 +209,6 @@ parametro_funcion: tipo funcion_identificador
 
 funcion_identificador: TOK_IDENTIFICADOR
 {
-	//TODO: Add print rule?
 	add_parameter($1);
 };
 
